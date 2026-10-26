@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Leaderboard | Tygerberg Cricket Club</title>
+<meta name="description" content="TCC Fantasy Cricket season standings — see who is dominating the league.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="canonical" href="https://tygerbergcc.co.za/leaderboard.html">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="manifest" href="fantasy-manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TCC Fantasy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/leaderboard.css?v=7">
+<link rel="stylesheet" href="css/fantasy-pwa.css">
+  <meta property="og:type"        content="website">
+  <meta property="og:site_name"   content="Tygerberg Cricket Club">
+  <meta property="og:url"         content="https://tygerbergcc.co.za/leaderboard.html">
+  <meta property="og:title"       content="Fantasy Leaderboard | Tygerberg Cricket Club">
+  <meta property="og:description" content="TCC Fantasy Cricket season standings — see who is dominating the league.">
+  <meta property="og:image"       content="https://tygerbergcc.co.za/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height"content="630">
+  <meta name="twitter:card"       content="summary_large_image">
+  <meta name="twitter:title"      content="Fantasy Leaderboard | Tygerberg Cricket Club">
+  <meta name="twitter:description"content="TCC Fantasy Cricket season standings — see who is dominating the league.">
+  <meta name="twitter:image"      content="https://tygerbergcc.co.za/images/og-image.jpg">
+<style>.skip-link{position:absolute;left:-9999px;top:4px;z-index:9999;padding:8px 16px;background:#b8922a;color:#000;font-weight:700;font-size:0.8rem;border-radius:2px;text-decoration:none}.skip-link:focus{left:4px}</style>
+<link rel="stylesheet" href="css/games.css?v=1">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+
+<!-- ══ NAV PILL ══ -->
+<div class="nav-wrap">
+  <nav class="nav-pill" id="nav-pill">
+    <div class="nav-logo-wrap">
+      <div class="nav-logo-ring">
+        <img loading="eager" src="images/tcc-logo.png" alt="TCC" class="nav-logo-img">
+      </div>
+    </div>
+    <div class="nav-sep"></div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="fantasy.html" class="nav-link">Fantasy</a></li>
+      <li><a href="leaderboard.html" class="nav-link  active">Leaderboard</a></li>
+      <li><a href="fantasy-stats.html" class="nav-link">Insights</a></li>
+      <li><a href="player-stats.html" class="nav-link">Stats</a></li>
+      <li><a href="badges.html" class="nav-link">Badges</a></li>
+      <li><a href="fantasy-guide.html" class="nav-link">Guide</a></li>
+      <li><a href="profile.html" class="nav-link" id="nav-profile-link" style="display:none">My Team</a></li>
+    </ul>
+    <div class="nav-sep"></div>
+    <button class="nav-sayhello" id="nav-enter-btn">
+      <span class="nav-sh-border"></span>
+      <span class="nav-sh-inner">Pick XI ↗</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</div>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="fantasy.html">Fantasy</a></li>
+    <li><a href="games.html"      class="nav-link nav-link-games">Games <span class="nav-games-badge">NEW</span></a></li>
+    <li><a href="leaderboard.html"  class="active">Leaderboard</a></li>
+    <li><a href="fantasy-stats.html">Insights</a></li>
+    <li><a href="player-stats.html">Stats</a></li>
+    <li><a href="badges.html">Badges</a></li>
+    <li><a href="fantasy-guide.html">Guide</a></li>
+    <li><a href="profile.html" id="drawer-profile-link" style="display:none">My Team</a></li>
+  </ul>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="main-content" class="lb-hero">
+  <div class="lb-hero-bg">
+    <img loading="eager" src="images/leaderboard-hero.webp"
+         alt="" class="lb-hero-img" id="lb-hero-img">
+    <div class="lb-hero-overlay"></div>
+    <div class="lb-hero-fade"></div>
+  </div>
+  <div class="lb-hero-content">
+    <div class="lb-hero-eyebrow"><span class="lb-hero-rule"></span>TCC Fantasy Cricket · 2025/26</div>
+    <h1 class="lb-hero-h1">Season<br><em>Standings.</em></h1>
+    <p class="lb-hero-sub">Who's dominating the TCC Fantasy League? Pick your XI and climb the ranks.</p>
+  </div>
+  <div id="lb-live-pill" class="lb-hero-live-pill" style="display:none">
+    <span class="lb-live-dot-hero"></span>
+    <span id="lb-live-pill-text">Round Scored</span>
+  </div>
+</section>
+
+<!-- ══ CONTENT ══ -->
+<div class="lb-outer">
+
+  <!-- Sticky toolbar -->
+  <div class="lb-toolbar-wrap" id="lb-toolbar-wrap">
+    <div class="lb-toolbar-inner">
+      <div class="lb-tabs">
+        <button class="lb-tab active" id="view-points-btn" onclick="switchView('points')">Points</button>
+        <button class="lb-tab" id="view-h2h-btn" onclick="switchView('h2h')">Head to Head</button>
+        <button class="lb-tab" id="view-live-btn" onclick="switchView('live')" style="display:none">Live</button>
+      </div>
+      <div class="lb-filter-group" id="round-filter">
+        <button class="filter-btn active" data-round="season">Season</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Points view
+       Order: the standings first. This page is called Season Standings
+       and the top of the table used to sit below a full-screen hero,
+       a player-of-the-round panel and a team sheet. The weekly extras
+       follow the thing people came for. -->
+  <div id="lb-points-view">
+
+    <div id="lb-loading" class="lb-state"><div class="spinner"></div><span>Loading standings…</span></div>
+    <div id="lb-empty" class="lb-state lb-empty-state" style="display:none">
+      <div class="lb-empty-inner">
+        <div class="lb-empty-icon">🏏</div>
+        <h2 class="lb-empty-title">No standings yet</h2>
+        <p class="lb-empty-sub">The first round hasn't been scored yet. Pick your XI now and you'll appear here once the results are in.</p>
+        <a href="pick.html" class="lb-cta-btn" style="margin-top:24px">Pick My XI →</a>
+      </div>
+    </div>
+
+    <!-- Podium (top 3) -->
+    <div id="lb-podium" style="display:none">
+      <div class="lb-podium-row" id="lb-podium-row"></div>
+      <!-- Where a podium team's round-by-round opens. Outside the grid
+           row on purpose: inside it, the bars get a third of the page. -->
+      <div id="lb-podium-expand"></div>
+    </div>
+
+    <!-- Rank 4+ cards. The header exists because three unlabelled
+         numeric columns are unreadable: rounds played, points behind
+         the leader, and the total. -->
+    <div id="lb-cards-wrap" style="display:none">
+      <div class="lb-cards-label">Chasing the podium</div>
+      <div class="lb-cards" id="lb-cards">
+        <div class="lb-cards-head">
+          <span>#</span><span>Team</span><span>Rnds</span><span>Behind</span><span>Points</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Player of Round -->
+    <div id="potr-wrap" style="display:none">
+      <div class="potr-card" id="potr-card"></div>
+    </div>
+
+    <!-- Team of the Week -->
+    <div id="totw-wrap" style="display:none">
+      <article class="totw-sheet" id="totw-sheet">
+        <div class="totw-tape" aria-hidden="true"></div>
+        <p class="totw-club">Tygerberg Fantasy League</p>
+        <h2 class="totw-h">Team of the Week</h2>
+        <p class="totw-round" id="totw-round"></p>
+        <div class="totw-rule"></div>
+        <ol class="totw-xi" id="totw-list"></ol>
+        <div class="totw-12" id="totw-12"></div>
+        <div class="totw-foot">
+          <span>The week&rsquo;s best XI</span>
+          <span class="motto">Facta Non Verba</span>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- H2H view
+       These three blocks used to sit OUTSIDE this div, which closed
+       immediately on the line above them, with a stray </div> after
+       them. Nothing ever hid them, so "Loading H2H standings…" and its
+       spinner rendered in the middle of the Points tab on every visit. -->
+  <div id="lb-h2h-view" style="display:none">
+    <div id="lb-h2h-loading" class="lb-state"><div class="spinner"></div><span>Loading H2H standings…</span></div>
+    <div id="lb-h2h-empty" class="lb-state lb-empty-state" style="display:none">
+      <div class="lb-empty-inner">
+        <div class="lb-empty-icon">⚔️</div>
+        <h2 class="lb-empty-title">No H2H results yet</h2>
+        <p class="lb-empty-sub">Head-to-Head rounds haven't been resolved yet. Check back after the first H2H round is scored.</p>
+      </div>
+    </div>
+    <div id="lb-h2h-content" style="display:none">
+      <!-- H2H Standings table -->
+      <div class="lb-section-label">Season H2H Standings</div>
+      <table class="lb-table h2h-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Team</th>
+            <th title="Wins">W</th>
+            <th title="Draws">D</th>
+            <th title="Losses">L</th>
+            <th title="H2H Points (3W / 1D / 0L)">H2H Pts</th>
+            <th title="Total fantasy points in H2H rounds">Fantasy Pts</th>
+          </tr>
+        </thead>
+        <tbody id="h2h-tbody"></tbody>
+      </table>
+
+      <!-- Round-by-round fixtures -->
+      <div id="h2h-rounds-wrap" style="margin-top:32px"></div>
+    </div>
+  </div>
+
+  <!-- Live view (placeholder — wired up when live scoring is active) -->
+  <div id="lb-live-view" style="display:none">
+    <div class="fantasy-state" style="padding:60px 0;color:var(--muted)">No live match in progress.</div>
+  </div>
+
+  <div class="lb-cta-row">
+    <a href="fantasy.html" class="lb-cta-btn">Pick My Team →</a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER ══ -->
+<div class="lb-footer-img-section">
+  <img loading="lazy" src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1920&q=80&auto=format&fit=crop"
+       alt="" class="lb-footer-img" id="lb-footer-img">
+  <div class="lb-footer-img-overlay">
+    <p class="lbfi-text"><em>Facta Non Verba</em></p>
+    <p class="lbfi-sub">Tygerberg Cricket Club · Est. 1957</p>
+  </div>
+</div>
+
+<footer class="lb-footer-bar">
+  <span>© <span class="copy-year"></span> Tygerberg Cricket Club</span>
+  <div class="lb-footer-avail">
+    <span class="avail-dot"></span>
+    <span>League open</span>
+  </div>
+  <a href="index.html" class="lb-footer-link">← Main site</a>
+</footer>
+
+<div class="pwa-banner" id="pwa-banner" style="display:none">
+  <div class="pwa-banner-inner">
+    <img src="images/tcc-logo.png" alt="TCC" class="pwa-banner-logo">
+    <div class="pwa-banner-text">
+      <div class="pwa-banner-title">Add to Home Screen</div>
+      <div class="pwa-banner-sub">Play TCC Fantasy from your home screen</div>
+    </div>
+    <button class="pwa-banner-btn" id="pwa-install-btn">Install</button>
+    <button class="pwa-banner-close" id="pwa-banner-close" aria-label="Dismiss">✕</button>
+  </div>
+</div>
+
+<script src="js/fantasy-scoring.js?v=1"></script>
+<script src="js/leaderboard.js?v=12"></script>
+<script src="js/fantasy-pwa.js"></script>
+<script src="js/fantasy-badges.js?v=3"></script>
+</body>
+</html>

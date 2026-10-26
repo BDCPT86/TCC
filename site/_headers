@@ -1,0 +1,41 @@
+/*
+  Permissions-Policy: xr-spatial-tracking=*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Frequently updated JS — must always revalidate
+/js/fantasy.js
+  Cache-Control: no-store
+/js/fantasy-pwa.js
+  Cache-Control: no-store
+/js/pick.js
+  Cache-Control: no-store
+/js/leaderboard.js
+  Cache-Control: no-store
+/js/main.js
+  Cache-Control: no-store
+/js/tcc-admin-worker.js
+  Cache-Control: no-store
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/sw.js
+  Cache-Control: no-cache
+
+/admin.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/pick.html
+  Cache-Control: no-store

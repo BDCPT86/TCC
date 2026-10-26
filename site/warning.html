@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- A disciplinary document about a named person has no business in a
+     search index, and no business in a referrer header either. -->
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Tygerberg Cricket Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f1ec; --bg2:#fff; --bg3:#e7e4da; --line:rgba(0,0,0,.12);
+  --ink:#13120e; --muted:#57554c; --gold:#7a6116; --gold-fill:#c9a227;
+  --red:#b3261e; --green:#20693a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;
+  line-height:1.55;padding:24px 16px 80px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto}
+.masthead{text-align:center;margin-bottom:20px}
+.masthead .club{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:3px;color:var(--gold)}
+.masthead .est{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.sheet{background:var(--bg2);border:1px solid var(--line);border-radius:12px;
+  padding:26px 24px;margin-bottom:16px}
+@media(max-width:560px){.sheet{padding:20px 16px}}
+.doc-head{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:16px}
+.doc-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;line-height:1.1}
+.doc-ref{font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-bottom:18px;font-size:.86rem}
+@media(max-width:560px){.meta{grid-template-columns:1fr}}
+.meta div span{display:block;font-size:.66rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+.body{white-space:pre-wrap;font-size:.92rem;line-height:1.75}
+.body strong{display:block}
+h2{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:2px;margin-bottom:10px}
+label{display:block;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+input,textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:8px;
+  padding:11px;font:inherit;font-size:.95rem;color:var(--ink)}
+input:focus,textarea:focus{outline:2px solid rgba(201,162,39,.45);outline-offset:1px}
+textarea{min-height:110px;resize:vertical;line-height:1.55}
+.sig-input{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:2px}
+/* ── the signature pad ──
+   Lined like a signature line, because that is what it is. */
+.sig-tabs{display:flex;gap:6px;margin-bottom:8px}
+.sig-tab{flex:1;background:var(--bg3);color:var(--muted);border:1px solid var(--line);
+  border-radius:8px;padding:9px 10px;font-size:.84rem;font-weight:700;cursor:pointer;width:auto}
+.sig-tab.on{background:var(--bg2);color:var(--ink);border-color:rgba(201,162,39,.55)}
+.sig-pad-wrap{position:relative;background:var(--bg2);border:1px solid var(--line);
+  border-radius:8px;overflow:hidden}
+.sig-pad{display:block;width:100%;height:170px;cursor:crosshair;touch-action:none}
+.sig-line{position:absolute;left:18px;right:18px;bottom:40px;border-bottom:1px solid var(--line);
+  pointer-events:none}
+.sig-ghost{position:absolute;left:0;right:0;bottom:16px;text-align:center;font-size:.76rem;
+  color:var(--muted);pointer-events:none}
+.sig-pad-bar{display:flex;justify-content:flex-end;padding:6px 8px;border-top:1px solid var(--line)}
+.sig-clear{background:none;border:none;color:var(--muted);font-size:.78rem;font-weight:700;
+  padding:5px 10px;width:auto;cursor:pointer}
+.sig-mark{max-width:260px;max-height:80px;display:block;margin-top:2px}
+@media print{.sig-mark{max-width:200px}}
+button{font:inherit;font-weight:700;border:none;border-radius:9px;padding:14px 20px;cursor:pointer;width:100%}
+.btn{background:var(--gold-fill);color:#13120e;font-size:1rem}
+.btn:disabled{opacity:.55;cursor:default}
+.hint{font-size:.78rem;color:var(--muted);margin-top:6px;line-height:1.55}
+.hidden{display:none !important}
+.tick{display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin:14px 0;
+  font-size:.88rem;line-height:1.5}
+.tick input{width:20px;height:20px;flex-shrink:0;margin-top:1px}
+.msg{margin-top:12px;font-size:.9rem;min-height:1.2em}
+.msg.err{color:var(--red);font-weight:700} .msg.ok{color:var(--green)}
+.callout{background:rgba(201,162,39,.10);border-left:3px solid var(--gold-fill);
+  border-radius:8px;padding:12px 14px;font-size:.86rem;line-height:1.6;margin:16px 0}
+.callout strong{color:var(--gold)}
+.signed-band{background:rgba(32,105,58,.10);border:1px solid rgba(32,105,58,.35);
+  border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:.9rem}
+.signed-band strong{color:var(--green)}
+.sigblock{border-top:1px solid var(--line);margin-top:18px;padding-top:14px;
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:.86rem}
+@media(max-width:560px){.sigblock{grid-template-columns:1fr}}
+.sigblock .who{font-size:.66rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+.sigblock .name{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:2px;margin-top:2px}
+.fingerprint{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.66rem;color:var(--muted);
+  word-break:break-all;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.state{text-align:center;padding:50px 20px;color:var(--muted)}
+@media print{
+  body{background:#fff;padding:0}
+  .no-print{display:none !important}
+  .sheet{border:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <div class="club">Tygerberg Cricket Club</div>
+    <div class="est">Cape Town</div>
+  </div>
+
+  <div id="state" class="state">Opening the document…</div>
+
+  <div id="doc" class="hidden">
+    <div id="signed-band" class="signed-band hidden"></div>
+
+    <div class="sheet">
+      <div class="doc-head">
+        <div class="doc-title" id="d-title"></div>
+        <div class="doc-ref" id="d-ref"></div>
+      </div>
+      <div class="meta">
+        <div><span>Player</span><b id="d-player"></b></div>
+        <div><span>Team</span><b id="d-team"></b></div>
+        <div><span>Issued by</span><b id="d-by"></b></div>
+        <div><span>Date issued</span><b id="d-on"></b></div>
+      </div>
+      <div class="body" id="d-body"></div>
+
+      <div class="sigblock">
+        <div>
+          <div class="who">For the club</div>
+          <div class="name" id="d-official"></div>
+          <div class="hint" id="d-official-when"></div>
+        </div>
+        <div id="d-playersig-wrap" class="hidden">
+          <div class="who">The player</div>
+          <div class="name" id="d-playersig"></div>
+          <div class="hint" id="d-playersig-when"></div>
+        </div>
+        <div id="d-guardiansig-wrap" class="hidden">
+          <div class="who">Parent or guardian</div>
+          <div class="name" id="d-guardiansig"></div>
+          <div class="hint" id="d-guardiansig-when"></div>
+        </div>
+      </div>
+
+      <div id="d-reply-wrap" class="hidden" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
+        <div class="who" style="font-size:.66rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)">The player's reply</div>
+        <div class="body" id="d-reply" style="margin-top:6px"></div>
+      </div>
+
+      <div class="fingerprint" id="d-hash"></div>
+    </div>
+
+    <!-- ── the signing form ── -->
+    <div class="sheet no-print" id="form">
+      <h2>Sign to confirm you received this</h2>
+
+      <div class="callout">
+        <strong>Signing does not mean you agree.</strong> It confirms only that you have received
+        this document and read it. If you disagree with any of it, say so in the box below —
+        your reply is kept with the document and goes to the committee with it.
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label for="reply">Anything you want to say (optional)</label>
+        <textarea id="reply" placeholder="Your side of it, if you want it on the record."></textarea>
+        <p class="hint">Optional. Leave it blank if you have nothing to add.</p>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label>Your signature</label>
+        <div class="sig-tabs">
+          <button type="button" class="sig-tab on" id="sig-tab-draw" data-for="sig">Draw it</button>
+          <button type="button" class="sig-tab" id="sig-tab-type" data-for="sig">Type it</button>
+        </div>
+        <div id="sig-draw">
+          <div class="sig-pad-wrap">
+            <canvas class="sig-pad" id="sig-pad"></canvas>
+            <div class="sig-line"></div>
+            <div class="sig-ghost" id="sig-ghost">Sign above with your finger or a mouse</div>
+            <div class="sig-pad-bar"><button type="button" class="sig-clear" id="sig-clear">Clear</button></div>
+          </div>
+        </div>
+        <div id="sig-type" style="display:none">
+          <input type="text" id="sig" class="sig-input" autocomplete="name" placeholder="Type your full name">
+        </div>
+      </div>
+
+      <div id="guardian-wrap" class="hidden" style="margin-bottom:14px">
+        <label>Parent or guardian — your signature</label>
+        <div class="sig-tabs">
+          <button type="button" class="sig-tab on" id="gsig-tab-draw" data-for="gsig">Draw it</button>
+          <button type="button" class="sig-tab" id="gsig-tab-type" data-for="gsig">Type it</button>
+        </div>
+        <div id="gsig-draw">
+          <div class="sig-pad-wrap">
+            <canvas class="sig-pad" id="gsig-pad"></canvas>
+            <div class="sig-line"></div>
+            <div class="sig-ghost" id="gsig-ghost">Sign above</div>
+            <div class="sig-pad-bar"><button type="button" class="sig-clear" id="gsig-clear">Clear</button></div>
+          </div>
+        </div>
+        <div id="gsig-type" style="display:none">
+          <input type="text" id="gsig" class="sig-input" autocomplete="name" placeholder="Type your full name">
+        </div>
+        <p class="hint" id="guardian-hint">The player is under 18, so a parent or guardian signs as well.</p>
+      </div>
+
+      <label class="tick" style="text-transform:none;letter-spacing:0;color:var(--ink);font-size:.88rem">
+        <input type="checkbox" id="confirm">
+        <span>I confirm that I have received this document and have read it.</span>
+      </label>
+
+      <button class="btn" id="sign-btn">Sign and send it back</button>
+      <div class="msg" id="sign-msg"></div>
+      <p class="hint">Your name, the date and time, and the device you signed from are recorded with the document.</p>
+    </div>
+
+    <div class="no-print" style="text-align:center;margin-top:8px">
+      <button class="btn" id="print-btn" style="background:var(--bg3);color:var(--ink);width:auto;padding:10px 18px;font-size:.85rem">
+        Save or print a copy
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="js/warnings-wording.js?v=1"></script>
+<script src="js/signature-pad.js?v=1"></script>
+<script>
+var WORKER_URL = 'https://tcc-admin.bydaries.workers.dev';
+var TOKEN = new URLSearchParams(location.search).get('t') || '';
+
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+  return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+
+function call(action, payload) {
+  return fetch(WORKER_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: action, payload: payload })
+  });
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  var d = new Date(iso.length <= 10 ? iso + 'T00:00:00' : iso);
+  if (isNaN(d)) return iso;
+  var months = ['January','February','March','April','May','June','July',
+                'August','September','October','November','December'];
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+function fmtWhen(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  if (isNaN(d)) return iso;
+  return fmtDate(iso) + ' at ' + String(d.getHours()).padStart(2, '0') + ':' +
+         String(d.getMinutes()).padStart(2, '0');
+}
+
+/* The body arrives as plain text with headings in capitals on their own
+   line. Those become headings; everything else is a paragraph. */
+function renderBody(text) {
+  return String(text || '').split('\n').map(function (line) {
+    var t = line.trim();
+    if (!t) return '';
+    if (/^[A-Z][A-Z ,'’-]{4,}$/.test(t)) {
+      return '<strong style="margin-top:18px;font-size:.74rem;letter-spacing:1.6px;color:var(--gold)">' +
+             esc(t) + '</strong>';
+    }
+    return esc(line);
+  }).join('\n');
+}
+
+var W = null;
+var PAD = {}, SIGMODE = { sig: 'draw', gsig: 'draw' };
+
+/* A signature block: the mark if one was drawn, and the name either way.
+   The name is always shown — a squiggle on its own identifies nobody. */
+function wnSetSig(id, name, type, data) {
+  var el = $(id);
+  if (!el) return;
+  if (type === 'drawn' && data) {
+    el.innerHTML = '<img class="sig-mark" src="' + esc(data) + '" alt="Signature of ' + esc(name) + '">' +
+                   '<span style="font-size:.78rem;letter-spacing:0;font-family:\'DM Sans\',sans-serif;' +
+                   'color:var(--muted)">' + esc(name) + '</span>';
+  } else {
+    el.textContent = name || '';
+  }
+}
+
+/* Draw or type, one or the other, for each signer. */
+function setSigMode(which, mode) {
+  SIGMODE[which] = mode;
+  $(which + '-tab-draw').classList.toggle('on', mode === 'draw');
+  $(which + '-tab-type').classList.toggle('on', mode === 'type');
+  $(which + '-draw').style.display = mode === 'draw' ? '' : 'none';
+  $(which + '-type').style.display = mode === 'type' ? '' : 'none';
+  if (mode === 'draw' && PAD[which]) PAD[which].resize();
+}
+
+function wirePad(which) {
+  var canvas = $(which + '-pad');
+  if (!canvas || typeof makeSignaturePad !== 'function') return;
+  PAD[which] = makeSignaturePad(canvas, {
+    onChange: function () {
+      var g = $(which + '-ghost');
+      if (g) g.style.display = PAD[which].isEmpty() ? '' : 'none';
+    }
+  });
+  $(which + '-clear').addEventListener('click', function () { PAD[which].clear(); });
+  $(which + '-tab-draw').addEventListener('click', function () { setSigMode(which, 'draw'); });
+  $(which + '-tab-type').addEventListener('click', function () { setSigMode(which, 'type'); });
+}
+
+/* What to send for one signer, or an error to show. */
+function signaturePayload(which, prefix, label) {
+  if (SIGMODE[which] === 'draw') {
+    var pad = PAD[which];
+    if (!pad || pad.isEmpty()) return { error: label + ', please sign in the box.' };
+    var data = pad.toDataURL();
+    if (!data || (typeof validSignatureData === 'function' && !validSignatureData(data))) {
+      return { error: 'That signature did not come through. Please sign again.' };
+    }
+    var out = {};
+    out[prefix + '_signature_type'] = 'drawn';
+    out[prefix + '_signature_data'] = data;
+    return out;
+  }
+  var typed = $(which).value.trim();
+  if (typed.length < 3) return { error: label + ', please type your full name.' };
+  var o = {};
+  o[prefix + '_signature'] = typed;
+  o[prefix + '_signature_type'] = 'typed';
+  return o;
+}
+
+function show(w) {
+  W = w;
+  var lv = (typeof levelById === 'function' && levelById(w.level)) || null;
+  /* The heading is the document's own first line, so an edited heading is
+     the one that shows. Only if that line does not look like a heading does
+     the level's standard title stand in. */
+  var text = String(w.doc_text || '');
+  var nl = text.indexOf('\n');
+  var firstLine = (nl === -1 ? text : text.slice(0, nl)).trim();
+  var rest = nl === -1 ? '' : text.slice(nl + 1);
+  var hasHeading = /^[A-Z][A-Z0-9 ,'\u2019()\u2013-]{6,}$/.test(firstLine);
+  $('d-title').textContent = hasHeading ? firstLine : (lv ? lv.title : 'DISCIPLINARY NOTICE');
+  $('d-ref').textContent = w.ref + ' · Tygerberg Cricket Club';
+  $('d-player').textContent = w.player_name;
+  $('d-team').textContent = w.player_team || '—';
+  $('d-by').textContent = w.issued_by + (w.issued_role ? ' (' + w.issued_role + ')' : '');
+  $('d-on').textContent = fmtDate(w.issued_on);
+  $('d-body').innerHTML = renderBody(hasHeading ? rest : text);
+  wnSetSig('d-official', w.official_signature || w.issued_by,
+           w.official_signature_type, w.official_signature_data);
+  $('d-official-when').textContent = 'Signed for the club';
+  $('d-hash').textContent = 'Document fingerprint (SHA-256): ' + (w.doc_hash || '');
+  document.title = w.ref + ' — Tygerberg Cricket Club';
+
+  $('state').classList.add('hidden');
+  $('doc').classList.remove('hidden');
+
+  if (w.player_signed_at) {
+    showSigned(w);
+  } else {
+    $('form').classList.remove('hidden');
+    $('guardian-wrap').classList.toggle('hidden', !w.is_minor);
+    /* A canvas inside something hidden has no width, so it is sized once
+       the form is actually on screen. */
+    if (PAD.sig) PAD.sig.resize();
+    if (w.is_minor && PAD.gsig) PAD.gsig.resize();
+    if (w.is_minor && w.guardian_name) {
+      $('guardian-hint').textContent =
+        'The player is under 18. This should be signed by ' + w.guardian_name +
+        ', or by another parent or guardian.';
+    }
+  }
+}
+
+function showSigned(w) {
+  $('form').classList.add('hidden');
+  var band = $('signed-band');
+  band.classList.remove('hidden');
+  band.innerHTML = '<strong>Signed.</strong> Received and signed by ' + esc(w.player_signature) +
+    ' on ' + esc(fmtWhen(w.player_signed_at)) +
+    (w.guardian_signed_at ? ', and by ' + esc(w.guardian_signature) + ' as parent or guardian' : '') +
+    '. Keep a copy for yourself with the button at the bottom.';
+
+  $('d-playersig-wrap').classList.remove('hidden');
+  wnSetSig('d-playersig', w.player_signature, w.player_signature_type, w.player_signature_data);
+  $('d-playersig-when').textContent = fmtWhen(w.player_signed_at);
+  if (w.guardian_signed_at) {
+    $('d-guardiansig-wrap').classList.remove('hidden');
+    wnSetSig('d-guardiansig', w.guardian_signature, w.guardian_signature_type, w.guardian_signature_data);
+    $('d-guardiansig-when').textContent = fmtWhen(w.guardian_signed_at);
+  }
+  if (w.player_response) {
+    $('d-reply-wrap').classList.remove('hidden');
+    $('d-reply').textContent = w.player_response;
+  }
+}
+
+function fail(text) {
+  $('state').classList.remove('hidden');
+  $('doc').classList.add('hidden');
+  $('state').innerHTML = '<p style="font-size:1rem">' + esc(text) + '</p>' +
+    '<p class="hint" style="margin-top:10px">If you think this is wrong, speak to whoever sent you the link.</p>';
+}
+
+async function load() {
+  if (!TOKEN) { fail('This link is incomplete. Ask for it to be sent again.'); return; }
+  try {
+    var res = await call('warning.get', { token: TOKEN });
+    var d = await res.json().catch(function () { return {}; });
+    if (!res.ok) {
+      /* "Not found" is a server's word, not a person's. A 404 always gets
+         the plain-English version; other errors carry their own wording. */
+      fail(res.status === 404
+        ? 'This link is not valid. It may have been mistyped, or the document may have been removed.'
+        : (d.error || 'This document could not be opened.'));
+      return;
+    }
+    show(d.warning);
+  } catch (e) { fail('Could not reach the club right now. Please try again in a moment.'); }
+}
+
+async function sign() {
+  if (!$('confirm').checked) { say('Please tick the box to confirm you have read it.', 'err'); return; }
+  var ps = signaturePayload('sig', 'player', 'Please');
+  if (ps.error) { say(ps.error, 'err'); return; }
+  var payload = Object.assign({
+    token: TOKEN,
+    player_response: $('reply').value.trim() || null,
+    confirm: true
+  }, ps);
+
+  if (W.is_minor) {
+    var gs = signaturePayload('gsig', 'guardian', 'Parent or guardian');
+    if (gs.error) { say(gs.error, 'err'); return; }
+    Object.assign(payload, gs);
+  }
+
+  $('sign-btn').disabled = true;
+  say('Sending…');
+  try {
+    var res = await call('warning.sign', payload);
+    var d = await res.json().catch(function () { return {}; });
+    if (!res.ok || !d.ok) { say(d.error || 'That did not go through.', 'err'); return; }
+    say('');
+    showSigned(d.warning);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { say('Could not reach the club right now. Please try again.', 'err'); }
+  finally { $('sign-btn').disabled = false; }
+}
+
+function say(text, kind) {
+  var n = $('sign-msg');
+  n.textContent = text || '';
+  n.className = 'msg' + (kind ? ' ' + kind : '');
+}
+
+wirePad('sig');
+wirePad('gsig');
+$('sign-btn').addEventListener('click', sign);
+$('print-btn').addEventListener('click', function () { window.print(); });
+load();
+</script>
+</body>
+</html>

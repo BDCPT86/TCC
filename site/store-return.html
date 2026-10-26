@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order — Tygerberg Cricket Club</title>
+<link rel="stylesheet" href="css/store.css?v=1">
+</head>
+<body>
+<!-- Gateway return page. In MOCK mode the storefront confirms inline and
+     rarely lands here; this exists for the REAL gateway redirect, which
+     comes back with ?payment=<id> (success) or ?cancelled=1. -->
+<div class="shop-state" id="msg" style="padding-top:120px">Checking your payment…</div>
+<script>
+  var q = new URLSearchParams(location.search);
+  var el = document.getElementById('msg');
+  if (q.get('cancelled')) {
+    el.innerHTML = 'Payment cancelled. Your cart is still saved — <a href="store.html" style="color:#C9A227">back to the shop</a>.';
+  } else {
+    // Real gateway: the webhook is the source of truth and will have marked
+    // the order paid server-side already. This page just reassures the buyer.
+    el.innerHTML = 'Thanks — your order is confirmed. We\u2019ll email you when it\u2019s ready to collect at the clubhouse.<br><br><a href="store.html" style="color:#C9A227">Back to the shop</a>';
+  }
+</script>
+</body>
+</html>

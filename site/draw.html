@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Draw — Tygerberg Cricket Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/draw.css?v=9">
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div class="flash" id="flash"></div>
+
+<div class="badge" id="badge">
+  <p class="club">Tygerberg Cricket Club &middot; 1957</p>
+  <p class="motto">Facta Non Verba</p>
+</div>
+
+<div class="tools" id="tools">
+  <button class="icon" id="sound" title="Sound" aria-label="Toggle sound">&#9835;</button>
+  <button class="icon" id="full" title="Fullscreen" aria-label="Toggle fullscreen">&#9974;</button>
+</div>
+
+<!-- ============ SETUP (display / solo) ============ -->
+<section id="setup">
+  <div class="card">
+    <p class="field-label" style="margin-bottom:0">Eight teams. Two groups.</p>
+    <h1>The <em>Draw</em></h1>
+    <p class="lede">Enter the teams in ranking order. Seed 1 is the strongest side.</p>
+
+    <div class="teams" id="teams"></div>
+
+    <div class="row">
+      <fieldset>
+        <p class="field-label">Draw type</p>
+        <label class="radio"><input type="radio" name="mode" value="seeded" checked> Seeded &mdash; four pots of two</label>
+        <label class="radio"><input type="radio" name="mode" value="open"> Open &mdash; all eight in one bag</label>
+      </fieldset>
+      <fieldset>
+        <p class="field-label">Who presses the button</p>
+        <label class="radio"><input type="radio" name="ctrl" value="local" checked> This device</label>
+        <label class="radio"><input type="radio" name="ctrl" value="phone"> A phone, paired to this screen</label>
+      </fieldset>
+      <fieldset class="grow">
+        <p class="field-label">Random seed</p>
+        <div class="seed-row">
+          <input type="text" id="seed" autocomplete="off" spellcheck="false" aria-label="Random seed">
+          <button type="button" class="reroll" id="reroll" title="Roll a new random seed" aria-label="Roll a new random seed">&#10227;</button>
+        </div>
+        <p class="note">Randomly generated for this draw &mdash; no one picks it, so the result can't be arranged in advance. It's shown so anyone can re-run this exact draw afterwards and confirm it. Roll again any time.</p>
+      </fieldset>
+    </div>
+
+    <p class="err" id="err"></p>
+    <div class="btns">
+      <button id="start">Begin the draw</button>
+      <button class="ghost" id="provFixtures">Provisional fixtures</button>
+      <button class="ghost" id="clear">Clear names</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAGE (display / solo) ============ -->
+<section id="stage">
+  <div class="paired" id="paired">
+    <p class="k"><span class="dot" id="dot"></span>Scan to control from your phone</p>
+    <div class="qr" id="pairQr"></div>
+    <p class="code" id="pairCode">------</p>
+    <p class="link" id="pairLink"></p>
+  </div>
+
+  <div class="boards left" id="wrapA">
+    <p class="board-title">Group A</p>
+    <div id="groupA"></div>
+  </div>
+  <div class="boards right" id="wrapB">
+    <p class="board-title">Group B</p>
+    <div id="groupB"></div>
+  </div>
+
+  <div class="reveal" id="reveal">
+    <p class="dest" id="dest"></p>
+    <p class="name" id="name"></p>
+    <div class="rule"></div>
+  </div>
+
+  <div class="finale-stage" id="finaleStage">
+    <div class="fin-head">
+      <p class="k">Tygerberg Cricket Club</p>
+      <h2>The Groups</h2>
+      <p class="fin-seed">Seed <b id="finSeed"></b></p>
+    </div>
+    <div class="fin-groups" id="finGroups"></div>
+  </div>
+
+  <div class="foot">
+    <button id="next">Draw the next ball</button>
+    <button class="ghost" id="fixtures">Fixtures</button>
+    <button class="ghost" id="copy">Copy result</button>
+    <button class="ghost" id="again">Start over</button>
+  </div>
+  <p class="seedline">Seed <b id="seedOut"></b></p>
+  <p class="toast" id="toast"></p>
+
+  <!-- Tournament fixtures, generated from the draw -->
+  <div class="fx-panel" id="fxPanel">
+    <div class="fx-card">
+      <div class="fx-head">
+        <div>
+          <p class="k">Florida Park &middot; 24, 26 &amp; 27 September 2026</p>
+          <h2>Tournament Fixtures</h2>
+        </div>
+        <button class="icon" id="fxClose" aria-label="Close fixtures">&times;</button>
+      </div>
+      <div class="fx-body" id="fxBody"></div>
+      <div class="fx-foot">
+        <button class="ghost" id="fxCopy">Copy fixtures</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REMOTE (phone) ============ -->
+<section id="remote">
+  <!-- join -->
+  <div class="r-join" id="rJoin">
+    <p class="field-label">Enter the code on the screen</p>
+    <input type="text" id="joinCode" maxlength="6" autocomplete="off"
+           autocapitalize="characters" spellcheck="false" aria-label="Room code">
+    <p class="err" id="joinErr"></p>
+    <button id="joinBtn" style="width:100%">Connect</button>
+  </div>
+
+  <!-- live -->
+  <div class="r-head" id="rHead" hidden>
+    <p class="k"><span class="dot" id="rDot"></span>Room <span id="rCode"></span></p>
+    <h2 id="rProgress">Ball 1 of 8</h2>
+    <p class="r-status" id="rStatus">Ready when you are.</p>
+  </div>
+
+  <button class="trigger" id="rTrigger" hidden>Draw<br>the ball</button>
+
+  <div class="r-last" id="rLast" hidden>
+    <p class="k">Last out of the bag</p>
+    <p class="v" id="rLastName">&mdash;</p>
+    <p class="g" id="rLastGroup"></p>
+  </div>
+
+  <div class="r-foot" id="rFoot" hidden>
+    <button class="ghost" id="rReset">Reset the draw</button>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/qrcode.js?v=1"></script>
+<script src="js/draw.js?v=12"></script>
+</body>
+</html>

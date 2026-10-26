@@ -1,0 +1,296 @@
+/* =====================================================================
+   Tygerberg Six & Out Challenge
+   Brand: Old Gold #C9A227 · Black #000 · White #FFF
+   ===================================================================== */
+
+:root{
+  --gold:#C9A227;
+  --gold-hi:#E8C24A;
+  --gold-deep:#8a6f15;
+  --ink:#0a0a0a;
+  --ink-2:#141210;
+  --paper:#f5f2e8;
+  --line: rgba(201,162,39,.28);
+  --red:#d7263d;
+  --green:#2e9e4f;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html,body{
+  margin:0; padding:0; height:100%;
+  background:#000; color:var(--paper);
+  font-family:"Barlow",system-ui,sans-serif;
+  overscroll-behavior:none;
+}
+
+body{
+  display:flex; align-items:center; justify-content:center;
+  min-height:100dvh;
+}
+
+/* The play area is a fixed-ratio stage, centred on desktop, full-bleed on phones */
+#stage{
+  position:relative;
+  width:min(100vw, 480px);
+  height:min(100dvh, 760px);
+  aspect-ratio:480 / 760;
+  overflow:hidden;
+  background:#05140a;
+  box-shadow:0 0 0 1px rgba(201,162,39,.18), 0 30px 80px rgba(0,0,0,.6);
+  border-radius:14px;
+}
+@media (max-width:520px){
+  #stage{ width:100vw; height:100dvh; max-height:none; border-radius:0; box-shadow:none; aspect-ratio:auto; }
+}
+
+#game{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+
+.hidden{ display:none !important; }
+
+/* ---------------------------------------------------------------- HUD --- */
+#hud{
+  position:absolute; inset:0; pointer-events:none;
+  display:flex; flex-direction:column; gap:0;
+  padding:10px 12px 0;
+}
+.hud-row{ display:flex; align-items:flex-start; gap:10px; }
+.stat{ display:flex; flex-direction:column; line-height:.9; }
+.stat--score{ flex:1; }
+.stat--right{ align-items:flex-end; text-align:right; }
+.stat-val{
+  font-family:"Bebas Neue",sans-serif; font-size:54px; letter-spacing:.5px;
+  color:var(--paper); text-shadow:0 2px 0 rgba(0,0,0,.5);
+}
+.stat-val.sm{ font-size:30px; color:var(--gold); }
+.stat-sub{
+  font-family:"Barlow Condensed",sans-serif; font-weight:600; font-size:13px;
+  letter-spacing:.6px; color:rgba(245,242,232,.75); text-transform:uppercase;
+  margin-top:2px;
+}
+.stat-label{
+  font-family:"Barlow Condensed",sans-serif; font-size:11px; font-weight:600;
+  letter-spacing:1.4px; text-transform:uppercase; color:rgba(245,242,232,.55);
+}
+
+.icon-btn{
+  pointer-events:auto; width:38px; height:38px; flex:0 0 38px;
+  border-radius:50%; border:1px solid var(--line);
+  background:rgba(10,10,10,.55); backdrop-filter:blur(4px);
+  display:grid; place-items:center; cursor:pointer; transition:.15s;
+}
+.icon-btn:hover{ border-color:var(--gold); }
+.ico-sound{ width:16px; height:16px; display:block; position:relative; }
+.ico-sound::before{
+  content:""; position:absolute; left:0; top:4px; width:6px; height:8px;
+  background:var(--gold); clip-path:polygon(0 0,55% 0,100% -35%,100% 135%,55% 100%,0 100%);
+}
+.ico-sound::after{
+  content:""; position:absolute; left:8px; top:2px; width:7px; height:12px;
+  border:2px solid var(--gold); border-left:0; border-radius:0 8px 8px 0;
+}
+.icon-btn.muted .ico-sound::after{ opacity:.2; }
+.icon-btn.muted .ico-sound::before{ background:rgba(245,242,232,.4); }
+
+/* combo / fire / golden tags */
+.combo-wrap{
+  position:absolute; left:12px; right:12px; top:74px;
+  display:flex; align-items:center; gap:8px;
+}
+.combo-track{
+  flex:1; height:7px; border-radius:6px;
+  background:rgba(245,242,232,.12); overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(201,162,39,.18);
+}
+.combo-fill{
+  height:100%; width:0%;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold),var(--gold-hi));
+  transition:width .25s ease;
+}
+.combo-tag{
+  font-family:"Bebas Neue",sans-serif; font-size:22px; color:var(--gold);
+  min-width:34px; text-align:right; text-shadow:0 1px 0 #000;
+}
+.fire-tag,.golden-tag{
+  display:none; font-family:"Barlow Condensed",sans-serif; font-weight:700;
+  font-size:12px; letter-spacing:1.2px; padding:3px 8px; border-radius:5px;
+}
+.fire-tag{ background:linear-gradient(180deg,#ff8a00,#d7263d); color:#fff; box-shadow:0 0 14px rgba(255,120,0,.6); }
+.golden-tag{ background:var(--gold); color:#1a1405; box-shadow:0 0 14px rgba(201,162,39,.7); }
+.fire-tag.on,.golden-tag.on{ display:inline-block; animation:pulse 1s infinite; }
+@keyframes pulse{ 50%{ transform:scale(1.06); } }
+
+.prompt{
+  position:absolute; left:0; right:0; bottom:14px; text-align:center;
+  font-family:"Barlow Condensed",sans-serif; font-weight:600; letter-spacing:1.2px;
+  text-transform:uppercase; font-size:13px; color:rgba(245,242,232,.7);
+  opacity:0; transition:opacity .3s;
+}
+.prompt.show{ opacity:1; }
+
+/* --------------------------------------------------------------- Toast -- */
+.toast{
+  position:absolute; left:50%; top:120px; transform:translate(-50%,-12px);
+  background:linear-gradient(180deg,#1a1505,#0d0a02);
+  border:1px solid var(--gold); border-radius:10px;
+  padding:9px 16px; min-width:200px; text-align:center;
+  opacity:0; pointer-events:none; transition:.35s; z-index:30;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+.toast.show{ opacity:1; transform:translate(-50%,0); }
+.toast .t-kicker{
+  display:block; font-family:"Barlow Condensed",sans-serif; font-size:10px;
+  letter-spacing:2px; color:var(--gold); text-transform:uppercase;
+}
+.toast .t-name{
+  display:block; font-family:"Bebas Neue",sans-serif; font-size:22px;
+  color:var(--paper); letter-spacing:.5px;
+}
+
+/* -------------------------------------------------------------- Screens - */
+.screen{
+  position:absolute; inset:0; z-index:20;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:26px 22px;
+  background:
+    radial-gradient(120% 80% at 50% 18%, rgba(201,162,39,.10), transparent 60%),
+    linear-gradient(180deg, rgba(5,8,6,.86), rgba(2,4,3,.96));
+  backdrop-filter:blur(2px);
+  animation:fadeIn .35s ease;
+}
+@keyframes fadeIn{ from{ opacity:0; } }
+.screen-inner{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:360px; }
+
+.crest{ width:96px; height:96px; }
+.crest.sm{ width:64px; height:64px; }
+
+.title{
+  font-family:"Bebas Neue",sans-serif; font-size:64px; line-height:.78; margin:0;
+  color:var(--paper); letter-spacing:1px;
+  text-shadow:0 3px 0 rgba(0,0,0,.45);
+}
+.title-sub{
+  display:block; font-size:26px; color:var(--gold); letter-spacing:6px; margin-top:6px;
+}
+.club{
+  margin:-4px 0 0; font-family:"Barlow Condensed",sans-serif; font-weight:600;
+  letter-spacing:3px; text-transform:uppercase; font-size:13px; color:rgba(245,242,232,.7);
+}
+
+.howto{ display:flex; flex-direction:column; gap:6px; margin-top:4px; }
+.howto-line{ font-family:"Barlow Condensed",sans-serif; font-size:16px; letter-spacing:.4px; color:var(--paper); }
+.howto-line.dim{ font-size:13px; color:rgba(245,242,232,.6); }
+.g{ color:var(--gold); }
+
+.btn{
+  pointer-events:auto; cursor:pointer; border:0; border-radius:11px;
+  font-family:"Bebas Neue",sans-serif; font-size:26px; letter-spacing:1.5px;
+  padding:13px 30px; transition:transform .12s, box-shadow .2s, background .2s;
+  width:100%; max-width:280px;
+}
+.btn:active{ transform:translateY(2px); }
+.btn--primary{
+  background:linear-gradient(180deg,var(--gold-hi),var(--gold));
+  color:#1a1405; box-shadow:0 8px 0 var(--gold-deep), 0 14px 24px rgba(0,0,0,.4);
+}
+.btn--primary:active{ box-shadow:0 4px 0 var(--gold-deep), 0 8px 14px rgba(0,0,0,.4); }
+.btn--ghost{
+  background:transparent; color:var(--gold); border:1px solid var(--line);
+  font-size:18px; padding:9px 22px; letter-spacing:2px;
+}
+.btn--ghost:hover{ border-color:var(--gold); }
+.btn.sm{ font-size:20px; padding:11px 18px; width:auto; }
+
+.hi-row{
+  display:flex; align-items:center; gap:10px; margin-top:2px;
+  font-family:"Barlow Condensed",sans-serif; text-transform:uppercase;
+  letter-spacing:2px; font-size:12px; color:rgba(245,242,232,.6);
+}
+.hi-row strong{ font-family:"Bebas Neue",sans-serif; font-size:24px; color:var(--gold); letter-spacing:1px; }
+.hi-row .hi-sep{ opacity:.4; }
+
+.motto{
+  position:absolute; bottom:14px; left:0; right:0; text-align:center;
+  font-family:"Barlow Condensed",sans-serif; font-style:italic;
+  letter-spacing:3px; font-size:12px; color:rgba(201,162,39,.55);
+  text-transform:uppercase;
+}
+
+/* game over */
+.out-how{
+  font-family:"Barlow Condensed",sans-serif; font-weight:700; letter-spacing:4px;
+  font-size:15px; color:var(--red); text-transform:uppercase; margin:0;
+}
+.out-title{
+  font-family:"Bebas Neue",sans-serif; font-size:70px; margin:-6px 0 4px;
+  color:var(--paper); letter-spacing:2px;
+}
+.final{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+.final-runs{ font-family:"Bebas Neue",sans-serif; font-size:88px; line-height:.8; color:var(--gold);
+  text-shadow:0 0 30px rgba(201,162,39,.35); }
+.final-meta{ display:flex; gap:14px; font-family:"Barlow Condensed",sans-serif;
+  text-transform:uppercase; letter-spacing:1px; font-size:13px; color:rgba(245,242,232,.7); }
+.final-meta b{ color:var(--paper); }
+
+.newhigh{
+  font-family:"Barlow Condensed",sans-serif; font-weight:700; letter-spacing:2px;
+  color:#1a1405; background:var(--gold); padding:5px 14px; border-radius:7px;
+  font-size:13px; text-transform:uppercase; animation:pulse 1s infinite;
+}
+
+.name-wrap{ display:flex; flex-direction:column; gap:6px; width:100%; max-width:280px; }
+.start-name{ margin-top:2px; }
+.start-name input{ text-align:center; }
+
+/* What happened to the innings just played. One line, under the score. */
+.save-state{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  min-height:22px; font-family:"Barlow Condensed",sans-serif;
+  text-transform:uppercase; letter-spacing:1.6px; font-size:12px;
+  color:rgba(245,242,232,.6); text-align:center;
+}
+.save-state.ok{ color:var(--gold); }
+.save-state.pending{ color:#e0a93a; }
+.save-state .btn.sm{ font-size:14px; padding:5px 12px; letter-spacing:1px; }
+
+.board-stale{
+  font-family:"Barlow Condensed",sans-serif; font-size:12px; letter-spacing:1px;
+  text-transform:uppercase; color:#e0a93a; margin:0;
+}
+.name-wrap label{ font-family:"Barlow Condensed",sans-serif; text-transform:uppercase;
+  letter-spacing:2px; font-size:11px; color:rgba(245,242,232,.6); }
+.name-row{ display:flex; gap:8px; }
+/* Styled by shape, not by one element's id. The id was #nameInput, the
+   box moved to the start screen as #startName, and the rule stopped
+   matching — leaving a white browser-default input in the middle of a
+   black screen. */
+.name-wrap input{
+  flex:1; background:rgba(245,242,232,.06); border:1px solid var(--line);
+  border-radius:9px; color:var(--paper); padding:10px 12px; font-size:16px;
+  font-family:"Barlow",sans-serif; outline:none;
+}
+.name-wrap input::placeholder{ color:rgba(245,242,232,.35); }
+.name-wrap input:focus{ border-color:var(--gold); }
+
+/* leaderboard */
+.board-inner{ max-width:340px; }
+.board-title,.club{ }
+.board-title{ font-family:"Bebas Neue",sans-serif; font-size:34px; color:var(--paper); margin:0; letter-spacing:1px; }
+.board-list{ list-style:none; margin:6px 0; padding:0; width:100%; display:flex; flex-direction:column; gap:5px; }
+.board-list li{
+  display:grid; grid-template-columns:26px 1fr auto; align-items:center; gap:10px;
+  background:rgba(245,242,232,.04); border:1px solid rgba(201,162,39,.14);
+  border-radius:9px; padding:8px 12px;
+}
+.board-list li.me{ border-color:var(--gold); background:rgba(201,162,39,.12); }
+.bd-rank{ font-family:"Bebas Neue",sans-serif; font-size:18px; color:var(--gold); }
+.bd-name{ font-family:"Barlow Condensed",sans-serif; font-weight:600; letter-spacing:.4px;
+  text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bd-score{ font-family:"Bebas Neue",sans-serif; font-size:22px; color:var(--paper); }
+.board-empty{ font-family:"Barlow Condensed",sans-serif; color:rgba(245,242,232,.6); font-size:15px; }
+.board-list li:nth-child(1) .bd-rank{ color:var(--gold-hi); }
+
+/* screen-shake hook: applied to canvas via JS transform, nothing needed here */
+@media (prefers-reduced-motion: reduce){
+  .screen,.toast,.newhigh,.fire-tag.on,.golden-tag.on{ animation:none !important; }
+}

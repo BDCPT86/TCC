@@ -1,0 +1,51 @@
+/* ══════════════════════════════════════════════════════
+   TCC PAGE TRANSITIONS  (v1)
+   Cross-document View Transitions for the whole site.
+   Pure CSS, zero JS. Progressive enhancement: browsers
+   without support (Firefox, older Safari) get normal
+   instant navigation — nothing to polyfill, nothing to
+   break. Linked on every public page; both the outgoing
+   and incoming page must include this file.
+══════════════════════════════════════════════════════ */
+
+/* Opt in to same-origin cross-document transitions */
+@view-transition {
+  navigation: auto;
+}
+
+/* Root: quick fade-out, new page rises in softly.
+   Kept fast — sluggish navigation is worse than none. */
+::view-transition-old(root) {
+  animation: tcc-vt-out 0.18s ease both;
+}
+::view-transition-new(root) {
+  animation: tcc-vt-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes tcc-vt-out {
+  to { opacity: 0; }
+}
+@keyframes tcc-vt-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+
+/* Persistent navigation: the nav is lifted out of the
+   root transition so it stays solid while page content
+   crossfades beneath it. #navbar (main site) and
+   #nav-pill (fantasy pages) share one name — they never
+   coexist on a page — so crossing between the two site
+   areas morphs one nav into the other. */
+#navbar,
+#nav-pill {
+  view-transition-name: site-nav;
+}
+
+/* Respect reduced motion: skip transitions entirely */
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

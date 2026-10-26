@@ -1,0 +1,221 @@
+/* ════════════════════════════════════════════════════
+   TCC FANTASY — INSIGHTS PAGE
+   Reuses the leaderboard.css token set (loaded first).
+════════════════════════════════════════════════════ */
+
+/* ── Hero ── */
+.fs-hero {
+  position: relative;
+  padding: 120px var(--gutter, 20px) 32px;
+  background:
+    radial-gradient(ellipse 70% 60% at 70% 0%, rgba(201,168,76,0.10) 0%, transparent 55%),
+    var(--bg);
+  border-bottom: 1px solid var(--stroke);
+}
+.fs-hero-eyebrow {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.fs-hero-rule { width: 22px; height: 1px; background: var(--gold); opacity: 0.7; }
+.fs-hero-h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(40px, 7vw, 68px); font-weight: 900;
+  line-height: 0.9; text-transform: uppercase; letter-spacing: -1px;
+  color: #f5f2e8; margin-bottom: 12px;
+}
+.fs-hero-h1 em { color: var(--gold); font-style: italic; display: block; }
+.fs-hero-sub {
+  font-size: 0.9rem; color: var(--muted);
+  max-width: 460px; line-height: 1.5;
+}
+
+/* ── Round filter ── */
+.fs-round-filter {
+  display: flex; gap: 8px; margin-top: 28px;
+  overflow-x: auto; padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+.fs-round-filter::-webkit-scrollbar { height: 0; }
+.fs-rf-btn {
+  flex-shrink: 0;
+  padding: 8px 16px; border-radius: 9999px;
+  border: 1px solid var(--stroke);
+  background: var(--card);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.74rem; font-weight: 600;
+  letter-spacing: 0.02em; cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.fs-rf-btn:hover { color: #f5f2e8; border-color: rgba(201,168,76,0.4); }
+.fs-rf-btn.active {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #0a0a0a; border-color: var(--gold);
+}
+
+/* ── Main ── */
+.fs-main {
+  max-width: 1100px; margin: 0 auto;
+  padding: 32px var(--gutter, 20px) 80px;
+}
+
+/* ── Manager of the Week ── */
+.fs-motw {
+  display: flex; align-items: center; gap: 20px;
+  padding: 22px 26px; margin-bottom: 24px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.03));
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 14px;
+  position: relative; overflow: hidden;
+}
+.fs-motw::before {
+  content: ''; position: absolute; top: 0; left: 0; bottom: 0;
+  width: 3px; background: linear-gradient(180deg, var(--gold), var(--gold2));
+}
+.fs-motw-badge {
+  width: 54px; height: 54px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #0a0a0a; border-radius: 50%;
+  font-size: 1.6rem; font-weight: 900;
+  box-shadow: 0 4px 16px rgba(201,168,76,0.35);
+}
+.fs-motw-body { flex: 1; min-width: 0; }
+.fs-motw-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 4px;
+}
+.fs-motw-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.6rem; font-weight: 800; color: #f5f2e8;
+  line-height: 1; text-transform: uppercase; letter-spacing: 0.01em;
+}
+.fs-motw-sub { font-size: 0.74rem; color: var(--muted); margin-top: 4px; }
+.fs-motw-score { text-align: center; flex-shrink: 0; }
+.fs-motw-pts {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.4rem; font-weight: 900; color: var(--gold); line-height: 1;
+}
+.fs-motw-pts-lbl {
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Top-line strip ── */
+.fs-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--stroke);
+  border: 1px solid var(--stroke); border-radius: 12px;
+  overflow: hidden; margin-bottom: 24px;
+}
+.fs-strip-item {
+  background: var(--card); padding: 18px 12px; text-align: center;
+}
+.fs-strip-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.9rem; font-weight: 900; color: #f5f2e8; line-height: 1;
+}
+.fs-strip-key {
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-top: 6px;
+}
+@media (max-width: 560px) {
+  .fs-strip { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Grid of stat cards ── */
+.fs-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+@media (max-width: 720px) { .fs-grid { grid-template-columns: 1fr; } }
+
+.fs-card {
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 22px;
+}
+.fs-card-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 18px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--stroke);
+}
+.fs-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.25rem; font-weight: 800; color: #f5f2e8;
+  text-transform: uppercase; letter-spacing: 0.02em;
+}
+.fs-card-tag {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Bars ── */
+.fs-bars { display: flex; flex-direction: column; gap: 12px; }
+.fs-bar-row {
+  display: grid; grid-template-columns: 1fr 90px 42px;
+  gap: 12px; align-items: center;
+}
+.fs-bar-name {
+  font-size: 0.82rem; font-weight: 600; color: #f5f2e8;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fs-bar-role {
+  display: block; font-size: 0.62rem; font-weight: 500;
+  color: var(--muted); letter-spacing: 0.02em; margin-top: 1px;
+  text-transform: capitalize;
+}
+.fs-bar-track {
+  height: 8px; background: rgba(255,255,255,0.05);
+  border-radius: 9999px; overflow: hidden;
+}
+.fs-bar-fill {
+  height: 100%; border-radius: 9999px;
+  transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.fs-bar-fill.own  { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+.fs-bar-fill.cap  { background: linear-gradient(90deg, #d98a2b, var(--gold)); }
+.fs-bar-fill.tin  { background: linear-gradient(90deg, #4a9e5e, var(--green)); }
+.fs-bar-fill.tout { background: linear-gradient(90deg, #a83232, var(--red)); }
+.fs-bar-fill.diff { background: linear-gradient(90deg, #6a4ba8, #a07ce8); }
+.fs-bar-pct {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem; font-weight: 800; color: var(--gold);
+  text-align: right;
+}
+
+/* ── Chip stats ── */
+.fs-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fs-chip-stat {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; padding: 16px 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--stroke); border-radius: 10px;
+}
+.fs-chip-stat.zero { opacity: 0.4; }
+.fs-chip-ic { font-size: 1.5rem; }
+.fs-chip-n {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.8rem; font-weight: 900; color: var(--gold); line-height: 1;
+}
+.fs-chip-nm {
+  font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); text-align: center;
+}
+
+/* ── Empty / loading ── */
+.fs-loading, .fs-empty {
+  padding: 20px; text-align: center;
+  font-size: 0.78rem; color: var(--muted);
+}
+
+/* ── Footer links ── */
+.fs-footer-links {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; margin-top: 40px;
+  font-size: 0.8rem; color: var(--muted);
+}
+.fs-text-btn { color: var(--gold); font-weight: 600; transition: opacity 0.2s; }
+.fs-text-btn:hover { opacity: 0.7; }

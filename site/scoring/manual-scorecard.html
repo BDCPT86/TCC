@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manual Scorecard — TCC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f6f3; --bg2: #ffffff; --bg3: #eceae3;
+    --gold: #7d6420; --gold-fill: #8a6d28;
+    --ink: #15140f; --muted: #5c5a51;
+    --red: #c0392b; --green: #2f7a41;
+    --border: rgba(0,0,0,0.14); --line: rgba(0,0,0,0.09);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'DM Sans', sans-serif; line-height: 1.5;
+    padding: calc(var(--safe-top) + 18px) 14px calc(var(--safe-bot) + 120px);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .eyebrow { font-size: 0.62rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; letter-spacing: 3px; line-height: 1; }
+  h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; letter-spacing: 2px;
+    margin: 0 0 2px; display: flex; align-items: baseline; gap: 10px;
+  }
+  h2 span { font-family: 'DM Sans', sans-serif; font-size: 0.72rem; letter-spacing: 0; color: var(--muted); font-weight: 400; }
+  .sub { color: var(--muted); font-size: 0.84rem; }
+
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-top: 14px; }
+
+  label.f { display: block; font-size: 0.7rem; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+  input, select {
+    width: 100%; padding: 9px 10px; font-family: inherit; font-size: 0.9rem; color: var(--ink);
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 7px;
+  }
+  input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: -1px; border-color: var(--gold); }
+  input[type=number] { text-align: right; }
+  .row { display: grid; gap: 10px; margin-bottom: 10px; }
+  .row.two { grid-template-columns: 1fr 1fr; }
+  .row.three { grid-template-columns: 1fr 1fr 1fr; }
+  .row.four { grid-template-columns: repeat(4, 1fr); }
+
+  /* Player rows: a table on a laptop, stacked cards on a phone. */
+  .plist { display: flex; flex-direction: column; gap: 8px; }
+  .prow { display: grid; gap: 6px; padding: 10px; background: var(--bg3); border-radius: 8px; align-items: end; }
+  .prow .nm { grid-column: 1 / -1; }
+  .bat-row { grid-template-columns: repeat(4, 1fr); }
+  .bowl-row { grid-template-columns: repeat(3, 1fr); }
+  .prow .out { grid-column: 1 / -1; }
+  @media (min-width: 680px) {
+    .bat-row  { grid-template-columns: 2fr 3fr repeat(4, 1fr) auto; }
+    .bowl-row { grid-template-columns: 2fr repeat(6, 1fr) auto; }
+    .prow .nm, .prow .out { grid-column: auto; }
+  }
+  .prow .mini { font-size: 0.6rem; }
+  .del {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 6px; padding: 8px 10px; cursor: pointer; font-family: inherit; font-size: 0.8rem;
+  }
+
+  button.btn {
+    display: block; width: 100%; padding: 13px; margin-top: 10px;
+    background: var(--gold-fill); color: #fff; border: none; border-radius: 8px;
+    font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  }
+  button.btn.sec { background: var(--bg3); color: var(--ink); border: 1px solid var(--border); }
+  button.btn:disabled { opacity: 0.5; cursor: default; }
+  button.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .addbtn { width: auto; padding: 8px 14px; margin-top: 8px; font-size: 0.85rem; }
+
+  /* The running total is the honesty check — it sits fixed so it's always in view. */
+  .tally {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: var(--bg2); border-top: 1px solid var(--border);
+    padding: 10px 14px calc(var(--safe-bot) + 10px);
+    box-shadow: 0 -8px 20px -10px rgba(0,0,0,0.3);
+  }
+  .tally-in { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .tally b { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; letter-spacing: 1.5px; font-weight: 400; }
+  .chk { font-size: 0.76rem; padding: 2px 8px; border-radius: 999px; }
+  .chk.ok   { color: var(--green); border: 1px solid rgba(47,122,65,0.35); }
+  .chk.warn { color: var(--red);   border: 1px solid rgba(192,57,43,0.35); }
+  .tally .btn { margin: 0 0 0 auto; width: auto; padding: 10px 20px; }
+
+  .note { background: var(--bg3); border-radius: 8px; padding: 10px 12px; font-size: 0.8rem; color: var(--muted); margin-top: 10px; }
+  .err  { color: var(--red); font-size: 0.82rem; margin-top: 8px; }
+  .tabs { display: flex; gap: 6px; margin-top: 16px; }
+  .tab {
+    flex: 1; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer;
+    background: var(--bg3); border: 1px solid var(--border); font-size: 0.85rem; font-weight: 600;
+  }
+  .tab.on { background: var(--gold-fill); color: #fff; border-color: var(--gold-fill); }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow">TCC Scorer</span>
+  <h1>Manual scorecard</h1>
+  <p class="sub">For a match that wasn't scored live, or one that was lost. Records a completed
+    match with full batting and bowling figures — everything except ball-by-ball.</p>
+
+  <!-- ── PIN ── -->
+  <div class="card" id="auth-card">
+    <label class="f" for="pin">Scorer PIN</label>
+    <div class="row two" style="margin-bottom:0">
+      <input type="password" id="pin" inputmode="numeric" autocomplete="off" placeholder="••••">
+      <button class="btn" id="auth-btn" style="margin-top:0">Unlock</button>
+    </div>
+    <div class="err" id="auth-err"></div>
+  </div>
+
+  <div id="main" class="hidden">
+    <!-- ── Match ── -->
+    <div class="card">
+      <h2>Match</h2>
+      <div class="row" style="margin-top:8px">
+        <div>
+          <label class="f" for="fixture">Fixture</label>
+          <select id="fixture"><option value="">Loading…</option></select>
+        </div>
+      </div>
+      <div class="row two">
+        <div><label class="f" for="team-a">Team batting first</label><input type="text" id="team-a" placeholder="TCC"></div>
+        <div><label class="f" for="team-b">Team batting second</label><input type="text" id="team-b" placeholder="Opponents"></div>
+      </div>
+      <div class="row three">
+        <div>
+          <label class="f" for="format">Format</label>
+          <select id="format"><option value="overs">Overs</option><option value="hundred">The Hundred</option></select>
+        </div>
+        <div><label class="f" for="maxovers">Overs per side</label><input type="number" id="maxovers" min="0" max="90" value="50"></div>
+        <div>
+          <label class="f" for="toss-winner">Toss won by</label>
+          <select id="toss-winner"><option value="">Not recorded</option><option value="a">Team batting first</option><option value="b">Team batting second</option></select>
+        </div>
+      </div>
+      <div class="row two">
+        <div>
+          <label class="f" for="toss-decision">Toss decision</label>
+          <select id="toss-decision"><option value="">Not recorded</option><option value="bat">Chose to bat</option><option value="bowl">Chose to bowl</option></select>
+        </div>
+        <div>
+          <label class="f" for="result">Result</label>
+          <select id="result">
+            <option value="Won">TCC won</option>
+            <option value="Lost">TCC lost</option>
+            <option value="Draw">Draw</option>
+            <option value="Tie">Tie</option>
+            <option value="No Result">No result</option>
+            <option value="Abandoned">Abandoned</option>
+            <option value="Forfeit">Forfeit</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab on" data-inn="1">1st innings</div>
+      <div class="tab" data-inn="2">2nd innings</div>
+    </div>
+
+    <div id="inn-1"></div>
+    <div id="inn-2" class="hidden"></div>
+
+    <div class="err" id="save-err"></div>
+    <div class="note" id="done" style="display:none"></div>
+  </div>
+</div>
+
+<div class="tally hidden" id="tally">
+  <div class="tally-in">
+    <b id="tally-score">0/0</b>
+    <span class="chk" id="tally-check"></span>
+    <button class="btn" id="save-btn">Save match</button>
+  </div>
+</div>
+
+<script>
+var SUPABASE_URL = 'https://cgjannvzpqecwzjdzwso.supabase.co';
+var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNnamFubnZ6cHFlY3d6amR6d3NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTQ2MzIsImV4cCI6MjA4ODk3MDYzMn0.tDzVTT1i8Cqzu1mGBM1tCxZHDuhVqX03efWiYcQLkH8';
+var WORKER_URL = 'https://tcc-admin.bydaries.workers.dev';
+
+var _token = localStorage.getItem('tcc_scorer_token') || null;
+var HOW = ['not out', 'Bowled', 'Caught', 'LBW', 'Run Out', 'Stumped', 'Hit Wicket', 'Retired Hurt', 'did not bat'];
+
+function $(id) { return document.getElementById(id); }
+function el(tag, cls, html) { var n = document.createElement(tag); if (cls) n.className = cls; if (html !== undefined) n.innerHTML = html; return n; }
+function num(v) { var n = parseFloat(v); return isFinite(n) && n > 0 ? n : 0; }
+function intv(v) { var n = parseInt(v, 10); return isFinite(n) && n > 0 ? n : 0; }
+
+/* ── Auth: same PIN and token as the scoring app ───────────────────────── */
+async function auth() {
+  var pin = $('pin').value.trim();
+  $('auth-err').textContent = '';
+  if (!pin) { $('auth-err').textContent = 'Enter the scorer PIN.'; return; }
+  $('auth-btn').disabled = true;
+  try {
+    var r = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'scoring.auth', payload: { pin: pin } })
+    });
+    if (r.status === 401) { $('auth-err').textContent = 'That PIN was not accepted.'; return; }
+    if (!r.ok) { $('auth-err').textContent = 'Could not reach the server. Check your connection.'; return; }
+    var d = await r.json();
+    if (!d.token) { $('auth-err').textContent = 'No token returned — try again.'; return; }
+    _token = d.token;
+    try { localStorage.setItem('tcc_scorer_token', d.token); localStorage.setItem('tcc_scorer_pin', pin); } catch (e) {}
+    start();
+  } catch (e) {
+    $('auth-err').textContent = 'Could not reach the server.';
+  } finally { $('auth-btn').disabled = false; }
+}
+async function workerCall(action, payload) {
+  return fetch(WORKER_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: action, token: _token, payload: payload })
+  });
+}
+
+/* ── Innings form ──────────────────────────────────────────────────────── */
+function inningsForm(n) {
+  var c = el('div', 'card');
+  c.innerHTML =
+    '<h2>' + (n === 1 ? '1st' : '2nd') + ' innings <span id="i' + n + '-team"></span></h2>' +
+    '<div class="row four" style="margin-top:8px">' +
+      '<div><label class="f" for="i' + n + '-runs">Total</label><input type="number" id="i' + n + '-runs" min="0" value="0"></div>' +
+      '<div><label class="f" for="i' + n + '-wkts">Wickets</label><input type="number" id="i' + n + '-wkts" min="0" max="10" value="0"></div>' +
+      '<div><label class="f" for="i' + n + '-ov">Overs</label><input type="number" id="i' + n + '-ov" min="0" value="0"></div>' +
+      '<div><label class="f" for="i' + n + '-bl">Balls</label><input type="number" id="i' + n + '-bl" min="0" max="5" value="0"></div>' +
+    '</div>' +
+    '<label class="f">Extras</label>' +
+    '<div class="row four">' +
+      '<div><label class="f mini" for="i' + n + '-wd">Wides</label><input type="number" id="i' + n + '-wd" min="0" value="0"></div>' +
+      '<div><label class="f mini" for="i' + n + '-nb">No-balls</label><input type="number" id="i' + n + '-nb" min="0" value="0"></div>' +
+      '<div><label class="f mini" for="i' + n + '-by">Byes</label><input type="number" id="i' + n + '-by" min="0" value="0"></div>' +
+      '<div><label class="f mini" for="i' + n + '-lb">Leg-byes</label><input type="number" id="i' + n + '-lb" min="0" value="0"></div>' +
+    '</div>' +
+    '<h2 style="margin-top:16px">Batting</h2>' +
+    '<div class="plist" id="i' + n + '-bat"></div>' +
+    '<button class="btn sec addbtn" id="i' + n + '-addbat">+ Add batter</button>' +
+    '<h2 style="margin-top:16px">Bowling <span>the other team\'s bowlers</span></h2>' +
+    '<div class="plist" id="i' + n + '-bowl"></div>' +
+    '<button class="btn sec addbtn" id="i' + n + '-addbowl">+ Add bowler</button>';
+  return c;
+}
+
+function batRow(n) {
+  var r = el('div', 'prow bat-row');
+  r.innerHTML =
+    '<div class="nm"><label class="f mini">Batter</label><input type="text" class="b-name" placeholder="Name"></div>' +
+    '<div class="out"><label class="f mini">How out</label><select class="b-how">' +
+      HOW.map(function (h) { return '<option value="' + h + '">' + h + '</option>'; }).join('') + '</select></div>' +
+    '<div><label class="f mini">Runs</label><input type="number" class="b-runs" min="0" value="0"></div>' +
+    '<div><label class="f mini">Balls</label><input type="number" class="b-balls" min="0" value="0"></div>' +
+    '<div><label class="f mini">4s</label><input type="number" class="b-4" min="0" value="0"></div>' +
+    '<div><label class="f mini">6s</label><input type="number" class="b-6" min="0" value="0"></div>' +
+    '<div><button class="del" type="button">Remove</button></div>';
+  r.querySelector('.del').addEventListener('click', function () { r.remove(); retally(); });
+  r.addEventListener('input', retally);
+  return r;
+}
+
+function bowlRow(n) {
+  var r = el('div', 'prow bowl-row');
+  r.innerHTML =
+    '<div class="nm"><label class="f mini">Bowler</label><input type="text" class="w-name" placeholder="Name"></div>' +
+    '<div><label class="f mini">Overs</label><input type="number" class="w-ov" min="0" step="0.1" value="0"></div>' +
+    '<div><label class="f mini">Mdns</label><input type="number" class="w-md" min="0" value="0"></div>' +
+    '<div><label class="f mini">Runs</label><input type="number" class="w-runs" min="0" value="0"></div>' +
+    '<div><label class="f mini">Wkts</label><input type="number" class="w-wkts" min="0" max="10" value="0"></div>' +
+    '<div><label class="f mini">Wd</label><input type="number" class="w-wd" min="0" value="0"></div>' +
+    '<div><label class="f mini">Nb</label><input type="number" class="w-nb" min="0" value="0"></div>' +
+    '<div><button class="del" type="button">Remove</button></div>';
+  r.querySelector('.del').addEventListener('click', function () { r.remove(); retally(); });
+  r.addEventListener('input', retally);
+  return r;
+}
+
+/* ── The running check: do the parts add up to the total? ──────────────── */
+function inningsData(n) {
+  var bat = [].slice.call(document.querySelectorAll('#i' + n + '-bat .prow')).map(function (r) {
+    return {
+      name: r.querySelector('.b-name').value.trim(),
+      how:  r.querySelector('.b-how').value,
+      runs: intv(r.querySelector('.b-runs').value),
+      balls: intv(r.querySelector('.b-balls').value),
+      fours: intv(r.querySelector('.b-4').value),
+      sixes: intv(r.querySelector('.b-6').value)
+    };
+  }).filter(function (b) { return b.name; });
+  var bowl = [].slice.call(document.querySelectorAll('#i' + n + '-bowl .prow')).map(function (r) {
+    return {
+      name: r.querySelector('.w-name').value.trim(),
+      ov:   num(r.querySelector('.w-ov').value),
+      md:   intv(r.querySelector('.w-md').value),
+      runs: intv(r.querySelector('.w-runs').value),
+      wkts: intv(r.querySelector('.w-wkts').value),
+      wd:   intv(r.querySelector('.w-wd').value),
+      nb:   intv(r.querySelector('.w-nb').value)
+    };
+  }).filter(function (b) { return b.name; });
+  return {
+    runs: intv($('i' + n + '-runs').value), wkts: intv($('i' + n + '-wkts').value),
+    overs: intv($('i' + n + '-ov').value), balls: intv($('i' + n + '-bl').value),
+    wd: intv($('i' + n + '-wd').value), nb: intv($('i' + n + '-nb').value),
+    by: intv($('i' + n + '-by').value), lb: intv($('i' + n + '-lb').value),
+    bat: bat, bowl: bowl
+  };
+}
+
+function retally() {
+  var n = activeInnings();
+  var d = inningsData(n);
+  var extras = d.wd + d.nb + d.by + d.lb;
+  var batTotal = d.bat.reduce(function (s, b) { return s + b.runs; }, 0);
+  $('tally-score').textContent = d.runs + '/' + d.wkts;
+  var diff = d.runs - (batTotal + extras);
+  var chk = $('tally-check');
+  if (!d.bat.length) {
+    chk.className = 'chk'; chk.textContent = 'add batters';
+  } else if (diff === 0) {
+    chk.className = 'chk ok'; chk.textContent = 'batters + extras = total';
+  } else {
+    chk.className = 'chk warn';
+    chk.textContent = (diff > 0 ? diff + ' run' + (diff === 1 ? '' : 's') + ' unaccounted for'
+                                : Math.abs(diff) + ' too many');
+  }
+}
+function activeInnings() { return document.querySelector('.tab.on').dataset.inn === '2' ? 2 : 1; }
+
+/* ── Build the payload in the shapes the app and site already read ────── */
+function buildInningsState(d) {
+  /* Not-out batters sit at the crease; everyone else is a dismissal. This is
+     the same shape the live scorer saves, so the existing scorecard renders it
+     without any changes. */
+  var notOut = d.bat.filter(function (b) { return b.how === 'not out'; });
+  var out    = d.bat.filter(function (b) { return b.how !== 'not out' && b.how !== 'did not bat' && b.how !== 'Retired Hurt'; });
+  var retired = d.bat.filter(function (b) { return b.how === 'Retired Hurt'; });
+  var strip = function (b) { return { name: b.name, runs: b.runs, balls: b.balls, fours: b.fours, sixes: b.sixes }; };
+  return {
+    batting: {
+      striker:    notOut[0] ? strip(notOut[0]) : null,
+      nonStriker: notOut[1] ? strip(notOut[1]) : null,
+      dismissed:  out.map(function (b) {
+        var o = strip(b); o.how = b.how; o.bowler = null; o.fielder = null; return o;
+      }),
+      retiredHurt: retired.map(strip),
+      fow: []
+    },
+    bowling: {
+      current: null,
+      bowlers: d.bowl.map(function (b, i) {
+        var whole = Math.floor(b.ov);
+        var part  = Math.round((b.ov - whole) * 10);
+        return {
+          id: i + 1, name: b.name, overs: whole, balls: part > 5 ? 5 : part,
+          runs: b.runs, wickets: b.wkts, maidens: b.md, wides: b.wd, noballs: b.nb
+        };
+      })
+    }
+  };
+}
+
+async function save() {
+  $('save-err').textContent = '';
+  var fixtureId = $('fixture').value;
+  if (!fixtureId) { $('save-err').textContent = 'Pick a fixture first.'; return; }
+  var teamA = $('team-a').value.trim() || 'TCC';
+  var teamB = $('team-b').value.trim() || 'Opponents';
+  var i1 = inningsData(1), i2 = inningsData(2);
+  if (!i1.bat.length && !i2.bat.length) { $('save-err').textContent = 'Add at least one batter.'; return; }
+
+  var s1 = buildInningsState(i1), s2 = buildInningsState(i2);
+  var fmt = $('format').value;
+  var maxOvers = intv($('maxovers').value);
+
+  var payload = {
+    fixture_id: parseInt(fixtureId, 10),
+    innings: 2,
+    batting_team: teamB, bowling_team: teamA,
+    runs: i2.runs, wickets: i2.wkts,
+    format: fmt, total_balls: fmt === 'hundred' ? 100 : null,
+    overs: i2.overs, balls: Math.min(i2.balls, 5),
+    extras_wides: i2.wd, extras_noballs: i2.nb, extras_byes: i2.by, extras_legbyes: i2.lb,
+    extras_penalty: 0,
+    target: i1.runs + 1,
+    run_rate: i2.overs > 0 ? parseFloat((i2.runs / (i2.overs + i2.balls / 6)).toFixed(2)) : 0,
+    status: 'completed',
+    result: $('result').value,
+    updated_at: new Date().toISOString(),
+    max_overs: fmt === 'hundred' ? 0 : maxOvers,
+    revised_overs: null,
+    toss_winner: $('toss-winner').value === 'a' ? teamA : ($('toss-winner').value === 'b' ? teamB : null),
+    toss_decision: $('toss-decision').value || null,
+    current_over_balls: JSON.stringify([]),
+    over_history: JSON.stringify([]),
+    batting_state: JSON.stringify(s2.batting),
+    bowling_state: JSON.stringify(s2.bowling),
+    lineup_state: JSON.stringify({}),
+    first_innings_batting: JSON.stringify(s1.batting),
+    first_innings_bowling: JSON.stringify(s1.bowling),
+    first_innings_score: JSON.stringify({
+      runs: i1.runs, wickets: i1.wkts, overs: i1.overs, balls: Math.min(i1.balls, 5),
+      extras: { wides: i1.wd, noballs: i1.nb, byes: i1.by, legbyes: i1.lb, penalty: 0 },
+      overHistory: []
+    }),
+    /* Marks this as typed up afterwards rather than scored ball by ball, so
+       nobody later mistakes an empty over history for lost data. */
+    manual_entry: true
+  };
+
+  $('save-btn').disabled = true;
+  $('save-btn').textContent = 'Saving…';
+  try {
+    var r = await workerCall('scoring.push', { id: null, data: payload });
+    if (r.status === 401) { $('save-err').textContent = 'Your session expired — reload and enter the PIN again.'; return; }
+    if (!r.ok) {
+      var t = await r.text().catch(function () { return ''; });
+      /* If the column doesn't exist yet, retry without it rather than failing. */
+      if (/manual_entry/.test(t)) {
+        delete payload.manual_entry;
+        r = await workerCall('scoring.push', { id: null, data: payload });
+      }
+      if (!r.ok) { $('save-err').textContent = 'Could not save: ' + (t || r.status).toString().slice(0, 180); return; }
+    }
+    await workerCall('scoring.setResult', { fixtureId: parseInt(fixtureId, 10), result: $('result').value });
+    $('done').style.display = 'block';
+    $('done').innerHTML = '<strong>Saved.</strong> ' + teamA + ' ' + i1.runs + '/' + i1.wkts +
+      ' — ' + teamB + ' ' + i2.runs + '/' + i2.wkts + '. The fixture result is set and the ' +
+      'scorecard will show on the site. Ball-by-ball is empty, as expected for a manual entry.';
+    $('save-btn').textContent = 'Saved';
+    window.scrollTo(0, document.body.scrollHeight);
+  } catch (e) {
+    $('save-err').textContent = 'Could not reach the server. Nothing was saved.';
+  } finally {
+    if ($('save-btn').textContent === 'Saving…') { $('save-btn').textContent = 'Save match'; }
+    $('save-btn').disabled = false;
+  }
+}
+
+/* ── Boot ──────────────────────────────────────────────────────────────── */
+async function start() {
+  $('auth-card').classList.add('hidden');
+  $('main').classList.remove('hidden');
+  $('tally').classList.remove('hidden');
+
+  $('inn-1').appendChild(inningsForm(1));
+  $('inn-2').appendChild(inningsForm(2));
+  [1, 2].forEach(function (n) {
+    for (var i = 0; i < 3; i++) $('i' + n + '-bat').appendChild(batRow(n));
+    for (var j = 0; j < 2; j++) $('i' + n + '-bowl').appendChild(bowlRow(n));
+    $('i' + n + '-addbat').addEventListener('click', function () { $('i' + n + '-bat').appendChild(batRow(n)); });
+    $('i' + n + '-addbowl').addEventListener('click', function () { $('i' + n + '-bowl').appendChild(bowlRow(n)); });
+    ['runs', 'wkts', 'ov', 'bl', 'wd', 'nb', 'by', 'lb'].forEach(function (k) {
+      $('i' + n + '-' + k).addEventListener('input', retally);
+    });
+  });
+
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('on'); });
+      t.classList.add('on');
+      $('inn-1').classList.toggle('hidden', t.dataset.inn !== '1');
+      $('inn-2').classList.toggle('hidden', t.dataset.inn !== '2');
+      retally();
+    });
+  });
+
+  ['team-a', 'team-b'].forEach(function (id) {
+    $(id).addEventListener('input', function () {
+      $('i1-team').textContent = $('team-a').value.trim() || '';
+      $('i2-team').textContent = $('team-b').value.trim() || '';
+    });
+  });
+  $('save-btn').addEventListener('click', save);
+  retally();
+
+  // Fixtures without a result yet — most likely the one being written up
+  try {
+    var res = await fetch(SUPABASE_URL + '/rest/v1/fixtures?select=*&result=is.null&order=date.desc&limit=40',
+      { headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + ANON_KEY } });
+    var fx = await res.json();
+    var sel = $('fixture');
+    sel.innerHTML = '<option value="">Choose a fixture…</option>' +
+      (fx || []).map(function (f) {
+        return '<option value="' + f.id + '" data-team="' + (f.team || 'TCC') + '" data-opp="' + (f.opponent || '') + '">' +
+          (f.date || '') + ' — ' + (f.team || 'TCC') + ' v ' + (f.opponent || '?') + '</option>';
+      }).join('');
+    sel.addEventListener('change', function () {
+      var o = sel.options[sel.selectedIndex];
+      if (!o || !o.dataset.opp) return;
+      if (!$('team-a').value) $('team-a').value = o.dataset.team;
+      if (!$('team-b').value) $('team-b').value = o.dataset.opp;
+      $('i1-team').textContent = $('team-a').value;
+      $('i2-team').textContent = $('team-b').value;
+    });
+  } catch (e) {
+    $('fixture').innerHTML = '<option value="">Could not load fixtures</option>';
+  }
+}
+
+$('auth-btn').addEventListener('click', auth);
+$('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') auth(); });
+if (_token) start();   // already unlocked on this device
+</script>
+</body>
+</html>

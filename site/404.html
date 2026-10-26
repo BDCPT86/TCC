@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Not Found | Tygerberg Cricket Club</title>
+<meta name="description" content="The page you are looking for could not be found.">
+<meta name="theme-color" content="#080a0d">
+<link rel="canonical" href="https://tygerbergcc.co.za/404.html">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg:#080a0d; --gold:#b8922a; --gold2:#d4aa3f; --white:#ede9df; --muted:#6e737f; }
+  html,body { height:100%; }
+  body {
+    background:var(--bg); color:var(--white); font-family:'DM Sans',sans-serif;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100vh; padding:32px 24px; text-align:center; overflow:hidden;
+  }
+  body::after {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:9999; opacity:0.022;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat:repeat; background-size:128px 128px;
+  }
+
+  .scene { width:100%; max-width:520px; margin-bottom:4px; }
+
+  /* Ball arcs across and hits stumps */
+  #ball {
+    animation: ballFly 2.8s cubic-bezier(0.25,0.46,0.45,0.94) infinite;
+    transform-origin: 80px 180px;
+  }
+  @keyframes ballFly {
+    0%   { transform: translate(0px, 0px); opacity:1; }
+    70%  { transform: translate(280px, -30px); opacity:1; }
+    72%  { transform: translate(285px, -28px); opacity:1; }
+    100% { transform: translate(285px, -28px); opacity:0; }
+  }
+
+  /* Ball shadow follows underneath */
+  #ball-shadow {
+    animation: shadowFly 2.8s cubic-bezier(0.25,0.46,0.45,0.94) infinite;
+  }
+  @keyframes shadowFly {
+    0%   { transform: translate(0px, 0px) scaleX(1); opacity:0.3; }
+    70%  { transform: translate(280px, 0px) scaleX(0.4); opacity:0.1; }
+    100% { transform: translate(280px, 0px) scaleX(0); opacity:0; }
+  }
+
+  /* Stumps get hit and wobble */
+  #stumps {
+    transform-origin: 390px 210px;
+    animation: stumpHit 2.8s ease-in-out infinite;
+  }
+  @keyframes stumpHit {
+    0%,68%  { transform: rotate(0deg); }
+    71%     { transform: rotate(-8deg); }
+    74%     { transform: rotate(12deg); }
+    77%     { transform: rotate(-5deg); }
+    82%     { transform: rotate(3deg); }
+    90%,100%{ transform: rotate(0deg); }
+  }
+
+  /* Bails fly off */
+  #bail-left {
+    transform-origin: 375px 178px;
+    animation: bailFlyL 2.8s ease-out infinite;
+  }
+  @keyframes bailFlyL {
+    0%,70%  { transform: translate(0,0) rotate(0deg); opacity:1; }
+    72%     { transform: translate(-8px,-4px) rotate(-20deg); opacity:1; }
+    90%     { transform: translate(-35px,-45px) rotate(-140deg); opacity:0.8; }
+    98%,100%{ transform: translate(-40px,-55px) rotate(-180deg); opacity:0; }
+  }
+  #bail-right {
+    transform-origin: 405px 178px;
+    animation: bailFlyR 2.8s ease-out infinite;
+  }
+  @keyframes bailFlyR {
+    0%,70%  { transform: translate(0,0) rotate(0deg); opacity:1; }
+    72%     { transform: translate(8px,-4px) rotate(20deg); opacity:1; }
+    90%     { transform: translate(30px,-40px) rotate(120deg); opacity:0.8; }
+    98%,100%{ transform: translate(36px,-52px) rotate(160deg); opacity:0; }
+  }
+
+  /* Bat swings and misses */
+  #bat {
+    transform-origin: 323px 146px;
+    animation: batSwing 2.8s ease-in-out infinite;
+  }
+  @keyframes batSwing {
+    0%,55%  { transform: rotate(35deg); }
+    65%     { transform: rotate(-40deg); }
+    75%     { transform: rotate(-45deg); }
+    90%,100%{ transform: rotate(35deg); }
+  }
+
+  /* Dust puff on pitch when ball lands */
+  #dust {
+    transform-origin: 310px 215px;
+    animation: dustPuff 2.8s ease-out infinite;
+    opacity: 0;
+  }
+  @keyframes dustPuff {
+    0%,58%  { transform: scale(0); opacity:0; }
+    62%     { transform: scale(1); opacity:0.5; }
+    80%     { transform: scale(1.6); opacity:0; }
+    100%    { transform: scale(0); opacity:0; }
+  }
+
+  /* Floating particles around stumps after hit */
+  .debris { animation: debrisFloat var(--dur,1.5s) var(--delay,0s) ease-out infinite; opacity:0; }
+  @keyframes debrisFloat {
+    0%,70%  { transform:translate(0,0) rotate(0deg); opacity:0; }
+    72%     { opacity:0.8; }
+    95%     { transform:translate(var(--dx,10px),var(--dy,-30px)) rotate(var(--dr,180deg)); opacity:0; }
+    100%    { opacity:0; }
+  }
+
+  /* Pitch lines subtle animation */
+  #pitch { animation: pitchFade 2.8s ease-in-out infinite; }
+  @keyframes pitchFade {
+    0%,60%  { opacity:0.8; }
+    75%     { opacity:1; }
+    100%    { opacity:0.8; }
+  }
+
+  /* Floating score labels */
+  .float-text { animation: floatUp var(--dur,4s) var(--delay,0s) ease-in-out infinite; }
+  @keyframes floatUp {
+    0%,100% { transform:translateY(0); opacity:0.15; }
+    50%     { transform:translateY(-10px); opacity:0.3; }
+  }
+
+  /* Text styles */
+  .logo {
+    width:60px; height:60px; object-fit:contain; margin-bottom:16px;
+    filter:drop-shadow(0 0 10px rgba(184,146,42,0.35));
+    animation:floatLogo 4s ease-in-out infinite;
+  }
+  @keyframes floatLogo { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  .code {
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(5rem,15vw,8.5rem);
+    letter-spacing:6px; line-height:1; color:transparent;
+    -webkit-text-stroke:2px rgba(184,146,42,0.38);
+    animation:glitchText 7s ease-in-out infinite;
+  }
+  @keyframes glitchText {
+    0%,88%,100%{transform:none;filter:none}
+    90%{transform:translateX(-4px);filter:hue-rotate(25deg) brightness(1.3)}
+    92%{transform:translateX(4px);filter:hue-rotate(-25deg)}
+    94%{transform:translateX(-2px)} 96%{transform:none}
+  }
+  h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.4rem,4vw,2.2rem); letter-spacing:3px; color:var(--white); margin-bottom:10px; }
+  .divider { width:44px; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:0 auto 16px; }
+  p { font-size:0.92rem; color:var(--muted); line-height:1.72; max-width:340px; margin-bottom:26px; }
+  .btn {
+    display:inline-flex; align-items:center; gap:8px; padding:12px 28px; border-radius:5px;
+    font-size:0.8rem; font-weight:700; letter-spacing:1.8px; text-transform:uppercase;
+    text-decoration:none; background:var(--gold); color:var(--bg);
+    transition:background 0.3s,transform 0.3s; box-shadow:0 4px 20px rgba(184,146,42,0.28);
+  }
+  .btn:hover { background:var(--gold2); transform:translateY(-2px); }
+  .motto { margin-top:32px; font-size:0.6rem; letter-spacing:4px; text-transform:uppercase; color:rgba(184,146,42,0.22); }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+  <meta property="og:type"        content="website">
+  <meta property="og:site_name"   content="Tygerberg Cricket Club">
+  <meta property="og:url"         content="https://tygerbergcc.co.za/404.html">
+  <meta property="og:title"       content="Page Not Found | Tygerberg Cricket Club">
+  <meta property="og:description" content="The page you are looking for could not be found.">
+  <meta property="og:image"       content="https://tygerbergcc.co.za/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height"content="630">
+  <meta name="twitter:card"       content="summary_large_image">
+  <meta name="twitter:title"      content="Page Not Found | Tygerberg Cricket Club">
+  <meta name="twitter:description"content="The page you are looking for could not be found.">
+  <meta name="twitter:image"      content="https://tygerbergcc.co.za/images/og-image.jpg">
+<style>.skip-link{position:absolute;left:-9999px;top:4px;z-index:9999;padding:8px 16px;background:#b8922a;color:#000;font-weight:700;font-size:0.8rem;border-radius:2px;text-decoration:none}.skip-link:focus{left:4px}</style>
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+
+<img loading="eager" src="images/tcc-logo.png" alt="Tygerberg Cricket Club" class="logo">
+
+<!-- SVG Cricket Scene -->
+<svg class="scene" viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="ballGrad" cx="38%" cy="32%" r="60%">
+      <stop offset="0%" stop-color="#cc3333"/>
+      <stop offset="100%" stop-color="#7a1111"/>
+    </radialGradient>
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#b8922a" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#b8922a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dustGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c8a060" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#c8a060" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background glow -->
+  <ellipse cx="390" cy="195" rx="80" ry="50" fill="url(#glowGrad)"/>
+
+  <!-- Pitch rectangle -->
+  <g id="pitch">
+    <rect x="180" y="205" width="220" height="30" rx="3" fill="none" stroke="#b8922a" stroke-width="1" stroke-opacity="0.25"/>
+    <!-- Crease lines -->
+    <line x1="220" y1="205" x2="220" y2="235" stroke="#b8922a" stroke-width="1" stroke-opacity="0.3"/>
+    <line x1="360" y1="205" x2="360" y2="235" stroke="#b8922a" stroke-width="1" stroke-opacity="0.3"/>
+    <!-- Centre line -->
+    <line x1="290" y1="205" x2="290" y2="235" stroke="#b8922a" stroke-width="0.5" stroke-opacity="0.15" stroke-dasharray="4 4"/>
+  </g>
+
+  <!-- Floating scorecard labels (atmosphere) -->
+  <text class="float-text" style="--dur:5s;--delay:0s" x="30" y="60" font-family="'Bebas Neue',sans-serif" font-size="13" fill="#b8922a" letter-spacing="2">BOWLED</text>
+  <text class="float-text" style="--dur:6s;--delay:1.5s" x="440" y="80" font-family="'Bebas Neue',sans-serif" font-size="11" fill="#b8922a" letter-spacing="2">OUT</text>
+  <text class="float-text" style="--dur:5.5s;--delay:0.8s" x="20" y="160" font-family="'Bebas Neue',sans-serif" font-size="10" fill="#b8922a" letter-spacing="1" opacity="0.2">DUCK</text>
+  <text class="float-text" style="--dur:7s;--delay:2s" x="455" y="150" font-family="'Bebas Neue',sans-serif" font-size="10" fill="#b8922a" letter-spacing="1" opacity="0.2">W</text>
+
+  <!-- Cricket bat (swings and misses) — proper flat blade + round toe + handle -->
+  <g id="bat">
+    <!-- Blade — flat face, wide shoulders, rounded toe -->
+    <!-- The blade sits at roughly 45deg, face pointing left toward ball -->
+    <path d="
+      M 318,158
+      L 308,162
+      L 272,196
+      C 264,204 262,214 265,222
+      C 268,230 278,236 290,234
+      C 302,232 310,224 314,214
+      L 340,172
+      L 332,162
+      Z
+    " fill="#d4a860" stroke="#a07830" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- Blade face highlight (flat face) -->
+    <path d="
+      M 316,160
+      L 274,196
+      C 266,204 264,213 267,221
+      C 270,229 279,234 290,233
+      L 313,213
+      L 338,170
+      Z
+    " fill="#e0b870" opacity="0.5"/>
+    <!-- Edge (thick side edge) -->
+    <path d="
+      M 332,162 L 340,172 L 314,214 C 310,224 302,232 290,234
+      C 292,236 296,236 300,234 C 312,230 322,220 326,210
+      L 352,166 Z
+    " fill="#b88830" opacity="0.8"/>
+    <!-- Bat brand lines on face -->
+    <line x1="292" y1="210" x2="308" y2="196" stroke="#a07830" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <line x1="287" y1="218" x2="304" y2="203" stroke="#a07830" stroke-width="1" stroke-linecap="round" opacity="0.35"/>
+    <!-- Splice — where handle meets blade -->
+    <path d="M 308,162 L 318,158 L 332,162 L 328,170 L 314,174 L 302,170 Z" fill="#c09040" stroke="#a07830" stroke-width="1"/>
+    <!-- Handle — round, thin, with grip wrapping -->
+    <!-- Handle shaft -->
+    <path d="M 314,174 L 320,148 L 326,146 L 328,170" fill="#8B5E2A" stroke="#6B4010" stroke-width="1"/>
+    <!-- Grip wrapping (diagonal stripes) -->
+    <line x1="318" y1="172" x2="325" y2="169" stroke="#222" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <line x1="317" y1="165" x2="324" y2="162" stroke="#222" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <line x1="317" y1="158" x2="324" y2="155" stroke="#222" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <!-- Handle top (round knob) -->
+    <ellipse cx="323" cy="146" rx="5" ry="4" fill="#6B4010" stroke="#4a2c08" stroke-width="1"/>
+  </g>
+
+  <!-- Ball shadow on pitch -->
+  <ellipse id="ball-shadow" cx="95" cy="215" rx="8" ry="3" fill="#000" opacity="0.3"/>
+
+  <!-- Cricket ball (flying in) -->
+  <g id="ball">
+    <circle cx="92" cy="185" r="12" fill="url(#ballGrad)" filter="url(#glow)"/>
+    <!-- Seam -->
+    <path d="M82,183 Q92,175 102,183" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <path d="M82,187 Q92,196 102,187" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <!-- Shine -->
+    <circle cx="86" cy="180" r="3.5" fill="white" opacity="0.25"/>
+    <!-- Motion blur lines -->
+    <line x1="68" y1="185" x2="78" y2="185" stroke="#cc3333" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+    <line x1="60" y1="183" x2="74" y2="183" stroke="#cc3333" stroke-width="2" stroke-linecap="round" opacity="0.2"/>
+    <line x1="68" y1="187" x2="76" y2="187" stroke="#cc3333" stroke-width="2" stroke-linecap="round" opacity="0.25"/>
+  </g>
+
+  <!-- Dust puff on pitch (when ball pitched) -->
+  <ellipse id="dust" cx="310" cy="215" rx="22" ry="10" fill="url(#dustGrad)"/>
+
+  <!-- Stumps (get hit) -->
+  <g id="stumps" filter="url(#softGlow)">
+    <!-- Stump 1 -->
+    <line x1="375" y1="178" x2="375" y2="228" stroke="#e8d5a0" stroke-width="6" stroke-linecap="round"/>
+    <!-- Stump 2 -->
+    <line x1="391" y1="178" x2="391" y2="228" stroke="#e8d5a0" stroke-width="6" stroke-linecap="round"/>
+    <!-- Stump 3 -->
+    <line x1="407" y1="178" x2="407" y2="228" stroke="#e8d5a0" stroke-width="6" stroke-linecap="round"/>
+    <!-- Stump tops detail -->
+    <circle cx="375" cy="178" r="4" fill="#f0e0b0"/>
+    <circle cx="391" cy="178" r="4" fill="#f0e0b0"/>
+    <circle cx="407" cy="178" r="4" fill="#f0e0b0"/>
+    <!-- Ground line -->
+    <line x1="365" y1="228" x2="417" y2="228" stroke="#b8922a" stroke-width="2" stroke-opacity="0.4"/>
+  </g>
+
+  <!-- Bails (fly off on hit) -->
+  <g id="bail-left">
+    <rect x="367" y="174" width="16" height="5" rx="2.5" fill="#f0e0b0" stroke="#c8a060" stroke-width="0.5"/>
+  </g>
+  <g id="bail-right">
+    <rect x="384" y="174" width="16" height="5" rx="2.5" fill="#f0e0b0" stroke="#c8a060" stroke-width="0.5"/>
+  </g>
+
+  <!-- Debris after stump hit -->
+  <circle class="debris" style="--dur:2.8s;--delay:0s;--dx:-20px;--dy:-35px;--dr:200deg" cx="385" cy="210" r="2.5" fill="#e8d5a0" opacity="0"/>
+  <circle class="debris" style="--dur:2.8s;--delay:0s;--dx:18px;--dy:-28px;--dr:-150deg" cx="400" cy="205" r="2" fill="#c8a060" opacity="0"/>
+  <rect class="debris" style="--dur:2.8s;--delay:0s;--dx:-14px;--dy:-42px;--dr:280deg" x="388" y="208" width="4" height="2" fill="#f0e0b0" opacity="0" rx="1"/>
+  <circle class="debris" style="--dur:2.8s;--delay:0s;--dx:24px;--dy:-18px;--dr:100deg" cx="395" cy="215" r="1.5" fill="#b8922a" opacity="0"/>
+
+  <!-- Fielders silhouette (atmosphere, far background) -->
+  <!-- Left fielder -->
+  <g opacity="0.12">
+    <ellipse cx="55" cy="228" rx="10" ry="4" fill="#b8922a"/>
+    <line x1="55" y1="205" x2="55" y2="228" stroke="#b8922a" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="55" cy="200" r="7" fill="#b8922a"/>
+    <!-- Arm raised -->
+    <line x1="55" y1="210" x2="40" y2="200" stroke="#b8922a" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <!-- Right fielder (keeper) -->
+  <g opacity="0.12">
+    <ellipse cx="460" cy="228" rx="10" ry="4" fill="#b8922a"/>
+    <line x1="460" y1="205" x2="460" y2="228" stroke="#b8922a" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="460" cy="200" r="7" fill="#b8922a"/>
+    <!-- Arms ready -->
+    <line x1="460" y1="210" x2="446" y2="204" stroke="#b8922a" stroke-width="4" stroke-linecap="round"/>
+    <line x1="460" y1="210" x2="474" y2="204" stroke="#b8922a" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- Umpire silhouette -->
+  <g opacity="0.1">
+    <ellipse cx="180" cy="228" rx="8" ry="3" fill="#b8922a"/>
+    <line x1="180" y1="208" x2="180" y2="228" stroke="#b8922a" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="180" cy="203" r="6" fill="#b8922a"/>
+    <!-- Finger raised for OUT -->
+    <line x1="180" y1="208" x2="175" y2="195" stroke="#b8922a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="175" y1="195" x2="173" y2="185" stroke="#b8922a" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+</svg>
+
+<div class="code">404</div>
+<h1>Bowled Out — Page Not Found</h1>
+<div class="divider"></div>
+<p>Looks like this page was clean bowled. Head back to the home page and get back to the crease.</p>
+<a href="index.html" class="btn">← Back to Home</a>
+<div class="motto">Facta Non Verba</div>
+
+</body>
+</html>

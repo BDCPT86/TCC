@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TCC Scorer">
+<meta name="theme-color" content="#c9a84c">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>TCC Scorer</title>
+  <link rel="stylesheet" href="scoring.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* Applied before anything paints, so the app never flashes the wrong colours. */
+(function () {
+  try {
+    var t = localStorage.getItem('tcc_theme') || 'gold';
+    if (t === 'auto') { var h = new Date().getHours(); t = (h >= 18 || h < 6) ? 'night' : 'gold'; }
+    if (t !== 'gold') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+</script>
+</head>
+<body>
+
+<div id="app">
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <button id="scoring-back-btn" title="Back to fixtures" style="display:none;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 8px 4px 0;line-height:1;flex-shrink:0" aria-label="Back to fixtures">←</button>
+      <img src="./icons/icon-192.png" alt="TCC" class="topbar-logo">
+      <div class="topbar-title">TCC Scorer</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button id="theme-btn" title="Appearance" style="background:none;border:1px solid rgba(var(--gold-rgb),0.25);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:0.8rem;cursor:pointer;font-family:inherit;flex-shrink:0">🎨</button>
+      <button id="help-btn" title="User Guide" style="background:none;border:1px solid rgba(201,168,76,0.25);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">?</button>
+      <div class="topbar-status">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Connecting…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offline queue banner -->
+  <div class="queue-banner" id="queue-banner">
+    ⚠ Offline — <span id="queue-count">0</span> update(s) queued, will sync when reconnected
+  </div>
+
+  <!-- Install banner -->
+  <div id="install-banner" style="display:none;align-items:center;gap:12px;padding:10px 16px;background:rgba(201,168,76,0.1);border-bottom:1px solid rgba(201,168,76,0.2);flex-shrink:0">
+    <div style="flex:1;font-size:0.78rem;color:var(--gold)">📲 Install TCC Scorer for offline use</div>
+    <button id="install-btn" style="background:var(--gold);color:var(--bg);border:none;border-radius:6px;padding:6px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">Install</button>
+    <button id="install-dismiss" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;font-family:inherit;padding:4px">✕</button>
+  </div>
+
+  <!-- ── SCREEN: PIN ── -->
+  <div class="screen active screen-body" id="screen-pin" style="overflow:hidden">
+    <div class="pin-wrap">
+      <img src="./icons/icon-192.png" alt="TCC" class="pin-logo">
+      <h1 class="pin-title">TCC Scorer</h1>
+      <p class="pin-sub">Scorer Access Only</p>
+      <div id="ios-install-hint" style="display:none;font-size:0.72rem;color:var(--muted);text-align:center;max-width:200px;line-height:1.5;margin-top:-20px;margin-bottom:20px">
+        On iOS: tap the Share button then "Add to Home Screen" to install
+      </div>
+      <div class="pin-dots" id="pin-dots">
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+      </div>
+      <div class="pin-pad">
+        <button class="pin-key" data-val="1">1</button>
+        <button class="pin-key" data-val="2">2</button>
+        <button class="pin-key" data-val="3">3</button>
+        <button class="pin-key" data-val="4">4</button>
+        <button class="pin-key" data-val="5">5</button>
+        <button class="pin-key" data-val="6">6</button>
+        <button class="pin-key" data-val="7">7</button>
+        <button class="pin-key" data-val="8">8</button>
+        <button class="pin-key" data-val="9">9</button>
+        <button class="pin-key empty"></button>
+        <button class="pin-key" data-val="0">0</button>
+        <button class="pin-key del" data-val="del">⌫</button>
+      </div>
+      <div class="pin-error" id="pin-error"></div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN: FIXTURE SELECT ── -->
+  <div class="screen" id="screen-fixtures">
+    <div class="screen-body">
+      <!-- One refresh for the whole screen: it reloads every list below. -->
+      <div class="fx-toolbar">
+        <div class="section-heading" style="margin-bottom:0">Matches</div>
+        <button id="fix-refresh-btn">↻ Refresh</button>
+      </div>
+
+      <!-- Any match still being scored, whatever its date — so one can never
+           be stranded because its fixture has slipped into the past. First on
+           the screen: it is the one thing somebody might need in a hurry. -->
+      <details class="setup-card panel panel-live" id="fixture-live-wrap" style="display:none" open>
+        <summary class="panel-head">
+          <span class="setup-card-title">Being scored now</span>
+          <span class="panel-meta" id="fx-live-meta"></span>
+          <span class="panel-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="panel-body">
+          <div class="fixture-list" id="fixture-list-live"></div>
+        </div>
+      </details>
+
+      <details class="setup-card panel" id="fx-today-panel" open>
+        <summary class="panel-head">
+          <span class="setup-card-title">Today</span>
+          <span class="panel-meta" id="fx-today-meta"></span>
+          <span class="panel-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="panel-body">
+          <div class="fixture-list" id="fixture-list">
+            <div class="fixture-loading">Loading fixtures…</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="setup-card panel" id="fx-upcoming-panel">
+        <summary class="panel-head">
+          <span class="setup-card-title">Upcoming</span>
+          <span class="panel-meta" id="fx-upcoming-meta"></span>
+          <span class="panel-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="panel-body">
+          <div class="fixture-list" id="fixture-list-upcoming">
+            <div class="fixture-loading">Loading…</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="setup-card panel" id="fx-results-panel">
+        <summary class="panel-head">
+          <span class="setup-card-title">Recent results</span>
+          <span class="panel-meta" id="fx-results-meta"></span>
+          <span class="panel-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="panel-body">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+            <div style="flex:1">
+              <div style="font-size:0.65rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">From</div>
+              <input type="date" id="results-date-from" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:0.82rem;padding:8px 10px;font-family:inherit;-webkit-appearance:none">
+            </div>
+            <div style="flex:1">
+              <div style="font-size:0.65rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">To</div>
+              <input type="date" id="results-date-to" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:0.82rem;padding:8px 10px;font-family:inherit;-webkit-appearance:none">
+            </div>
+            <div style="padding-top:18px">
+              <button id="results-search-btn" style="background:var(--gold-fill);border:none;border-radius:8px;color:var(--on-gold);font-size:0.75rem;font-weight:700;padding:9px 14px;cursor:pointer;letter-spacing:1px;font-family:inherit;white-space:nowrap">Go</button>
+            </div>
+          </div>
+          <div class="fixture-list" id="fixture-list-completed">
+            <div class="fixture-loading">Loading…</div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ── SCREEN: MATCH SETUP ── -->
+  <div class="screen" id="screen-setup">
+    <div class="screen-body">
+      <details class="setup-card panel" id="setup-match-panel" open>
+      <summary class="panel-head">
+        <span class="setup-card-title">Match</span>
+        <span class="panel-meta" id="setup-match-meta"></span>
+        <span class="panel-chev" aria-hidden="true">▾</span>
+      </summary>
+      <div class="panel-body">
+        <div id="setup-fixture-summary" style="font-size:0.88rem;color:var(--muted);margin-bottom:14px"></div>
+        <div class="form-group">
+          <label class="form-label">Format</label>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px" id="format-btns">
+            <button class="toss-btn" data-overs="10"  id="fmt-t10">T10</button>
+            <button class="toss-btn" data-overs="20"  id="fmt-t20">T20</button>
+            <button class="toss-btn active" data-overs="40" id="fmt-40">40 ov</button>
+            <button class="toss-btn" data-overs=""    id="fmt-custom">Custom</button>
+          </div>
+          <input type="number" class="form-control" id="setup-overs"
+            value="40" min="1" max="100" placeholder="Overs per innings">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Toss — who won?</label>
+          <div class="toss-toggle">
+            <button class="toss-btn active" id="toss-home">TCC</button>
+            <button class="toss-btn" id="toss-away">Opponents</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Toss decision</label>
+          <div class="toss-toggle">
+            <button class="toss-btn active" id="decision-bat">Bat first</button>
+            <button class="toss-btn" id="decision-field">Field first</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Batting first</label>
+          <select class="form-control" id="setup-bat-first">
+            <option value="tcc">TCC</option>
+            <option value="opp">Opponents</option>
+          </select>
+        </div>
+      </div>
+      </details>
+
+      <details class="setup-card panel" id="setup-rules-panel">
+      <summary class="panel-head">
+        <span class="setup-card-title">Rules</span>
+        <span class="panel-meta" id="setup-rules-meta"></span>
+        <span class="panel-chev" aria-hidden="true">▾</span>
+      </summary>
+      <div class="panel-body">
+        <div class="form-group" id="setup-format-group">
+          <label class="form-label">Match format</label>
+          <select class="form-control" id="setup-format">
+            <option value="overs" selected>Overs cricket (6-ball overs)</option>
+            <option value="hundred">The Hundred (100 balls, 5-ball sets)</option>
+          </select>
+          <div id="setup-bowler-limit-wrap" style="margin-top:12px">
+            <label class="form-label" for="setup-bowler-limit">Max overs per bowler</label>
+            <input type="number" class="form-control" id="setup-bowler-limit" min="1" max="50" placeholder="Auto — one-fifth of the innings">
+            <p style="font-size:0.72rem;color:var(--muted);margin:5px 0 0;line-height:1.45">Leave blank for the usual rule: 4 in a T20, 8 in 40 overs, 10 in 50. Adjusts itself if overs are reduced.</p>
+          </div>
+          <p id="setup-format-note" style="display:none;font-size:0.75rem;color:var(--muted);margin:6px 0 0;line-height:1.5">
+            100 balls per innings &middot; sets of 5 &middot; ends change every 10 balls
+            &middot; 25-ball powerplay &middot; max 20 balls per bowler &middot; no-ball = 2 runs
+          </p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="setup-extra-penalty">Wide / no-ball penalty</label>
+          <select class="form-control" id="setup-extra-penalty">
+            <option value="1">1 run</option>
+            <option value="2">2 runs</option>
+          </select>
+          <p style="font-size:0.72rem;color:var(--muted);margin:5px 0 0;line-height:1.45">What a wide or a no-ball costs before any runs taken off it. 2 in the 100-ball game, 1 in most others.</p>
+        </div>
+        <div class="form-group">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <label class="form-label" style="margin-bottom:0">Wides &amp; no-balls use up a ball</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" id="setup-extras-ball" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer">
+              <span id="setup-extras-ball-label" style="font-size:0.75rem;color:var(--muted)">Off</span>
+            </label>
+          </div>
+          <p style="font-size:0.72rem;color:var(--muted);margin:6px 0 0;line-height:1.45">
+            On: the run is conceded but the delivery still counts, so the innings is exactly its allotted balls — except the
+            <strong style="color:var(--white)">last ball of the innings</strong>, which must be legal and is re-bowled until it is.
+            Off: every wide and no-ball is re-bowled, as in the Laws.
+          </p>
+        </div>
+        <div class="form-group" style="display:flex;align-items:center;justify-content:space-between">
+          <label class="form-label" style="margin-bottom:0">Free hits on no-balls</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="setup-free-hits" checked style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer">
+            <span id="setup-free-hits-label" style="font-size:0.75rem;color:var(--muted)">On</span>
+          </label>
+        </div>
+      </div>
+      </details>
+
+      <button class="btn-primary" id="start-match-btn" style="margin-top:8px">Start Scoring →</button>
+      <button class="end-match-btn" id="back-to-fixtures-btn" style="margin-top:10px;color:var(--muted);border-color:rgba(255,255,255,0.1)">← Back to fixtures</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN: SCORING ── -->
+  <div class="screen" id="screen-scoring" style="overflow:hidden">
+    <div class="scoring-wrap">
+
+      <!-- ── SCOREBOARD: score dominant, target inline right ── -->
+      <div class="scoreboard">
+        <div class="scoreboard-top">
+          <div class="scoreboard-teams">
+            <div class="scoreboard-batting" id="sb-batting-label">TCC BATTING</div>
+            <div class="scoreboard-vs" id="sb-vs">vs Opponents</div>
+            <div class="sb-meta">
+              <div class="score-rr" id="sb-rr" style="display:none"></div>
+              <div class="scoreboard-extras">
+                <div class="extra-item">W <span id="sb-wides">0</span></div>
+                <div class="extra-item">NB <span id="sb-noballs">0</span></div>
+                <div class="extra-item">B <span id="sb-byes">0</span></div>
+                <div class="extra-item">LB <span id="sb-legbyes">0</span></div>
+                <div class="extra-item" id="sb-penalty-wrap" style="display:none">P <span id="sb-penalty">0</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="scoreboard-score">
+            <div class="score-main" id="sb-score">0/0</div>
+            <div class="score-overs" id="sb-overs">0.0 ov</div>
+          </div>
+        </div>
+        <!-- Chase bar: need X off Y balls, required rate -->
+        <div class="target-banner" id="target-banner" style="display:none">
+          <span class="target-need" id="target-need"></span>
+          <span class="target-rrr" id="target-rrr"></span>
+        </div>
+      </div>
+
+      <!-- ── PLAYER BAR: 3-col striker | swap | non-striker ── -->
+      <div class="player-bar" id="player-bar" style="display:none">
+        <div class="batter-card striker" id="batter-striker">
+          <div class="batter-role-lbl">STRIKER</div>
+          <div class="batter-name" id="striker-name">—</div>
+          <div><span class="batter-score" id="striker-runs">0</span><span class="batter-balls" id="striker-balls"> (0)</span></div>
+        </div>
+        <div class="pb-mid">
+          <button class="pb-swap-btn" id="pb-swap-btn" title="Swap strike">⇄</button>
+          <div class="pb-pship" id="partnership-card" style="display:none">P'ship<b id="partnership-display">0 (0)</b></div>
+        </div>
+        <div class="batter-card" id="batter-non-striker">
+          <div class="batter-role-lbl" style="color:var(--muted)">NON-STRIKER</div>
+          <div class="batter-name" id="non-striker-name">—</div>
+          <div><span class="batter-score" id="non-striker-runs">0</span><span class="batter-balls" id="non-striker-balls"> (0)</span></div>
+        </div>
+      </div>
+
+      <!-- ── BOWLER ROW: bowler figures + current over chips ── -->
+      <div class="bowler-over-row" id="bowler-over-row" style="display:none">
+        <div class="bor-bowler">
+          <div class="bor-bowl-lbl">BOWLING</div>
+          <div class="bowler-card" id="bowler-card" title="Tap to change bowler">
+            <div class="bor-bowl-name" id="bowler-name">—</div>
+            <div class="bor-bowl-fig" id="bowler-figures">0-0-0-0</div>
+          </div>
+        </div>
+        <div class="bor-chips">
+          <div class="bor-over-lbl" id="over-label">Ov 1</div>
+          <div class="over-balls" id="over-balls"></div>
+        </div>
+      </div>
+
+      <!-- ── FREE HIT BANNER ── -->
+      <div id="free-hit-banner" style="display:none;background:rgba(94,201,138,0.1);border-top:1px solid rgba(94,201,138,0.25);border-bottom:1px solid rgba(94,201,138,0.15);padding:5px 10px;display:none;align-items:center;gap:8px;flex-shrink:0">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:var(--green2)">FREE HIT</span>
+        <span style="font-size:0.65rem;color:var(--muted)">Batter cannot be bowled out</span>
+      </div>
+
+      <!-- Super Over Indicator -->
+      <div id="powerplay-indicator" style="display:none;background:#2f3d8f;border-bottom:1px solid #24306f;padding:5px 10px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:3px;color:#ffffff;flex-shrink:0"></div>
+      <div id="super-over-indicator" style="display:none;background:rgba(201,168,76,0.1);border-bottom:1px solid rgba(201,168,76,0.2);padding:5px 10px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:3px;color:var(--gold);flex-shrink:0"></div>
+
+      <!-- ── SCORING INPUT ── -->
+      <div class="scoring-input" id="scoring-input">
+
+        <!-- End-of-over confirm -->
+        <div class="over-confirm" id="over-confirm">
+          <p>End of over — <strong id="confirm-over-summary"></strong></p>
+          <div class="over-confirm-btns">
+            <button class="confirm-btn confirm-cancel" id="confirm-cancel-btn">Continue over</button>
+            <button class="confirm-btn confirm-ok" id="confirm-ok-btn">Next over →</button>
+          </div>
+        </div>
+
+        <!-- Run buttons: 0 1 2 3 / 4 6 W(wide). 5 lives in Other. -->
+        <div class="run-btns">
+          <button class="run-btn" data-runs="0">0</button>
+          <button class="run-btn" data-runs="1">1</button>
+          <button class="run-btn" data-runs="2">2</button>
+          <button class="run-btn" data-runs="3">3</button>
+          <button class="run-btn b4" data-runs="4">4</button>
+          <button class="run-btn b6" data-runs="6">6</button>
+          <button class="run-btn wicket-run-btn" id="wicket-btn-inline" data-wicket="1">W</button>
+        </div>
+
+        <!-- Extras: single 4-col row -->
+        <div class="extra-btns">
+          <button class="extra-type-btn" data-extra="wide">Wd</button>
+          <button class="extra-type-btn" data-extra="noball">Nb</button>
+          <button class="extra-type-btn" data-extra="bye">B</button>
+          <button class="extra-type-btn" data-extra="legbye">Lb</button>
+        </div>
+
+        <!-- Extra run picker -->
+        <div class="extra-run-picker" id="extra-run-picker" style="display:none">
+          <div class="extra-run-label" id="extra-run-label">Runs off the delivery:</div>
+          <div class="extra-run-btns" id="extra-run-btns">
+            <button class="extra-run-btn" data-runs="0">0</button>
+            <button class="extra-run-btn" data-runs="1">1</button>
+            <button class="extra-run-btn" data-runs="2">2</button>
+            <button class="extra-run-btn" data-runs="3">3</button>
+            <button class="extra-run-btn" data-runs="4">4</button>
+            <button class="extra-run-btn" data-runs="5">5</button>
+            <button class="extra-run-btn" data-runs="6">6</button>
+            <button class="extra-run-btn cancel" id="extra-cancel-btn">✕</button>
+          </div>
+        </div>
+
+        <!-- Utility row: Undo (wide) + Other + commentary toggle -->
+        <div class="util-row">
+          <button class="run-btn undo" id="undo-btn">↩ Undo</button>
+          <button class="run-btn other-btn" id="other-runs-btn">OTHER · 5</button>
+          <button class="util-note" id="commentary-toggle" title="Add commentary to the next ball" aria-label="Commentary">✎</button>
+        </div>
+
+        <!-- Commentary — opened with ✎, attaches to the next ball -->
+        <div id="commentary-wrap" style="display:none">
+          <input type="text" id="ball-commentary" class="player-input-field" placeholder="Commentary for the next ball…" autocomplete="off">
+        </div>
+
+        <!-- Shot direction — optional, attaches to the next ball -->
+        <div id="pitch-region-row" class="shot-row">
+          <span class="shot-lbl">Shot<br>(opt)</span>
+          <button class="region-btn" data-region="off">Off</button>
+          <button class="region-btn" data-region="cover">Cvr</button>
+          <button class="region-btn" data-region="straight">Str</button>
+          <button class="region-btn" data-region="leg">Leg</button>
+          <button class="region-btn" data-region="fine">Fine</button>
+        </div>
+
+        <!-- Hidden original wicket btn (kept for JS compatibility) -->
+        <button class="wicket-btn" id="wicket-btn" style="display:none">Wicket</button>
+      </div>
+
+        <!-- Over history — collapsible, with innings tabs in 2nd innings -->
+        <div class="over-history" id="over-history-panel">
+          <div class="history-heading" id="history-heading-btn">
+            <span>Over history <span id="over-history-count" style="color:rgba(255,255,255,0.3);font-size:0.58rem"></span></span>
+            <span class="history-chevron" id="history-chevron">▼</span>
+          </div>
+          <div id="over-history-inn-tabs" style="display:none;gap:6px;padding:6px 10px 2px">
+            <button class="oh-inn-tab active" data-inn="2">2nd Innings</button>
+            <button class="oh-inn-tab" data-inn="1">1st Innings</button>
+          </div>
+          <div id="over-history-list"></div>
+        </div>
+
+
+      <!-- ── ACTION BAR ── -->
+      <div class="scoring-action-bar">
+        <button class="action-bar-btn" id="scorer-scorecard-btn">📋 Card</button>
+        <button class="action-bar-btn action-bar-history" id="action-history-btn">
+          <span>History</span><span id="action-history-count" style="color:rgba(255,255,255,0.25);font-size:0.65rem"></span><span style="font-size:0.65rem;color:var(--muted)">▼</span>
+        </button>
+        <button class="action-bar-btn end" id="end-innings-btn">End</button>
+      </div>
+
+      <!-- Hidden buttons kept for JS compatibility -->
+      <div style="display:none">
+        <button id="reduce-overs-btn">Reduce</button>
+        <button id="catchup-btn">Catch up</button>
+        <button class="run-btn" data-runs="5" id="run-five-btn">5</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SCREEN: END ── -->
+  <div class="screen" id="screen-end">
+    <div class="screen-body">
+      <div class="end-wrap">
+        <div class="end-icon">🏏</div>
+        <h2 class="end-title" id="end-title">Match Over</h2>
+        <div class="end-result" id="end-result"></div>
+        <div class="end-detail" id="end-detail"></div>
+        <div id="end-potm"></div>
+        <button class="btn-secondary potm-pick-btn" id="end-potm-btn">🏅 Pick player of the match</button>
+        <div class="end-scorecard" id="end-scorecard"></div>
+        <button class="btn-primary" id="new-match-btn">Back to fixtures</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Resume Match Modal -->
+<div class="modal-overlay" id="resume-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">📱 Resume Match?</div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">A match was in progress when the app closed. Would you like to resume?</p>
+      <div class="modal-current" id="resume-summary"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="resume-discard-btn">Start fresh</button>
+      <button class="modal-confirm-btn" id="resume-continue-btn">Resume →</button>
+    </div>
+  </div>
+</div>
+
+<!-- End Innings / Match Modal -->
+<div class="modal-overlay" id="end-innings-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title" id="end-innings-modal-title">End Innings / Match</div></div>
+    <div class="modal-body">
+      <div class="bowler-select-list" id="end-innings-options"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="end-innings-modal-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scorer Scorecard Modal -->
+<div class="modal-overlay" id="scorer-scorecard-modal" style="display:none">
+  <div class="modal-card" style="max-height:85vh;display:flex;flex-direction:column;">
+    <div class="modal-header" style="flex-shrink:0">
+      <div class="modal-title">📋 Scorecard</div>
+    </div>
+    <div id="scorer-scorecard-body" style="overflow-y:auto;flex:1;padding:0 4px 4px;"></div>
+    <div id="scorer-manhattan-wrap" style="display:none;padding:8px 4px 0;flex-shrink:0">
+      <div style="font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Manhattan — Runs per Over</div>
+      <canvas id="scorer-manhattan-canvas" height="80" style="width:100%;display:block;border-radius:6px;background:var(--bg2)"></canvas>
+    </div>
+    <div id="scorer-worm-wrap" style="display:none;padding:8px 4px 0;flex-shrink:0">
+      <div style="font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Worm — Cumulative Runs</div>
+      <canvas id="scorer-worm-canvas" height="80" style="width:100%;display:block;border-radius:6px;background:var(--bg2)"></canvas>
+    </div>
+    <div class="modal-actions" style="flex-shrink:0;gap:8px;flex-wrap:wrap">
+      <button class="modal-cancel-btn" id="scorer-scorecard-pdf">⬇ PDF</button>
+      <button class="modal-cancel-btn" id="scorer-scorecard-social" style="display:none">📸 Card</button>
+      <button class="modal-cancel-btn" id="scorer-scorecard-whatsapp" style="display:none">📲 Text</button>
+      <button class="modal-cancel-btn" id="scorer-scorecard-share" style="display:none">🔗 Share</button>
+      <button class="modal-cancel-btn" id="scorer-scorecard-rename">✎ Names</button>
+      <button class="modal-cancel-btn" id="scorer-scorecard-potm" style="display:none">🏅 POTM</button>
+      <button class="modal-confirm-btn" id="scorer-scorecard-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit a player's name — fixes a misspelling everywhere in the match -->
+<div class="modal-overlay" id="rename-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">✎ Edit a player's name</div></div>
+    <div class="modal-body">
+      <label class="modal-desc" for="rename-player" style="display:block;margin-bottom:4px">Player</label>
+      <select class="player-input-field" id="rename-player" style="margin-bottom:12px"></select>
+      <label class="modal-desc" for="rename-new" style="display:block;margin-bottom:4px">Correct name</label>
+      <input type="text" class="player-input-field" id="rename-new" autocomplete="off" autocapitalize="words" spellcheck="false">
+      <p class="modal-desc" style="font-size:0.72rem;opacity:0.75;margin-top:10px">Changes the name everywhere in this match: batting and bowling cards, dismissals, fall of wickets and ball-by-ball.</p>
+      <p class="modal-error" id="rename-error"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="rename-cancel">Cancel</button>
+      <button class="modal-confirm-btn" id="rename-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Match settings — the rules, changeable mid-match -->
+<div class="modal-overlay" id="match-settings-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">⚙ Match settings</div></div>
+    <div class="modal-body">
+      <p class="modal-desc" style="margin-bottom:14px">Changes apply from the next ball. Nothing already scored is touched.</p>
+
+      <label class="modal-desc" for="ms-extra-penalty" style="display:block;margin-bottom:4px">Wide / no-ball penalty</label>
+      <select class="player-input-field" id="ms-extra-penalty" style="margin-bottom:14px">
+        <option value="1">1 run</option>
+        <option value="2">2 runs</option>
+      </select>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:0.85rem">Wides &amp; no-balls use up a ball</span>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="ms-extras-ball" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer">
+          <span id="ms-extras-ball-label" style="font-size:0.75rem;color:var(--muted)">Off</span>
+        </label>
+      </div>
+      <p class="modal-desc" style="font-size:0.7rem;opacity:0.75;margin-bottom:14px">The last ball of the innings must still be legal.</p>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <span style="font-size:0.85rem">Free hits on no-balls</span>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="ms-free-hits" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer">
+          <span id="ms-free-hits-label" style="font-size:0.75rem;color:var(--muted)">On</span>
+        </label>
+      </div>
+
+      <div id="ms-bowler-limit-wrap">
+        <label class="modal-desc" for="ms-bowler-limit" style="display:block;margin-bottom:4px">Max overs per bowler</label>
+        <input type="number" class="player-input-field" id="ms-bowler-limit" min="1" max="50" placeholder="Auto — one-fifth of the innings">
+      </div>
+
+      <p class="modal-desc" style="font-size:0.72rem;opacity:0.75;margin-top:12px">Rain and shortened innings are under <strong>Other · 5 → Reduce overs</strong>.</p>
+      <p class="modal-error" id="ms-error"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="ms-cancel">Cancel</button>
+      <button class="modal-confirm-btn" id="ms-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Appearance — pick the colour theme -->
+<div class="modal-overlay" id="theme-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">🎨 Appearance</div></div>
+    <div class="modal-body">
+      <p class="modal-desc" style="margin-bottom:12px">Pick the colours. It changes as you tap, and the phone remembers it for every match.</p>
+      <div class="theme-list" id="theme-list"></div>
+      <p class="modal-desc" style="font-size:0.72rem;opacity:0.75;margin-top:12px">Night match is easiest on the eyes indoors and after dark, but hardest to read in direct sun. Auto uses Gold Standard by day and Night match from 6pm.</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
+        <span style="font-size:0.85rem">Animations</span>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="motion-toggle" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer">
+          <span id="motion-toggle-label" style="font-size:0.75rem;color:var(--muted)">On</span>
+        </label>
+      </div>
+      <p class="modal-desc" style="font-size:0.72rem;opacity:0.75;margin-top:6px">Small movements that confirm a ball went in. Off if you'd rather have none — scoring is unaffected either way.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm-btn" id="theme-close">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Player of the match -->
+<div class="modal-overlay" id="potm-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">🏅 Player of the match</div></div>
+    <div class="modal-body">
+      <label class="modal-desc" for="potm-player" style="display:block;margin-bottom:4px">Player</label>
+      <select class="player-input-field" id="potm-player" style="margin-bottom:12px"></select>
+      <label class="modal-desc" for="potm-note" style="display:block;margin-bottom:4px">Figures shown with the award</label>
+      <input type="text" class="player-input-field" id="potm-note" autocomplete="off" spellcheck="false" maxlength="80">
+      <p class="modal-desc" style="font-size:0.72rem;opacity:0.75;margin-top:10px">The suggestions rank everyone on runs, wickets, catches, strike rate and economy, with a lift for the winning side. Pick whoever the captains or umpires chose. You can edit the figures line.</p>
+      <p class="modal-error" id="potm-error"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="potm-clear" style="display:none">Clear</button>
+      <button class="modal-cancel-btn" id="potm-cancel">Cancel</button>
+      <button class="modal-confirm-btn" id="potm-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Super Over Modal -->
+<div class="modal-overlay" id="super-over-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">⚡ It's a Tie!</div></div>
+    <div class="modal-body">
+      <p class="modal-desc" id="super-over-tie-text">The match is tied. Would you like to play a Super Over?</p>
+      <div class="modal-error" id="super-over-error"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm-btn" id="super-over-yes">Play Super Over</button>
+      <button class="modal-cancel-btn" id="super-over-no">End as Tie / No Result</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bowler Disambiguation Modal -->
+<div class="modal-overlay" id="bowler-disambig-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">Multiple Bowlers</div></div>
+    <div class="modal-body">
+      <p class="modal-desc" id="disambig-desc">Multiple bowlers have this name. Select the correct one or add as a new player.</p>
+      <div class="bowler-select-list" id="disambig-list"></div>
+      <div class="modal-error" id="disambig-error"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="disambig-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- NB Extras Modal -->
+<div class="modal-overlay" id="nb-extras-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">No-ball — Extra Runs?</div></div>
+    <div class="modal-body">
+      <p class="modal-desc">Runs off bat: <strong id="nb-batruns-display">0</strong> &nbsp;·&nbsp; Any additional extras off this delivery?</p>
+      <div class="bowler-select-list" id="nb-extras-list">
+        <button class="bowler-select-item selected" data-nbextra="none"><span>None</span></button>
+        <button class="bowler-select-item" data-nbextra="bye"><span>Bye</span><span class="bsi-figures">Ball rolls to keeper</span></button>
+        <button class="bowler-select-item" data-nbextra="legbye"><span>Leg-bye</span><span class="bsi-figures">Off the body</span></button>
+        <button class="bowler-select-item" data-nbextra="overthrow"><span>Overthrow</span><span class="bsi-figures">Fielding error</span></button>
+        <button class="bowler-select-item" data-nbextra="penalty"><span>Penalty Runs</span><span class="bsi-figures">Umpire awarded</span></button>
+      </div>
+      <div id="nb-extra-runs-wrap" style="display:none">
+        <div class="modal-desc" id="nb-extra-runs-label" style="margin-bottom:8px">How many?</div>
+        <div class="extra-run-btns" id="nb-extra-run-picker">
+          <button class="extra-run-btn" data-nbr="1">1</button>
+          <button class="extra-run-btn" data-nbr="2">2</button>
+          <button class="extra-run-btn" data-nbr="3">3</button>
+          <button class="extra-run-btn" data-nbr="4">4</button>
+          <button class="extra-run-btn" data-nbr="5">5</button>
+        </div>
+      </div>
+      <div class="modal-error" id="nb-extras-error"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm-btn" id="nb-extras-ok">Confirm</button>
+      <button class="modal-cancel-btn" id="nb-extras-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Other Runs Modal (Overthrow / Penalty) -->
+<div class="modal-overlay" id="other-runs-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">Other Runs</div></div>
+    <div class="modal-body">
+      <button class="other-five" id="other-five-btn">5 runs <span>all run, off the bat</span></button>
+      <div class="bowler-select-list" id="other-type-list">
+        <button class="bowler-select-item" data-othertype="overthrow">
+          <div><div>Overthrow</div><div style="font-size:0.68rem;color:var(--muted);margin-top:2px">Added to striker score · swap applies on odd runs</div></div>
+        </button>
+        <button class="bowler-select-item" data-othertype="penalty">
+          <div><div>Penalty Runs</div><div style="font-size:0.68rem;color:var(--muted);margin-top:2px">Extras only · not credited to batter or bowler</div></div>
+        </button>
+      </div>
+      <div id="other-runs-wrap" style="display:none">
+        <div class="modal-desc" id="other-runs-label" style="margin-bottom:8px">How many runs?</div>
+        <div class="extra-run-btns" id="other-run-picker">
+          <button class="extra-run-btn" data-otr="1">1</button>
+          <button class="extra-run-btn" data-otr="2">2</button>
+          <button class="extra-run-btn" data-otr="3">3</button>
+          <button class="extra-run-btn" data-otr="4">4</button>
+          <button class="extra-run-btn" data-otr="5">5</button>
+        </div>
+      </div>
+      <div class="modal-error" id="other-runs-error"></div>
+      <!-- Match tools — these existed but had no way to reach them -->
+      <div class="bowler-select-divider" style="margin-top:12px">Match tools</div>
+      <div class="bowler-select-list">
+        <button class="bowler-select-item" id="other-reduce-btn">
+          <div><div>🌧 Reduce overs (rain)</div><div style="font-size:0.68rem;color:var(--muted);margin-top:2px">Shorten the innings and revise the target</div></div>
+        </button>
+        <button class="bowler-select-item" id="other-catchup-btn">
+          <div><div>⏱ Catch up the score</div><div style="font-size:0.68rem;color:var(--muted);margin-top:2px">Enter overs you fell behind on in one go</div></div>
+        </button>
+        <button class="bowler-select-item" id="other-settings-btn">
+          <div><div>⚙ Match settings</div><div style="font-size:0.68rem;color:var(--muted);margin-top:2px">Extras, free hits, bowler limit — mid-match</div></div>
+        </button>
+        <button class="bowler-select-item" id="other-theme-btn">
+          <div><div>🎨 Appearance</div><div style="font-size:0.68rem;color:var(--muted);margin-top:2px">Change the app's colours</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm-btn" id="other-runs-ok" disabled>Confirm</button>
+      <button class="modal-cancel-btn" id="other-runs-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Opening Players Modal -->
+
+<!-- Pre-Match Team Lineup Modal -->
+<div class="modal-overlay" id="lineup-modal" style="display:none">
+  <div class="modal-card" style="max-width:420px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column">
+    <div class="modal-header">
+      <div class="modal-title">📋 Team Lineup</div>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;flex:1;padding-bottom:8px">
+      <p class="modal-desc">Select the playing XI for TCC. Pick from the dropdown or add a name freehand for players not in the list.</p>
+
+      <!-- Dropdown + add -->
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <select class="player-input-field" id="lineup-player-select" style="margin-bottom:0;flex:1">
+          <option value="">— Select a player —</option>
+        </select>
+        <button class="modal-confirm-btn" id="lineup-add-btn" style="flex-shrink:0;padding:10px 12px;font-size:0.75rem">Add</button>
+      </div>
+
+      <!-- Freehand for unlisted players -->
+      <div style="display:flex;gap:6px;margin-bottom:14px">
+        <input type="text" class="player-input-field" id="lineup-search" placeholder="Not in list? Type name and add" autocomplete="off" style="margin-bottom:0;flex:1;font-size:0.82rem">
+        <button class="modal-confirm-btn" id="lineup-add-freehand-btn" style="flex-shrink:0;padding:10px 12px;font-size:0.75rem">Add</button>
+      </div>
+
+      <!-- Selected XI -->
+      <div id="lineup-selected-section">
+        <div class="modal-desc" style="margin-bottom:6px;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase">Selected (<span id="lineup-count">0</span>/11)</div>
+        <div id="lineup-selected-list" style="display:flex;flex-direction:column;gap:4px"></div>
+      </div>
+
+      <div class="modal-error" id="lineup-error" style="margin-top:8px"></div>
+    </div>
+    <div class="modal-actions" style="flex-shrink:0">
+      <button class="modal-confirm-btn" id="lineup-ok">Confirm XI →</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="opening-players-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">🏏 Opening Players</div></div>
+    <div class="modal-body">
+      <p class="modal-desc">Enter the opening batters and first bowler.</p>
+      <label class="modal-desc" style="margin-bottom:4px;display:block">Striker (facing first)</label>
+      <input type="text" class="player-input-field" id="input-striker" placeholder="Batter name" autocomplete="off">
+      <label class="modal-desc" style="margin-bottom:4px;display:block">Non-striker</label>
+      <input type="text" class="player-input-field" id="input-non-striker" placeholder="Batter name" autocomplete="off">
+      <label class="modal-desc" style="margin-bottom:4px;display:block">Opening bowler</label>
+      <input type="text" class="player-input-field" id="input-opening-bowler" placeholder="Bowler name" autocomplete="off">
+      <div class="modal-error" id="opening-players-error"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm-btn" id="opening-players-ok">Start Scoring</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Bowler Modal -->
+<div class="modal-overlay" id="new-bowler-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">🎳 New Over — Select Bowler</div></div>
+    <div class="modal-body">
+      <div class="bowler-select-list" id="bowler-select-list"></div>
+      <div class="modal-error" id="new-bowler-error"></div>
+    </div>
+    <div class="modal-actions" id="new-bowler-cancel-wrap" style="display:none">
+      <button class="modal-cancel-btn" id="new-bowler-cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Wicket Modal -->
+<!-- Retire a batter between deliveries — no ball is recorded -->
+<div class="modal-overlay" id="retire-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">&#128694; Batter off — no ball bowled</div></div>
+    <div class="modal-body">
+      <p class="modal-desc"><strong id="retire-batter-name"></strong> leaves without a ball being bowled. For anything that happened off a delivery, use <b>W</b> instead.</p>
+      <div class="dismissal-options" style="margin-bottom:10px">
+        <button class="dismissal-btn" id="retire-hurt-btn" data-mode="hurt">Retired hurt<br><small style="opacity:.7">can return later</small></button>
+        <button class="dismissal-btn" id="retire-out-btn" data-mode="out">Retired out<br><small style="opacity:.7">innings over</small></button>
+        <button class="dismissal-btn" id="retire-timed-btn" data-mode="timed">Timed out<br><small style="opacity:.7">not ready in time</small></button>
+      </div>
+      <label class="modal-desc" style="margin-bottom:4px;display:block">New batter</label>
+      <input type="text" class="player-input-field" id="input-retire-replacement" placeholder="Batter name" autocomplete="off">
+      <p class="modal-error" id="retire-error"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="retire-cancel-btn">Cancel</button>
+      <button class="modal-confirm-btn" id="retire-ok-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="wicket-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header"><div class="modal-title">🔴 Wicket</div></div>
+    <div class="modal-body">
+      <p class="modal-desc" id="wicket-batter-label">How was <strong id="wicket-batter-name"></strong> out?</p>
+      <div class="dismissal-options">
+        <button class="dismissal-btn" data-how="Bowled">Bowled</button>
+        <button class="dismissal-btn" data-how="Caught">Caught</button>
+        <button class="dismissal-btn" data-how="Caught & Bowled">Caught & Bowled</button>
+        <button class="dismissal-btn" data-how="LBW">LBW</button>
+        <button class="dismissal-btn" data-how="Run Out">Run Out</button>
+        <button class="dismissal-btn" data-how="Stumped">Stumped</button>
+        <button class="dismissal-btn" data-how="Hit Wicket">Hit Wicket</button>
+        <button class="dismissal-btn" data-how="Retired Hurt">Retired Hurt</button>
+        <button class="dismissal-btn" data-how="Retired Out">Retired Out</button>
+        <button class="dismissal-btn" data-how="Obstructing the Field">Obstructing</button>
+        <button class="dismissal-btn" data-how="Hit the Ball Twice">Hit ball twice</button>
+      </div>
+      <!-- Which batter was out (run outs can dismiss either end) -->
+      <div id="wicket-who-section" style="display:none;margin-bottom:10px">
+        <label class="modal-desc" style="margin-bottom:4px;display:block">Which batter was out?</label>
+        <div class="dismissal-options">
+          <button class="dismissal-btn wicket-who-btn selected" data-who="striker">On strike<br><small style="opacity:.7" id="wicket-who-striker"></small></button>
+          <button class="dismissal-btn wicket-who-btn" data-who="nonStriker">Non-striker<br><small style="opacity:.7" id="wicket-who-nonstriker"></small></button>
+        </div>
+      </div>
+      <!-- Running: runs completed, what the ball was, who faces next -->
+      <div id="wicket-run-section" style="display:none;margin-bottom:10px">
+        <div id="wicket-runs-wrap">
+          <label class="modal-desc" style="margin-bottom:4px;display:block">Runs completed before the wicket</label>
+          <div class="wk-chips" id="wicket-runs-chips">
+            <button class="wk-chip selected" data-runs="0">0</button>
+            <button class="wk-chip" data-runs="1">1</button>
+            <button class="wk-chip" data-runs="2">2</button>
+            <button class="wk-chip" data-runs="3">3</button>
+            <button class="wk-chip" data-runs="4">4</button>
+          </div>
+        </div>
+        <label class="modal-desc" style="margin:8px 0 4px;display:block">The ball was</label>
+        <div class="wk-chips" id="wicket-type-chips">
+          <button class="wk-chip selected" data-type="bat">Off the bat</button>
+          <button class="wk-chip" data-type="bye">Bye</button>
+          <button class="wk-chip" data-type="legbye">Leg-bye</button>
+          <button class="wk-chip" data-type="wide">Wide</button>
+          <button class="wk-chip" data-type="noball">No-ball</button>
+        </div>
+        <p class="modal-desc" id="wicket-win-note" style="display:none;margin:8px 0 0;color:var(--gold);font-weight:600">The winning run was completed first — the match ended there, so this run out doesn't count. Confirm records the runs only.</p>
+        <div id="wicket-strike-wrap" style="display:none">
+          <label class="modal-desc" style="margin:8px 0 4px;display:block">Who faces the next ball?</label>
+          <div class="wk-chips" id="wicket-strike-chips">
+            <button class="wk-chip" data-next="survivor" id="wicket-next-survivor">—</button>
+            <button class="wk-chip" data-next="new">New batter</button>
+          </div>
+        </div>
+      </div>
+      <label class="modal-desc" style="margin-bottom:4px;display:block" id="new-batter-label">New batter</label>
+      <div id="retired-hurt-list" style="display:none;margin-bottom:8px"></div>
+      <!-- Fielder (shown for Caught/Run Out/Stumped) -->
+      <div id="fielder-section" style="display:none">
+        <label class="modal-desc" style="margin-bottom:4px;display:block" id="fielder-label">Fielder</label>
+        <div id="fielder-select-list" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px"></div>
+        <input type="text" class="player-input-field" id="input-fielder" placeholder="Fielder name (optional)" autocomplete="off">
+      </div>
+      <input type="text" class="player-input-field" id="input-new-batter" placeholder="Batter name or select above" autocomplete="off">
+      <div class="modal-error" id="wicket-error"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm-btn" id="wicket-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Set Match PIN Modal -->
+<div class="modal-overlay" id="set-match-pin-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">🔐 Set Match PIN</div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Set a 4-digit PIN for this match. If your device fails, the replacement scorer will need this PIN to take over.</p>
+      <div class="match-pin-dots" id="set-pin-dots">
+        <div class="match-pin-dot"></div>
+        <div class="match-pin-dot"></div>
+        <div class="match-pin-dot"></div>
+        <div class="match-pin-dot"></div>
+      </div>
+      <div class="modal-error" id="set-pin-error"></div>
+      <div class="match-pin-pad">
+        <button class="match-pin-key" data-val="1">1</button>
+        <button class="match-pin-key" data-val="2">2</button>
+        <button class="match-pin-key" data-val="3">3</button>
+        <button class="match-pin-key" data-val="4">4</button>
+        <button class="match-pin-key" data-val="5">5</button>
+        <button class="match-pin-key" data-val="6">6</button>
+        <button class="match-pin-key" data-val="7">7</button>
+        <button class="match-pin-key" data-val="8">8</button>
+        <button class="match-pin-key" data-val="9">9</button>
+        <button class="match-pin-key empty"></button>
+        <button class="match-pin-key" data-val="0">0</button>
+        <button class="match-pin-key del" data-val="del">⌫</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="set-pin-cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Takeover PIN Modal -->
+<div class="modal-overlay" id="takeover-pin-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">🔐 Match In Progress</div>
+    </div>
+    <div class="modal-body">
+      <div class="takeover-info">
+        <strong id="takeover-match-label"></strong>
+        This match is already being scored. Enter the match PIN from the current scorer to take over.
+      </div>
+      <div class="match-pin-dots" id="takeover-pin-dots">
+        <div class="match-pin-dot"></div>
+        <div class="match-pin-dot"></div>
+        <div class="match-pin-dot"></div>
+        <div class="match-pin-dot"></div>
+      </div>
+      <div class="modal-error" id="takeover-pin-error"></div>
+      <div class="match-pin-pad">
+        <button class="match-pin-key" data-val="1">1</button>
+        <button class="match-pin-key" data-val="2">2</button>
+        <button class="match-pin-key" data-val="3">3</button>
+        <button class="match-pin-key" data-val="4">4</button>
+        <button class="match-pin-key" data-val="5">5</button>
+        <button class="match-pin-key" data-val="6">6</button>
+        <button class="match-pin-key" data-val="7">7</button>
+        <button class="match-pin-key" data-val="8">8</button>
+        <button class="match-pin-key" data-val="9">9</button>
+        <button class="match-pin-key empty"></button>
+        <button class="match-pin-key" data-val="0">0</button>
+        <button class="match-pin-key del" data-val="del">⌫</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="takeover-cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Catch-up / Manual entry Modal -->
+<div class="modal-overlay" id="catchup-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">⚡ Catch Up</div>
+      <button class="modal-close" id="catchup-modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Device restarted mid-match? Enter the current score to catch up. This won't affect previous overs in the history.</p>
+      <div class="form-row-two">
+        <div>
+          <label class="form-label">Runs</label>
+          <input type="number" id="catchup-runs" class="form-control" min="0" placeholder="e.g. 87">
+        </div>
+        <div>
+          <label class="form-label">Wickets</label>
+          <input type="number" id="catchup-wickets" class="form-control" min="0" max="10" placeholder="e.g. 3">
+        </div>
+      </div>
+      <div class="form-row-two" style="margin-top:10px">
+        <div>
+          <label class="form-label">Completed overs</label>
+          <input type="number" id="catchup-overs" class="form-control" min="0" placeholder="e.g. 14">
+        </div>
+        <div>
+          <label class="form-label">Balls in current over</label>
+          <input type="number" id="catchup-balls" class="form-control" min="0" max="5" placeholder="0–5">
+        </div>
+      </div>
+      <div class="modal-error" id="catchup-error" style="margin-top:8px"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="catchup-cancel-btn">Cancel</button>
+      <button class="modal-confirm-btn" id="catchup-confirm-btn">Apply score →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Result Picker Modal -->
+<div class="modal-overlay" id="result-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">🏆 Match Result</div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc" id="result-modal-desc">Select the official result for this match.</p>
+      <div class="result-options" id="result-options"></div>
+      <div class="modal-error" id="result-error"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="result-cancel-btn">Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ball Edit Modal -->
+<div class="modal-overlay" id="ball-edit-modal" style="display:none;z-index:200">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Edit Ball</div>
+      <button class="modal-close" id="ball-edit-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc" id="ball-edit-desc">Edit this ball's recorded value.</p>
+      <div class="form-group">
+        <label class="form-label">Ball type</label>
+        <select id="ball-edit-type" class="form-control">
+          <option value="run">Normal delivery</option>
+          <option value="wide">Wide</option>
+          <option value="noball">No-ball</option>
+          <option value="bye">Bye</option>
+          <option value="legbye">Leg-bye</option>
+          <option value="wicket">Wicket</option>
+        </select>
+      </div>
+      <div class="form-group" id="ball-edit-runs-group">
+        <label class="form-label" id="ball-edit-runs-label">Runs</label>
+        <select id="ball-edit-runs" class="form-control">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+      <!-- NB extras — shown when type is noball -->
+      <div class="form-group" id="ball-edit-nb-extras-group" style="display:none">
+        <label class="form-label">No-ball extras</label>
+        <select class="form-control" id="ball-edit-nb-extra-type">
+          <option value="none">None</option>
+          <option value="bye">Bye</option>
+          <option value="legbye">Leg-bye</option>
+          <option value="overthrow">Overthrow</option>
+          <option value="penalty">Penalty</option>
+        </select>
+      </div>
+      <div class="form-group" id="ball-edit-nb-extra-runs-group" style="display:none">
+        <label class="form-label" id="ball-edit-nb-extra-runs-label">Extra runs</label>
+        <select class="form-control" id="ball-edit-nb-extra-runs">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Was this a wicket?</label>
+        <div class="toss-toggle">
+          <button class="toss-btn" id="ball-edit-wkt-no">No</button>
+          <button class="toss-btn" id="ball-edit-wkt-yes">Yes — wicket</button>
+        </div>
+      </div>
+      <div class="modal-error" id="ball-edit-error"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="ball-edit-cancel">Cancel</button>
+      <button class="modal-confirm-btn" id="ball-edit-confirm">Save ball →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Over Edit Modal — shows individual balls for the selected over -->
+<div class="modal-overlay" id="over-edit-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title" id="over-edit-title">✏️ Edit Over</div>
+      <button class="modal-close" id="over-edit-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Tap a ball to edit it. Changes update the over total and match score automatically.</p>
+      <!-- Ball chips for this over -->
+      <div id="over-edit-balls" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <!-- Over summary -->
+      <div id="over-edit-summary" style="font-size:0.8rem;color:var(--muted);padding:8px 12px;background:var(--bg3);border-radius:6px;margin-bottom:4px"></div>
+      <div class="modal-error" id="over-edit-error" style="margin-top:8px"></div>
+    </div>
+    <div class="modal-actions" style="gap:8px">
+      <button class="modal-option-btn" id="over-edit-bowler-btn" style="flex:1;padding:10px 12px;font-size:0.8rem">
+        🎳 Edit Bowler
+      </button>
+      <button class="modal-cancel-btn" id="over-edit-cancel" style="flex:1">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Post-over bowler correction — reason step -->
+<div class="modal-overlay" id="post-over-bowler-reason-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">🔄 Edit Over Bowler</div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px" id="pobr-over-label"></div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:16px">Why is the bowler being corrected?</div>
+    <button class="modal-option-btn" id="pobr-wrong-btn" style="width:100%;margin-bottom:10px">
+      <div style="font-weight:700;color:var(--white);margin-bottom:3px">Wrong selection</div>
+      <div style="font-size:0.75rem;color:var(--muted)">All balls in this over reassigned to the correct bowler</div>
+    </button>
+    <button class="modal-option-btn" id="pobr-split-btn" style="width:100%;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--white);margin-bottom:3px">Injury / Suspension mid-over</div>
+      <div style="font-size:0.75rem;color:var(--muted)">Pick which balls belong to each bowler</div>
+    </button>
+    <button class="modal-cancel-btn" id="pobr-cancel-btn">Cancel</button>
+  </div>
+</div>
+
+<!-- Post-over bowler correction — bowler picker step -->
+<div class="modal-overlay" id="post-over-bowler-pick-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title" id="pobp-title">🎳 Select Correct Bowler</div>
+      <button class="modal-close" id="pobp-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="pobp-list"></div>
+      <div class="modal-error" id="pobp-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Post-over split attribution — ball-by-ball picker -->
+<div class="modal-overlay" id="post-over-split-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title" id="pos-title">🔀 Split Over Attribution</div>
+      <button class="modal-close" id="pos-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc" id="pos-desc">Tap each ball to toggle which bowler bowled it.</p>
+      <div id="pos-bowler-labels" style="display:flex;gap:10px;margin-bottom:12px;font-size:0.78rem"></div>
+      <div id="pos-balls" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <div id="pos-summary" style="font-size:0.78rem;color:var(--muted);padding:8px 12px;background:var(--bg3);border-radius:6px"></div>
+      <div class="modal-error" id="pos-error" style="margin-top:8px"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="pos-cancel">Cancel</button>
+      <button class="modal-confirm-btn" id="pos-confirm">Apply →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Abandon Match Modal -->
+<div class="modal-overlay" id="abandon-match-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">🔄 Leaving this match?</div>
+    <div id="abandon-match-summary" style="font-size:0.82rem;color:var(--muted);margin:10px 0 6px;line-height:1.5"></div>
+    <div style="font-size:0.78rem;color:var(--red);margin-bottom:16px" id="abandon-match-warning"></div>
+    <button class="modal-option-btn" id="abandon-keep-btn" style="width:100%;margin-bottom:10px">
+      <div style="font-weight:600">Leave this screen — keep the match</div>
+      <div style="font-size:0.73rem;color:var(--muted)">Resume it later from the fixture list</div>
+    </button>
+    <button class="modal-cancel-btn" id="abandon-cancel-btn" style="width:100%;margin-bottom:10px">Cancel — keep scoring</button>
+    <button class="modal-option-btn" id="abandon-confirm-btn" style="width:100%;margin-bottom:10px;border-color:rgba(192,48,48,0.4)">
+      <div style="font-weight:700;color:var(--red)">Wrong fixture — delete this match</div>
+      <div style="font-size:0.73rem;color:var(--muted)" id="abandon-sub-label">This match will be removed from the system</div>
+    </button>
+    <div id="abandon-type-guard" style="display:none;margin-bottom:10px">
+      <label class="modal-desc" for="abandon-type-input" style="display:block;margin-bottom:4px">Type DELETE to confirm</label>
+      <input type="text" class="player-input-field" id="abandon-type-input" placeholder="DELETE"
+        autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <div class="modal-error" id="abandon-type-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Reduced Overs Modal -->
+<div class="modal-overlay" id="reduce-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">🌧 Reduce Overs</div>
+      <button class="modal-close" id="reduce-modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Enter the revised total overs for this innings. This can be applied before the match starts or at any point during play.</p>
+      <div class="modal-current" id="reduce-modal-current"></div>
+      <label class="form-label" style="margin-top:14px;display:block">Revised overs for this innings</label>
+      <input type="number" id="reduce-overs-input" class="form-control" min="1" max="50" placeholder="e.g. 25">
+      <div id="reduce-target-wrap" style="display:none;margin-top:12px">
+        <label class="form-label">Revised target (if changed by umpires)</label>
+        <input type="number" id="reduce-target-input" class="form-control" min="1" placeholder="Leave blank to keep current target">
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:4px">Only enter if umpires have set a new target using DLS or league rain rules.</div>
+      </div>
+      <div class="modal-error" id="reduce-modal-error"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="reduce-modal-cancel">Cancel</button>
+      <button class="modal-confirm-btn" id="reduce-modal-confirm">Apply →</button>
+    </div>
+  </div>
+</div>
+
+<!-- No help modal needed — guide opens in new tab -->
+
+<!-- Mid-over bowler change reason modal -->
+<div class="modal-overlay" id="bowler-change-reason-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">🔄 Change Bowler</div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:16px">Why is the bowler being changed?</div>
+    <button class="modal-option-btn" id="bcr-wrong-btn" style="width:100%;margin-bottom:10px">
+      <div style="font-weight:700;color:var(--white);margin-bottom:3px">Wrong selection</div>
+      <div style="font-size:0.75rem;color:var(--muted)">Correct a mistake — all balls reassigned to new bowler</div>
+    </button>
+    <button class="modal-option-btn" id="bcr-split-btn" style="width:100%;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--white);margin-bottom:3px">Injury / Suspension</div>
+      <div style="font-size:0.75rem;color:var(--muted)">Split over — balls already bowled stay with current bowler</div>
+    </button>
+    <button class="modal-cancel-btn" id="bcr-cancel-btn">Cancel</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+  <script src="scoring.js"></script>
+</body>
+</html>

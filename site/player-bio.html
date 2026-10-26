@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Bio | Tygerberg Cricket Club</title>
+<meta name="description" content="Submit your player bio for the TCC website.">
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#050608; --surface:hsl(0,0%,8%); --text:hsl(0,0%,96%);
+  --muted:hsl(0,0%,52%); --stroke:hsl(0,0%,13%);
+  --blue1:#89AACC; --blue2:#4E85BF; --red:#cc4444; --green:#4aaa5a;
+  --ease:cubic-bezier(0.16,1,0.3,1); --gutter:clamp(20px,5vw,48px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.5;min-height:100vh}
+em{font-family:'Instrument Serif',serif;font-style:italic}
+::selection{background:var(--blue2);color:#fff}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9996;opacity:0.022;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:128px}
+
+.page-wrap{max-width:640px;margin:0 auto;padding:60px var(--gutter) 80px}
+
+/* Header */
+.bio-header{display:flex;align-items:center;gap:14px;margin-bottom:48px}
+.bio-logo{width:44px;height:44px;object-fit:contain}
+.bio-brand{display:flex;flex-direction:column;gap:2px}
+.bio-brand-name{font-family:'Inter',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase}
+.bio-brand-sub{font-size:0.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue1);font-weight:600}
+
+/* Hero */
+.bio-hero{margin-bottom:40px}
+.bio-eyebrow{font-size:0.62rem;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.bio-title{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(2.2rem,7vw,3.5rem);line-height:1;color:var(--text);margin-bottom:16px}
+.bio-desc{font-size:0.9rem;color:var(--muted);line-height:1.75;max-width:480px}
+
+/* Form */
+.bio-form{display:flex;flex-direction:column;gap:28px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field-label{font-size:0.62rem;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted)}
+.field-hint{font-size:0.75rem;color:var(--muted);margin-top:-4px;line-height:1.5}
+.field-input,.field-select,.field-textarea{
+  background:rgba(255,255,255,0.04);border:1px solid var(--stroke);
+  padding:13px 16px;color:var(--text);font-family:'Inter',sans-serif;
+  font-size:0.95rem;outline:none;transition:border-color 0.2s;width:100%;
+  border-radius:6px;
+}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--blue2);background:rgba(78,133,191,0.04)}
+.field-input::placeholder,.field-textarea::placeholder{color:var(--muted)}
+.field-select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.field-select option{background:var(--bg)}
+.field-textarea{resize:vertical;min-height:100px;line-height:1.6}
+
+/* Character counter */
+.field-counter{font-size:0.68rem;color:var(--muted);text-align:right;margin-top:4px}
+.field-counter.warn{color:var(--blue1)}
+.field-counter.over{color:var(--red)}
+
+/* Section divider */
+.form-section{font-size:0.6rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--blue1);padding-bottom:12px;border-bottom:1px solid var(--stroke);margin-bottom:4px}
+
+/* Photo upload */
+.photo-upload-wrap { display: flex; flex-direction: column; gap: 10px; }
+.photo-dropzone {
+  border: 2px dashed var(--stroke); border-radius: 8px; cursor: pointer;
+  transition: border-color 0.2s, background 0.2s; overflow: hidden;
+  position: relative; min-height: 140px; display: flex; align-items: center; justify-content: center;
+}
+.photo-dropzone:hover, .photo-dropzone.drag-over { border-color: var(--blue2); background: rgba(78,133,191,0.04); }
+.photo-dz-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 28px; }
+.photo-dz-icon { font-size: 2rem; }
+.photo-dz-label { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+.photo-dz-hint { font-size: 0.75rem; color: var(--muted); }
+.photo-preview { width: 100%; max-height: 280px; object-fit: cover; display: block; }
+.photo-clear-btn {
+  background: none; border: 1px solid var(--stroke); color: var(--muted);
+  padding: 7px 14px; font-family: 'Inter', sans-serif; font-size: 0.75rem;
+  font-weight: 600; cursor: pointer; border-radius: 4px; align-self: flex-start;
+  transition: all 0.2s;
+}
+.photo-clear-btn:hover { border-color: var(--red); color: var(--red); }
+.photo-compress-note { font-size: 0.72rem; color: var(--muted); }
+.bio-submit {
+  background:linear-gradient(90deg,var(--blue1),var(--blue2));color:#fff;border:none;
+  border-radius:6px;padding:16px;font-family:'Inter',sans-serif;font-size:0.88rem;
+  font-weight:600;cursor:pointer;letter-spacing:0.02em;width:100%;
+  transition:transform 0.2s var(--ease),box-shadow 0.2s;margin-top:8px;
+}
+.bio-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(78,133,191,0.35)}
+.bio-submit:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+.form-error{font-size:0.78rem;color:var(--red);min-height:18px;font-weight:500}
+
+/* Success */
+.bio-success{display:none;text-align:center;padding:60px 0;flex-direction:column;align-items:center;gap:16px}
+.success-icon{font-size:3rem}
+.success-title{font-family:'Instrument Serif',serif;font-style:italic;font-size:2.5rem;color:var(--text)}
+.success-msg{font-size:0.9rem;color:var(--muted);line-height:1.75;max-width:400px}
+.back-link{color:var(--blue1);font-size:0.82rem;font-weight:500;margin-top:8px}
+
+/* Already submitted */
+.already-done{display:none;text-align:center;padding:60px 0;flex-direction:column;align-items:center;gap:16px}
+</style>
+<link rel="stylesheet" href="css/theme.css?v=1">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body class="theme">
+
+<div class="page-wrap">
+
+  <div class="bio-header">
+    <img src="images/tcc-logo.png" alt="TCC" class="bio-logo" loading="eager">
+    <div class="bio-brand">
+      <div class="bio-brand-name">Tygerberg CC</div>
+      <div class="bio-brand-sub">Player Profile</div>
+    </div>
+  </div>
+
+  <div class="bio-hero">
+    <div class="bio-eyebrow">For Players</div>
+    <h1 class="bio-title">Tell us<br>about yourself.</h1>
+    <p class="bio-desc">Fill in this form and your bio will appear on the TCC website once reviewed. Takes about 2 minutes.</p>
+  </div>
+
+  <!-- Success state -->
+  <div class="bio-success" id="bio-success">
+    <div class="success-icon">🏏</div>
+    <div class="success-title">Submitted!</div>
+    <p class="success-msg">Your bio has been sent for review. It'll appear on the website once the admin approves it. Thanks for taking the time.</p>
+    <a href="players.html" class="back-link">View player profiles →</a>
+  </div>
+
+  <!-- Already submitted state -->
+  <div class="already-done" id="bio-already">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Already submitted</div>
+    <p class="success-msg">We already have a bio submission from you. Contact the admin if you'd like to update it.</p>
+    <a href="players.html" class="back-link">View player profiles →</a>
+  </div>
+
+  <!-- Form -->
+  <form class="bio-form" id="bio-form" novalidate>
+
+    <div class="form-section">Your Details</div>
+
+    <div class="field">
+      <label class="field-label" for="f-player">Your name *</label>
+      <p class="field-hint">Select your name from the squad list.</p>
+      <select class="field-select" id="f-player" required>
+        <option value="">Loading squad…</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-email">Email *</label>
+      <p class="field-hint">So we can contact you if needed. Not shown publicly.</p>
+      <input type="email" class="field-input" id="f-email" placeholder="your@email.com" autocomplete="email" required>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-nickname">Nickname</label>
+      <input type="text" class="field-input" id="f-nickname" placeholder="What the team calls you">
+    </div>
+
+    <div class="form-section">Cricket</div>
+
+    <div class="field">
+      <label class="field-label" for="f-batting">Batting style *</label>
+      <select class="field-select" id="f-batting" required>
+        <option value="">Select…</option>
+        <option>Right-hand bat</option>
+        <option>Left-hand bat</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-bowling">Bowling style</label>
+      <select class="field-select" id="f-bowling">
+        <option value="">Select…</option>
+        <option>Right-arm fast</option>
+        <option>Right-arm medium</option>
+        <option>Right-arm medium-fast</option>
+        <option>Right-arm off-spin</option>
+        <option>Right-arm leg-spin</option>
+        <option>Left-arm fast</option>
+        <option>Left-arm medium</option>
+        <option>Left-arm orthodox</option>
+        <option>Left-arm chinaman</option>
+        <option>Don't bowl</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-shot">Favourite shot</label>
+      <input type="text" class="field-input" id="f-shot" placeholder="e.g. Cover drive, Pull shot…">
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-hero">Cricket hero</label>
+      <input type="text" class="field-input" id="f-hero" placeholder="e.g. AB de Villiers">
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-years">Years at TCC</label>
+      <input type="number" class="field-input" id="f-years" placeholder="e.g. 5" min="0" max="50" style="max-width:120px">
+    </div>
+
+    <div class="form-section">About You</div>
+
+    <div class="field">
+      <label class="field-label" for="f-photo">Profile photo</label>
+      <p class="field-hint">Optional. A clear headshot works best. JPG or PNG, max 5MB. Your photo will appear on the players page once approved.</p>
+      <div class="photo-upload-wrap" id="photo-upload-wrap">
+        <div class="photo-dropzone" id="photo-dropzone">
+          <div class="photo-dz-inner" id="photo-dz-inner">
+            <div class="photo-dz-icon">📷</div>
+            <div class="photo-dz-label">Tap to choose a photo</div>
+            <div class="photo-dz-hint">or drag and drop here</div>
+          </div>
+          <img id="photo-preview" class="photo-preview" style="display:none" alt="Preview">
+        </div>
+        <input type="file" id="f-photo" accept="image/jpeg,image/png,image/webp" style="display:none">
+        <button type="button" class="photo-clear-btn" id="photo-clear-btn" style="display:none">✕ Remove photo</button>
+      </div>
+      <div class="form-error" id="photo-error"></div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-bio">Bio *</label>
+      <p class="field-hint">A short paragraph about yourself — background, how you got into cricket, what you love about the game. 50–300 characters.</p>
+      <textarea class="field-textarea" id="f-bio" placeholder="Tell us a bit about yourself…" maxlength="300" required></textarea>
+      <div class="field-counter" id="bio-counter">0 / 300</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-fact">Fun fact</label>
+      <p class="field-hint">Something teammates might not know about you.</p>
+      <input type="text" class="field-input" id="f-fact" placeholder="e.g. I once scored a century before breakfast" maxlength="120">
+      <div class="field-counter" id="fact-counter">0 / 120</div>
+    </div>
+
+    <div class="form-error" id="form-error"></div>
+
+    <button type="submit" class="bio-submit" id="bio-submit-btn">
+      Submit My Bio →
+    </button>
+
+  </form>
+
+</div>
+
+<script src="js/player-bio.js"></script>
+</body>
+</html>

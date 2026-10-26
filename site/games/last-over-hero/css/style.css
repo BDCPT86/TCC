@@ -1,0 +1,153 @@
+/* =====================================================================
+   Tygerberg Last Over Hero — style.css
+   EVERY selector is scoped under #cricket-game so the widget is isolated
+   from the host page (and the host's CSS can't reach in and break it).
+   Old Gold #C9A227 · Black #000 · White #FFF
+   ===================================================================== */
+
+#cricket-game{ display:block; }
+#cricket-game *,#cricket-game *::before,#cricket-game *::after{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+#cricket-game .loh-root{
+  --gold:#C9A227; --gold-hi:#E8C24A; --gold-deep:#8a6f15;
+  --ink:#0a0a0a; --paper:#f5f2e8; --red:#d7263d; --green:#2e9e4f;
+  width:100%;
+  font-family:"Barlow",system-ui,-apple-system,sans-serif;
+  color:var(--paper); line-height:1.5; outline:none;
+}
+
+#cricket-game .loh-stage{
+  position:relative; width:100%; max-width:460px; margin:0 auto;
+  aspect-ratio:480 / 720; overflow:hidden; border-radius:14px;
+  background:#05140a;
+  box-shadow:0 0 0 1px rgba(201,162,39,.28), 0 24px 60px rgba(0,0,0,.5);
+}
+#cricket-game .loh-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+#cricket-game .loh-hidden{ display:none !important; }
+
+/* ── HUD ────────────────────────────────────────────── */
+#cricket-game .loh-hud{ position:absolute; left:0; right:0; top:0; padding:10px 12px 0; pointer-events:none; z-index:5; }
+#cricket-game .loh-hud-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+#cricket-game .loh-chase{ display:flex; flex-direction:column; line-height:.9; }
+#cricket-game .loh-need{ font-family:"Bebas Neue",Impact,sans-serif; font-size:52px; color:var(--paper); text-shadow:0 2px 0 rgba(0,0,0,.5); }
+#cricket-game .loh-need-lbl{ font-family:"Barlow Condensed",sans-serif; font-weight:600; font-size:12px; letter-spacing:.8px; text-transform:uppercase; color:rgba(245,242,232,.8); margin-top:2px; }
+#cricket-game .loh-need-lbl b{ color:var(--gold-hi); }
+
+#cricket-game .loh-mute{ pointer-events:auto; width:36px; height:36px; flex:0 0 36px; border-radius:50%; border:1px solid rgba(201,162,39,.3); background:rgba(10,10,10,.5); backdrop-filter:blur(4px); display:grid; place-items:center; cursor:pointer; }
+#cricket-game .loh-ico{ width:15px; height:15px; position:relative; display:block; }
+#cricket-game .loh-ico::before{ content:""; position:absolute; left:0; top:4px; width:6px; height:7px; background:var(--gold); clip-path:polygon(0 0,55% 0,100% -35%,100% 135%,55% 100%,0 100%); }
+#cricket-game .loh-ico::after{ content:""; position:absolute; left:8px; top:1px; width:7px; height:12px; border:2px solid var(--gold); border-left:0; border-radius:0 8px 8px 0; }
+#cricket-game .loh-mute.muted .loh-ico::after{ opacity:.2; }
+#cricket-game .loh-mute.muted .loh-ico::before{ background:rgba(245,242,232,.4); }
+
+#cricket-game .loh-hud-meta{ display:flex; align-items:center; gap:14px; margin-top:8px; }
+#cricket-game .loh-stat{ display:flex; flex-direction:column; line-height:1; }
+#cricket-game .loh-stat span{ font-family:"Barlow Condensed",sans-serif; font-size:9.5px; letter-spacing:1.4px; text-transform:uppercase; color:rgba(245,242,232,.55); }
+#cricket-game .loh-stat b{ font-family:"Bebas Neue",Impact,sans-serif; font-size:22px; color:var(--paper); }
+#cricket-game .loh-pips{ display:flex; gap:5px; margin-left:auto; }
+#cricket-game .loh-pip{ width:13px; height:6px; border-radius:3px; background:rgba(245,242,232,.16); box-shadow:inset 0 0 0 1px rgba(201,162,39,.18); }
+#cricket-game .loh-pip.done{ box-shadow:none; }
+#cricket-game .loh-pip-six{ background:var(--gold-hi); }
+#cricket-game .loh-pip-four{ background:var(--gold); }
+#cricket-game .loh-pip-run{ background:var(--paper); }
+#cricket-game .loh-pip-dot{ background:rgba(245,242,232,.4); }
+#cricket-game .loh-pip-out{ background:var(--red); }
+
+#cricket-game .loh-special{ position:absolute; left:0; right:0; top:108px; text-align:center; font-family:"Barlow Condensed",sans-serif; font-weight:700; font-size:13px; letter-spacing:2px; opacity:0; transition:opacity .2s; }
+#cricket-game .loh-special.on{ opacity:1; animation:loh-pulse 1s infinite; }
+#cricket-game .loh-special-golden{ color:#1a1405; background:var(--gold); display:inline-block; padding:3px 10px; border-radius:5px; left:50%; right:auto; transform:translateX(-50%); box-shadow:0 0 14px rgba(201,162,39,.6); }
+#cricket-game .loh-special-yorker{ color:#ff9a3c; }
+#cricket-game .loh-special-bouncer{ color:var(--red); }
+#cricket-game .loh-special-slower{ color:#7fd1ff; }
+@keyframes loh-pulse{ 50%{ transform:scale(1.05); } }
+#cricket-game .loh-special-golden.on{ animation:loh-pulse-c 1s infinite; }
+@keyframes loh-pulse-c{ 50%{ transform:translateX(-50%) scale(1.05); } }
+
+#cricket-game .loh-prompt{ position:absolute; left:0; right:0; bottom:12px; text-align:center; font-family:"Barlow Condensed",sans-serif; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; font-size:12px; color:rgba(245,242,232,.7); opacity:0; transition:opacity .3s; z-index:5; pointer-events:none; }
+#cricket-game .loh-prompt.show{ opacity:1; }
+
+/* ── Screens ────────────────────────────────────────── */
+#cricket-game .loh-screen{
+  position:absolute; inset:0; z-index:20; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; gap:11px; padding:22px 18px;
+  background:radial-gradient(120% 80% at 50% 16%, rgba(201,162,39,.10), transparent 60%), linear-gradient(180deg, rgba(5,8,6,.9), rgba(2,4,3,.97));
+  animation:loh-fade .3s ease;
+}
+@keyframes loh-fade{ from{ opacity:0; } }
+#cricket-game .loh-crest{ width:78px; height:78px; }
+#cricket-game .loh-crest.sm{ width:54px; height:54px; }
+#cricket-game .loh-title{ font-family:"Bebas Neue",Impact,sans-serif; font-size:50px; line-height:.8; letter-spacing:1px; color:var(--paper); }
+#cricket-game .loh-title span{ display:block; font-size:24px; color:var(--gold); letter-spacing:5px; margin-top:5px; }
+#cricket-game .loh-club{ font-family:"Barlow Condensed",sans-serif; font-weight:600; letter-spacing:3px; text-transform:uppercase; font-size:12px; color:rgba(245,242,232,.7); margin-top:-4px; }
+#cricket-game .loh-tag{ font-family:"Barlow Condensed",sans-serif; font-size:14px; color:rgba(245,242,232,.78); }
+
+#cricket-game .loh-diff{ display:flex; flex-direction:column; gap:6px; width:100%; max-width:240px; }
+#cricket-game .loh-diff button{ cursor:pointer; font-family:"Barlow Condensed",sans-serif; font-weight:600; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; padding:9px 12px; border-radius:8px; border:1px solid rgba(201,162,39,.28); background:rgba(245,242,232,.04); color:rgba(245,242,232,.75); transition:.18s; }
+#cricket-game .loh-diff button:hover{ border-color:var(--gold); }
+#cricket-game .loh-diff button.on{ background:linear-gradient(180deg,var(--gold-hi),var(--gold)); color:#1a1405; border-color:var(--gold); }
+
+#cricket-game .loh-btn{ cursor:pointer; border:0; border-radius:10px; font-family:"Bebas Neue",Impact,sans-serif; font-size:24px; letter-spacing:1.4px; padding:12px 26px; transition:transform .12s, box-shadow .2s; width:100%; max-width:260px; }
+#cricket-game .loh-btn:active{ transform:translateY(2px); }
+#cricket-game .loh-btn-go{ background:linear-gradient(180deg,var(--gold-hi),var(--gold)); color:#1a1405; box-shadow:0 7px 0 var(--gold-deep), 0 12px 22px rgba(0,0,0,.4); }
+#cricket-game .loh-btn-go:active{ box-shadow:0 3px 0 var(--gold-deep), 0 6px 12px rgba(0,0,0,.4); }
+#cricket-game .loh-btn-ghost{ background:transparent; color:var(--gold); border:1px solid rgba(201,162,39,.3); font-size:16px; padding:8px 18px; letter-spacing:2px; width:auto; }
+#cricket-game .loh-btn-ghost:hover{ border-color:var(--gold); }
+#cricket-game .loh-btn-sm{ font-size:18px; padding:10px 16px; width:auto; }
+
+#cricket-game .loh-statline{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px; font-family:"Barlow Condensed",sans-serif; text-transform:uppercase; letter-spacing:1px; font-size:11px; color:rgba(245,242,232,.6); }
+#cricket-game .loh-statline b{ font-family:"Bebas Neue",Impact,sans-serif; font-size:17px; color:var(--gold); letter-spacing:1px; }
+
+#cricket-game .loh-motto{ font-family:"Barlow Condensed",sans-serif; font-style:italic; letter-spacing:3px; font-size:11px; text-transform:uppercase; color:rgba(201,162,39,.55); margin-top:4px; }
+
+/* result */
+#cricket-game .loh-result{ font-family:"Bebas Neue",Impact,sans-serif; font-size:64px; letter-spacing:2px; line-height:.9; }
+#cricket-game .loh-result.win{ color:var(--gold-hi); text-shadow:0 0 30px rgba(201,162,39,.4); }
+#cricket-game .loh-result.loss{ color:var(--red); }
+#cricket-game .loh-result-sub{ font-family:"Barlow Condensed",sans-serif; font-weight:700; letter-spacing:2px; text-transform:uppercase; font-size:13px; color:rgba(245,242,232,.8); margin-top:-6px; }
+#cricket-game .loh-result-score{ font-family:"Bebas Neue",Impact,sans-serif; font-size:72px; line-height:.8; color:var(--paper); }
+#cricket-game .loh-result-line{ font-family:"Barlow Condensed",sans-serif; font-size:15px; color:rgba(245,242,232,.78); max-width:280px; }
+#cricket-game .loh-result-actions{ display:flex; gap:8px; }
+
+#cricket-game .loh-name{ display:flex; flex-direction:column; gap:6px; width:100%; max-width:280px; }
+#cricket-game .loh-name label{ font-family:"Barlow Condensed",sans-serif; text-transform:uppercase; letter-spacing:2px; font-size:11px; color:rgba(245,242,232,.6); }
+#cricket-game .loh-name-row{ display:flex; gap:8px; }
+#cricket-game .loh-name input{ flex:1; background:rgba(245,242,232,.06); border:1px solid rgba(201,162,39,.3); border-radius:9px; color:var(--paper); padding:9px 12px; font-size:16px; font-family:"Barlow",sans-serif; outline:none; }
+#cricket-game .loh-name input:focus{ border-color:var(--gold); }
+
+/* what happened to the over just played */
+#cricket-game .loh-save{ display:flex; align-items:center; justify-content:center; gap:10px; min-height:20px;
+  font-family:"Barlow Condensed",sans-serif; text-transform:uppercase; letter-spacing:1.6px;
+  font-size:11.5px; color:rgba(245,242,232,.6); text-align:center; }
+#cricket-game .loh-save.ok{ color:var(--gold); }
+#cricket-game .loh-save.pending{ color:#e0a93a; }
+#cricket-game .loh-save .loh-btn{ font-size:13px; padding:4px 10px; letter-spacing:1px; }
+#cricket-game .loh-board-stale{ font-family:"Barlow Condensed",sans-serif; font-size:11.5px;
+  letter-spacing:1px; text-transform:uppercase; color:#e0a93a; }
+
+/* leaderboard */
+#cricket-game .loh-board-title{ font-family:"Bebas Neue",Impact,sans-serif; font-size:32px; letter-spacing:1px; color:var(--paper); }
+#cricket-game .loh-board{ list-style:none; width:100%; max-width:320px; display:flex; flex-direction:column; gap:5px; }
+#cricket-game .loh-board li{ display:grid; grid-template-columns:24px 1fr auto; align-items:center; gap:10px; background:rgba(245,242,232,.04); border:1px solid rgba(201,162,39,.14); border-radius:9px; padding:7px 11px; }
+#cricket-game .loh-board li.me{ border-color:var(--gold); background:rgba(201,162,39,.12); }
+#cricket-game .loh-board .r{ font-family:"Bebas Neue",Impact,sans-serif; font-size:17px; color:var(--gold); }
+#cricket-game .loh-board .n{ font-family:"Barlow Condensed",sans-serif; font-weight:600; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Which level the chase was made on. Without it a Club 16 and a Tyger
+   Legend 16 printed identically, and they are not the same feat. */
+#cricket-game .loh-board .lvl{ display:block; font-style:normal; font-size:9px; letter-spacing:1.2px;
+  text-transform:uppercase; color:rgba(245,242,232,.45); margin-top:1px; }
+#cricket-game .loh-board .lvl-legend{ color:var(--gold-hi); }
+#cricket-game .loh-board .lvl-first{ color:var(--gold); }
+#cricket-game .loh-board .s{ font-family:"Bebas Neue",Impact,sans-serif; font-size:20px; color:var(--paper); }
+#cricket-game .loh-board .s small{ font-family:"Barlow Condensed",sans-serif; font-size:10px; color:rgba(245,242,232,.5); letter-spacing:.5px; }
+#cricket-game .loh-board-empty{ font-family:"Barlow Condensed",sans-serif; color:rgba(245,242,232,.6); font-size:14px; }
+
+/* compact width tweaks */
+@media (max-width:380px){
+  #cricket-game .loh-need{ font-size:44px; }
+  #cricket-game .loh-title{ font-size:42px; }
+  #cricket-game .loh-result{ font-size:54px; }
+  #cricket-game .loh-result-score{ font-size:60px; }
+}
+@media (prefers-reduced-motion: reduce){
+  #cricket-game .loh-screen,#cricket-game .loh-special.on,#cricket-game .loh-special-golden.on{ animation:none !important; }
+}

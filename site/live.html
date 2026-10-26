@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TCC Live Scores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/live.css">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <img src="images/tcc-logo.png" alt="TCC" class="topbar-logo">
+      <div>
+        <div class="topbar-name">Tygerberg CC</div>
+        <div class="topbar-sub">Florida Park · Est. 1957</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div style="text-align:right">
+        <div class="topbar-clock" id="clock">00:00</div>
+        <div class="topbar-date" id="dateline"></div>
+      </div>
+      <div class="topbar-status">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Connecting…</span>
+      </div>
+      <button class="bell-btn" id="bell-btn" title="Notify me of match events" style="display:none">
+        <span id="bell-icon">🔔</span>
+      </button>
+      <button class="fullscreen-btn" id="fullscreen-btn">⛶ Full Screen</button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main" id="main">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Ticker bar -->
+  <div class="ticker-bar" id="ticker-bar" style="display:none">
+    <div class="ticker-label">Upcoming</div>
+    <div class="ticker-track-wrap">
+      <div class="ticker-track" id="ticker-track"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Scorecard Modal -->
+<div id="scorecard-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#161616;border:1px solid rgba(201,168,76,0.2);border-radius:14px;width:100%;max-width:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:3px;color:#c9a84c;">Scorecard</div>
+      <button id="scorecard-modal-close" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#f2ede3;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:0.8rem;">✕ Close</button>
+    </div>
+    <div id="scorecard-modal-body" style="overflow-y:auto;padding:16px 20px;flex:1;"></div>
+  </div>
+</div>
+
+<script src="js/live.js?v=6"></script>
+</body>
+</html>

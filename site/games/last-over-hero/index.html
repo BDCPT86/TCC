@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Tygerberg Last Over Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  /* Demo host page only — NOT part of the widget. Shows that the game
+     embeds cleanly and does not take over the surrounding page. */
+  body{ margin:0; background:#111; color:#cfcabe; font-family:"Barlow",system-ui,sans-serif; }
+  .host-wrap{ max-width:780px; margin:0 auto; padding:48px 20px 80px; }
+  .host-head{ text-align:center; margin-bottom:28px; }
+  .host-head h1{ font-family:"Bebas Neue",Impact,sans-serif; font-size:40px; letter-spacing:1px; color:#f5f2e8; margin:0; }
+  .host-head p{ color:#8a8678; font-size:14px; margin:6px 0 0; }
+  .host-note{ margin-top:30px; font-size:13px; color:#76726a; text-align:center; line-height:1.7; }
+  .host-note code{ background:#1e1e1e; padding:2px 6px; border-radius:4px; color:#C9A227; }
+</style>
+</head>
+<body>
+  <div class="host-wrap">
+    <div class="host-head">
+      <h1>Last Over Hero</h1>
+      <p>Embedded demo — the game lives inside a single div and never takes over the page.</p>
+    </div>
+
+    <!-- ▼▼▼  This is the only markup a host page needs  ▼▼▼ -->
+    <div id="cricket-game"></div>
+    <!-- ▲▲▲ -->
+
+    <p class="host-note">
+      Drop <code>&lt;div id="cricket-game"&gt;&lt;/div&gt;</code> anywhere on a page,
+      include <code>css/style.css</code> and the four scripts, and the game mounts itself.
+      Everything is scoped to that div. Facta Non Verba.
+    </p>
+  </div>
+
+  <!-- order matters: helpers first, controller last -->
+  <script src="js/ui.js"></script>
+  <script src="js/ball.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

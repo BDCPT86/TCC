@@ -1,0 +1,2521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Tygerberg Cricket Club</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1a1a1a">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css?v=37">
+<style id="shop-tab-styles">
+  /* Shop tab — scoped additions; relies on existing tokens (--muted2 etc.) */
+  .shop-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:8px; }
+  .shop-field { display:flex; flex-direction:column; gap:5px; font-size:0.85rem; }
+  .shop-field > span { color:var(--muted2, #9b978b); }
+  .shop-field small { opacity:0.7; }
+  .shop-field--full { grid-column:1 / -1; }
+  .shop-check { display:flex; align-items:center; gap:10px; grid-column:1 / -1; font-size:0.9rem; cursor:pointer; }
+  .shop-check input { width:18px; height:18px; accent-color:var(--gold, #C9A227); }
+  .sp-image-preview { width:72px; height:72px; border-radius:8px; background:#1c1c1f center/cover; border:1px solid #2a2a2e;
+    display:grid; place-items:center; font-size:0.68rem; color:#6d675a; }
+  .sp-vrow { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .sp-thumb { width:44px; height:44px; border-radius:6px; background:#1c1c1f center/cover; flex:none; }
+  .sp-thumb--ph { display:grid; place-items:center; font-family:'Barlow Condensed',sans-serif; font-weight:700; color:rgba(201,162,39,.4); font-size:0.9rem; }
+  .shop-prow { display:flex; align-items:center; gap:12px; padding:10px 12px; border:1px solid #2a2a2e; border-radius:8px;
+    margin-bottom:8px; cursor:pointer; transition:border-color .15s; }
+  .shop-prow:hover { border-color:var(--gold, #C9A227); }
+  @media (max-width:620px){ .shop-form-grid { grid-template-columns:1fr; } .sp-vrow { flex-wrap:wrap; } }
+</style>
+
+<style id="ts-fee-styles">
+  /* Timesheet monthly fees + admin toast — scoped additions on existing tokens */
+  .ts-tag { display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; font-size:0.66rem;
+    letter-spacing:0.4px; text-transform:uppercase; vertical-align:1px;
+    color:var(--gold, #C9A227); border:1px solid rgba(201,162,39,0.4); }
+  .ts-tag-quiet { color:var(--muted2, #9b978b); border-color:rgba(155,151,139,0.35); }
+  .ts-pay-section { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:22px 0 8px; }
+  .ts-pay-section:first-child { margin-top:4px; }
+  .ts-pay-section h4 { margin:0; font-size:0.78rem; letter-spacing:1.6px; text-transform:uppercase; color:var(--gold, #C9A227); }
+  .ts-pay-section span { font-size:0.76rem; color:var(--muted2, #9b978b); }
+  .ts-pay-sub { display:flex; justify-content:space-between; padding:8px 12px; font-size:0.85rem; color:var(--muted2, #9b978b); }
+  .ts-fee-pick { display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+  .ts-fee-pick input { width:16px; height:16px; accent-color:var(--gold, #C9A227); }
+  .ts-fee-amt { max-width:130px; margin-left:auto; text-align:right; padding:4px 8px; }
+  .ts-fee-reason { padding:0 12px 10px; }
+  .ts-fee-reason input { font-size:0.82rem; }
+  .ts-fee-paid { opacity:0.62; }
+  .ts-fee-paid small { display:block; font-size:0.72rem; color:var(--muted2, #9b978b); }
+  .ts-flag { font-size:0.72rem; color:#e0a860; }
+  .ts-w-hint { font-size:0.72rem; color:var(--muted2, #9b978b); margin:5px 0 0; }
+
+  .admin-toast { position:fixed; left:50%; bottom:24px; z-index:9999; max-width:calc(100vw - 32px);
+    transform:translate(-50%, 12px); opacity:0; pointer-events:none;
+    padding:10px 16px; border-radius:8px; font-size:0.85rem;
+    background:#1a1916; color:var(--white, #f2ede3); border:1px solid rgba(201,162,39,0.35);
+    box-shadow:0 10px 30px rgba(0,0,0,0.4); transition:opacity .18s ease, transform .18s ease; }
+  .admin-toast.on { opacity:1; transform:translate(-50%, 0); }
+  @media (prefers-reduced-motion: reduce) { .admin-toast { transition:none; } }
+</style>
+
+
+</head>
+<body>
+
+<!-- ════ LOGIN ════ -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <img loading="eager" src="images/tcc-logo.png" alt="TCC" class="login-logo">
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">Tygerberg Cricket Club</div>
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input type="text" class="form-control" id="admin-username" placeholder="Username" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="pwd-wrap">
+        <input type="password" class="form-control" id="admin-password" placeholder="Password" autocomplete="current-password">
+        <button type="button" class="pwd-toggle" id="admin-password-toggle" aria-label="Show password" aria-pressed="false">
+          <svg class="pwd-eye" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="pwd-eye-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+      <span class="form-error" id="login-error">Invalid username or password.</span>
+    </div>
+    <button class="btn btn-primary" id="login-btn">Unlock →</button>
+  </div>
+</div>
+
+<!-- ════ ADMIN PANEL ════ -->
+<div class="admin-panel" id="admin-panel" style="display:none">
+
+  <!-- Mobile top bar (hamburger) -->
+  <header class="admin-topbar">
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="topbar-title">TCC Admin</div>
+    <button class="nav-tab-refresh" id="tab-refresh-btn-mobile" title="Refresh"><span>↻</span></button>
+  </header>
+
+  <!-- Sidebar / drawer -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-brand">
+      <img loading="eager" src="images/tcc-logo.png" alt="TCC" class="nav-logo-img">
+      <div class="nav-brand-text">
+        <div class="nav-brand-name">TCC Admin</div>
+        <div class="nav-brand-sub">Club Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav">
+      <button class="nav-tab active" data-tab="upload">Upload</button>
+      <button class="nav-tab" data-tab="manage">Manage Albums</button>
+      <button class="nav-tab" data-tab="news">News</button>
+      <button class="nav-tab" data-tab="fantasy">Fantasy</button>
+      <button class="nav-tab" data-tab="bios">Player Bios</button>
+      <button class="nav-tab" data-tab="fixtures">Fixtures</button>
+      <button class="nav-tab" data-tab="calendar">Calendar</button>
+      <button class="nav-tab" data-tab="timesheet">Timesheet</button>
+      <button class="nav-tab" data-tab="players">Players</button>
+      <button class="nav-tab" data-tab="registrations" id="tab-btn-registrations" style="display:none">Registrations</button>
+      <button class="nav-tab" data-tab="shop" id="tab-btn-shop" style="display:none">Shop</button>
+      <button class="nav-tab" data-tab="coaching" id="tab-btn-coaching" style="display:none">Coaching</button>
+      <button class="nav-tab" data-tab="warnings" id="tab-btn-warnings" style="display:none">Warnings</button>
+      <button class="nav-tab" data-tab="agreements" id="tab-btn-agreements" style="display:none">Agreements</button>
+      <button class="nav-tab" data-tab="confidentiality" id="tab-btn-confidentiality" style="display:none">Confidentiality</button>
+      <button class="nav-tab" data-tab="admin" id="tab-btn-admin" style="display:none">Admin Users</button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-tab-refresh sidebar-refresh" id="tab-refresh-btn" title="Refresh current tab">
+        <span id="tab-refresh-icon">↻</span> Refresh
+      </button>
+      <button class="btn-logout" id="logout-btn">Log Out</button>
+    </div>
+    <!-- kept hidden for existing JS references (tab sync + role gating) -->
+    <select class="nav-tab-select" id="nav-tab-select" style="display:none" aria-hidden="true" tabindex="-1">
+      <option value="upload">Upload</option>
+      <option value="manage">Manage Albums</option>
+      <option value="news">News</option>
+      <option value="fantasy">Fantasy</option>
+      <option value="bios">Player Bios</option>
+      <option value="fixtures">Fixtures</option>
+      <option value="calendar">Calendar</option>
+      <option value="timesheet">Timesheet</option>
+      <option value="players">Players</option>
+      <option value="registrations" id="select-opt-registrations" style="display:none">Registrations</option>
+      <option value="shop" id="select-opt-shop" style="display:none">Shop</option>
+      <option value="coaching" id="select-opt-coaching" style="display:none">Coaching Analytics</option>
+      <option value="warnings" id="select-opt-warnings" style="display:none">Warnings</option>
+      <option value="agreements" id="select-opt-agreements" style="display:none">Agreements</option>
+      <option value="confidentiality" id="select-opt-confidentiality" style="display:none">Confidentiality</option>
+      <option value="admin" id="select-opt-admin" style="display:none">Admin Users</option>
+    </select>
+  </aside>
+
+  <!-- Drawer backdrop (mobile) -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="admin-content">
+
+    <!-- ── TAB: UPLOAD ── -->
+    <div class="tab-panel" id="tab-upload">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Upload photos</h3>
+          <p>Add photos to a new or existing album.</p>
+        </div>
+      </div>
+      <div class="upload-grid">
+        <div class="upload-form-card">
+          <h3 class="card-title">Add Photos</h3>
+          <div class="form-group">
+            <label class="form-label">Album Name <span class="required">*</span></label>
+            <input type="text" class="form-control" id="album-input" placeholder="e.g. vs Parow CC — 15 Mar 2026">
+            <div class="form-hint">Type an existing album name to add to it, or a new name to create one.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-control" id="category-input">
+              <option value="Match">Match</option>
+              <option value="Training">Training</option>
+              <option value="Events">Events</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" id="date-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Caption <span class="optional">(optional)</span></label>
+            <input type="text" class="form-control" id="caption-input" placeholder="Applies to all uploaded photos">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Photos <span class="required">*</span></label>
+            <div class="file-drop" id="file-drop">
+              <input type="file" id="file-input" accept="image/*" multiple style="display:none">
+              <div class="file-drop-icon">📷</div>
+              <div class="file-drop-text">Drop images here or <span class="file-drop-link">browse</span></div>
+              <div class="file-drop-hint">JPG, PNG, WebP · Max 5MB each · Multiple files supported</div>
+            </div>
+          </div>
+          <div class="preview-grid" id="preview-grid"></div>
+          <button class="btn btn-primary upload-btn" id="upload-btn" style="display:none">
+            <span id="upload-label">Upload Photos →</span>
+            <span id="upload-spinner" style="display:none">Uploading…</span>
+          </button>
+          <div class="upload-success" id="upload-success" style="display:none">✅ Photos uploaded successfully!</div>
+          <div class="upload-error" id="upload-error" style="display:none"></div>
+        </div>
+        <div class="albums-sidebar">
+          <h3 class="card-title">Existing Albums</h3>
+          <div class="album-list" id="album-list"><div class="album-list-loading">Loading albums…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: MANAGE ── -->
+    <div class="tab-panel" id="tab-manage" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Manage albums</h3>
+          <p>Edit album details, add photos, and reorder galleries.</p>
+        </div>
+      </div>
+      <div class="manage-grid">
+        <div class="manage-albums-list" id="manage-albums-list">
+          <div class="album-list-loading">Loading albums…</div>
+        </div>
+        <div class="edit-panel" id="edit-panel">
+          <div class="edit-panel-empty" id="edit-panel-empty">
+            <div class="edit-empty-icon">📂</div>
+            <div>Select an album to edit</div>
+          </div>
+          <div class="edit-panel-content" id="edit-panel-content" style="display:none">
+
+            <!-- Album details -->
+            <div class="edit-section">
+              <h3 class="card-title">Album Details</h3>
+              <div class="form-group">
+                <label class="form-label">Album Name <span class="required">*</span></label>
+                <input type="text" class="form-control" id="edit-album-name">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Category</label>
+                  <select class="form-control" id="edit-category">
+                    <option value="Match">Match</option>
+                    <option value="Training">Training</option>
+                    <option value="Events">Events</option>
+                    <option value="General">General</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control" id="edit-date">
+                </div>
+              </div>
+              <div class="edit-actions">
+                <button class="btn btn-primary" id="save-album-btn">Save Changes</button>
+                <button class="btn btn-danger" id="delete-album-btn">Delete Album</button>
+              </div>
+              <div class="upload-success" id="edit-success" style="display:none">✅ Album updated!</div>
+              <div class="upload-error" id="edit-error" style="display:none"></div>
+            </div>
+
+            <!-- Add more photos -->
+            <div class="edit-section">
+              <h3 class="card-title">Add More Photos</h3>
+              <div class="file-drop file-drop-sm" id="edit-file-drop">
+                <input type="file" id="edit-file-input" accept="image/*" multiple style="display:none">
+                <div class="file-drop-icon">📷</div>
+                <div class="file-drop-text">Drop images or <span class="file-drop-link">browse</span></div>
+              </div>
+              <div class="preview-grid" id="edit-preview-grid"></div>
+              <button class="btn btn-primary upload-btn" id="edit-upload-btn" style="display:none">
+                <span id="edit-upload-label">Add Photos →</span>
+                <span id="edit-upload-spinner" style="display:none">Uploading…</span>
+              </button>
+              <div class="upload-success" id="edit-upload-success" style="display:none">✅ Photos added!</div>
+              <div class="upload-error" id="edit-upload-error" style="display:none"></div>
+            </div>
+
+            <!-- Reorder + manage photos -->
+            <div class="edit-section">
+              <h3 class="card-title">Photos <span class="photo-count" id="edit-photo-count"></span></h3>
+              <div class="form-hint" style="margin-bottom:12px">Drag photos to reorder. Changes save automatically.</div>
+              <div class="edit-photos-grid" id="edit-photos-grid"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: NEWS ── -->
+    <!-- ══════════ CALENDAR ══════════ -->
+    <div class="tab-panel" id="tab-calendar" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Calendar</h3>
+          <p>Fixtures, training, birthdays and club events in one view.</p>
+        </div>
+        <div class="mx-actions">
+          <button class="mx-btn mx-btn-primary" id="cal-new-btn">+ New event</button>
+        </div>
+      </div>
+
+      <!-- Today's birthdays — one tap to post to the club WhatsApp group.
+           Hidden entirely when nobody has a birthday today. -->
+      <div class="cal-bday-strip" id="cal-bday-strip" style="display:none">
+        <div class="cal-bday-icon" aria-hidden="true">&#127874;</div>
+        <div class="cal-bday-main">
+          <div class="cal-bday-title" id="cal-bday-names"></div>
+          <div class="cal-bday-note">Opens WhatsApp with the message ready &mdash; pick the club group and send. Ages are shown here only; the message doesn&rsquo;t include them.</div>
+        </div>
+        <div class="cal-bday-graphic" id="cal-bday-graphic" style="display:none">
+          <div id="cal-bday-thumbs" class="cal-bday-thumbs"></div>
+          <button type="button" class="mx-btn mx-btn-sm mx-btn-ghost" id="cal-bday-graphic-btn">Share graphic</button>
+        </div>
+        <a class="mx-btn mx-btn-primary cal-bday-btn" id="cal-bday-send" href="#" target="_blank" rel="noopener">Send to WhatsApp</a>
+      </div>
+
+      <div class="mx-metrics" id="cal-metrics"></div>
+
+      <div class="cal-toolbar">
+        <div class="cal-nav">
+          <button class="mx-icon-btn" id="cal-prev" aria-label="Previous month">&#8249;</button>
+          <h4 class="cal-month" id="cal-month-label">&nbsp;</h4>
+          <button class="mx-icon-btn" id="cal-next" aria-label="Next month">&#8250;</button>
+          <button class="mx-btn mx-btn-sm mx-btn-ghost" id="cal-today">Today</button>
+        </div>
+        <div class="cal-layers">
+          <label class="mx-check"><input type="checkbox" id="cal-l-fixture" checked><span class="cal-dot cal-dot-fixture"></span>Fixtures</label>
+          <label class="mx-check"><input type="checkbox" id="cal-l-training" checked><span class="cal-dot cal-dot-training"></span>Training</label>
+          <label class="mx-check"><input type="checkbox" id="cal-l-event" checked><span class="cal-dot cal-dot-event"></span>Events</label>
+          <label class="mx-check"><input type="checkbox" id="cal-l-birthday" checked><span class="cal-dot cal-dot-birthday"></span>Birthdays</label>
+        </div>
+      </div>
+
+      <div class="cal-wrap">
+        <div class="cal-dow" aria-hidden="true">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+        <div class="cal-grid" id="cal-grid"><div class="mx-empty">Loading&hellip;</div></div>
+      </div>
+
+      <div class="mx-panel cal-day-panel" id="cal-day-panel" style="display:none">
+        <div class="mx-subhead" style="justify-content:space-between">
+          <h4 id="cal-day-title">Day</h4>
+          <button class="mx-btn mx-btn-sm mx-btn-ghost" id="cal-day-close">Close</button>
+        </div>
+        <div id="cal-day-list"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-news" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>News</h3>
+          <p>Write and manage news articles and match reports.</p>
+        </div>
+      </div>
+      <div class="news-grid">
+
+        <!-- Articles list -->
+        <div class="news-list-card">
+          <div class="mx-subhead" style="justify-content:space-between">
+            <h4>Articles</h4>
+            <button class="mx-btn mx-btn-sm mx-btn-ghost" id="new-article-btn">New article</button>
+          </div>
+          <div class="players-list-count" id="news-count"></div>
+          <div class="players-list-scroll">
+            <div class="news-list" id="news-list"><div class="mx-empty">Loading…</div></div>
+          </div>
+        </div>
+
+        <!-- Editor -->
+        <div class="news-editor-card" id="news-editor-card">
+          <div class="edit-panel-empty" id="news-editor-empty">
+            <div class="edit-empty-icon">📝</div>
+            <div>Select an article or create a new one</div>
+          </div>
+          <div id="news-editor-content" style="display:none">
+            <input type="hidden" id="news-id">
+            <input type="hidden" id="news-category" value="general">
+
+            <!-- Article type toggle -->
+            <div class="form-group" style="flex-direction:row;align-items:center;gap:14px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px">
+              <span class="form-label" style="margin:0;white-space:nowrap">Article type</span>
+              <div style="display:flex;gap:6px">
+                <button type="button" class="article-type-btn active" data-type="general" id="type-general-btn">📰 General</button>
+                <button type="button" class="article-type-btn" data-type="match-report" id="type-match-btn">🏏 Match Report</button>
+              </div>
+            </div>
+
+            <!-- Match Report fields (shown when type = match-report) -->
+            <div id="match-report-fields" style="display:none;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;flex-direction:column;gap:12px">
+              <div class="form-label" style="color:var(--white);letter-spacing:0">Match details</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Opponent <span class="required">*</span></label>
+                  <input type="text" class="form-control" id="mr-opponent" placeholder="e.g. Pinelands CC">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Result</label>
+                  <select class="form-control" id="mr-result">
+                    <option value="">Select…</option>
+                    <option value="W">Win</option>
+                    <option value="L">Loss</option>
+                    <option value="D">Draw</option>
+                    <option value="NR">No Result</option>
+                    <option value="T">Tie</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Our Score</label>
+                  <input type="text" class="form-control" id="mr-our-score" placeholder="e.g. 187/6 (40 overs)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Their Score</label>
+                  <input type="text" class="form-control" id="mr-their-score" placeholder="e.g. 154 all out (38.2 overs)">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Team / Division</label>
+                  <select class="form-control" id="mr-team">
+                    <option value="1st XI">1st XI</option>
+                    <option value="2nd XI">2nd XI</option>
+                    <option value="3rd XI">3rd XI</option>
+                    <option value="4th XI">4th XI</option>
+                    <option value="Youth">Youth</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Venue</label>
+                  <input type="text" class="form-control" id="mr-venue" placeholder="e.g. Florida Park (Home)">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Match Date</label>
+                <input type="date" class="form-control" id="mr-date" style="max-width:200px">
+              </div>
+              <button type="button" class="btn btn-secondary" id="mr-autofill-btn" style="align-self:flex-start">✨ Auto-fill report template</button>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Title <span class="required">*</span></label>
+              <input type="text" class="form-control" id="news-title" placeholder="Article title">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cover Image <span style="font-size:0.65rem;color:var(--muted2);font-weight:400">(used as card background on news page)</span></label>
+              <div class="cover-image-row" id="cover-image-row">
+                <div class="cover-image-preview" id="cover-image-preview" style="display:none">
+                  <img id="cover-image-thumb" src="" alt="Cover">
+                  <button type="button" class="cover-image-remove" id="cover-image-remove" title="Remove cover image">✕</button>
+                </div>
+                <div class="cover-image-actions" id="cover-image-actions">
+                  <input type="file" id="cover-image-file" accept="image/*" style="display:none">
+                  <button type="button" class="btn btn-secondary btn-sm" id="cover-image-upload-btn">📁 Upload Image</button>
+                  <span style="font-size:0.72rem;color:var(--muted2)">or</span>
+                  <input type="url" class="form-control" id="cover-image-url" placeholder="Paste image URL…" style="max-width:320px;font-size:0.8rem">
+                </div>
+                <span class="cover-image-status" id="cover-image-status"></span>
+              </div>
+              <input type="hidden" id="news-cover-image">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gallery Album <span style="font-size:0.65rem;color:var(--muted2);font-weight:400">(optional — shows a photo filmstrip in the article)</span></label>
+              <div class="album-picker-wrap" id="album-picker-wrap">
+                <div class="album-picker-input-row">
+                  <input type="text" class="form-control" id="album-picker-search" placeholder="Search albums…" autocomplete="off">
+                  <button type="button" class="btn btn-secondary btn-sm" id="album-picker-clear" style="display:none">✕ Clear</button>
+                </div>
+                <div class="album-picker-dropdown" id="album-picker-dropdown" style="display:none"></div>
+                <div class="album-picker-selected" id="album-picker-selected" style="display:none">
+                  <img id="album-picker-thumb" src="" alt="" class="album-picker-thumb">
+                  <div class="album-picker-selected-info">
+                    <div class="album-picker-name" id="album-picker-name"></div>
+                    <div class="album-picker-count" id="album-picker-count"></div>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" id="news-gallery-album">
+            </div>
+              <div class="editor-toolbar">
+                <button class="editor-btn" data-cmd="bold" title="Bold"><b>B</b></button>
+                <button class="editor-btn" data-cmd="italic" title="Italic"><i>I</i></button>
+                <button class="editor-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+                <div class="editor-sep"></div>
+                <button class="editor-btn" data-cmd="insertUnorderedList" title="Bullet list">• List</button>
+                <button class="editor-btn" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+                <div class="editor-sep"></div>
+                <button class="editor-btn" data-cmd="h2" title="Heading">H2</button>
+                <button class="editor-btn" data-cmd="h3" title="Subheading">H3</button>
+                <div class="editor-sep"></div>
+                <button class="editor-btn" id="editor-link-btn" title="Insert link">🔗 Link</button>
+                <button class="editor-btn" data-cmd="unlink" title="Remove link">Unlink</button>
+                <div class="editor-sep"></div>
+                <button class="editor-btn" id="editor-img-btn" title="Insert image">🖼 Image</button>
+                <button class="editor-btn" id="editor-video-btn" title="Insert YouTube video">🎬 Video</button>
+              </div>
+
+              <!-- Inline link input — shown when Link is clicked -->
+              <div class="editor-inline-input" id="editor-link-bar" style="display:none">
+                <input type="url" id="editor-link-url" placeholder="https://example.com" autocomplete="off">
+                <button class="editor-inline-btn" id="editor-link-apply">Apply</button>
+                <button class="editor-inline-btn editor-inline-cancel" id="editor-link-cancel">✕</button>
+              </div>
+
+              <!-- Inline image input — upload or URL -->
+              <div class="editor-inline-input editor-img-panel" id="editor-img-bar" style="display:none">
+                <input type="file" id="editor-img-file" accept="image/*" style="display:none">
+                <button class="editor-inline-btn" id="editor-img-upload-btn">📁 Upload</button>
+                <span class="editor-inline-sep">or</span>
+                <input type="url" id="editor-img-url" placeholder="Paste image URL…" autocomplete="off">
+                <button class="editor-inline-btn" id="editor-img-apply">Insert</button>
+                <button class="editor-inline-btn editor-inline-cancel" id="editor-img-cancel">✕</button>
+                <span class="editor-img-status" id="editor-img-status"></span>
+              </div>
+
+              <!-- Inline video input — YouTube URL -->
+              <div class="editor-inline-input" id="editor-video-bar" style="display:none">
+                <input type="url" id="editor-video-url" placeholder="Paste a YouTube link (watch / shorts / youtu.be)…" autocomplete="off">
+                <button class="editor-inline-btn" id="editor-video-apply">Insert</button>
+                <button class="editor-inline-btn editor-inline-cancel" id="editor-video-cancel">✕</button>
+                <span class="editor-img-status" id="editor-video-status"></span>
+              </div>
+
+              <!-- Floating toolbar shown when an inserted image is selected -->
+              <div class="img-inline-toolbar" id="img-inline-toolbar" style="display:none">
+                <div class="img-tb-group">
+                  <button type="button" class="img-tb-btn" data-align="left"   title="Wrap text right of image">⬅</button>
+                  <button type="button" class="img-tb-btn" data-align="center" title="Center, break text">⬛</button>
+                  <button type="button" class="img-tb-btn" data-align="right"  title="Wrap text left of image">➡</button>
+                </div>
+                <div class="img-tb-sep"></div>
+                <div class="img-tb-group">
+                  <button type="button" class="img-tb-btn" data-size="small"  title="Small">S</button>
+                  <button type="button" class="img-tb-btn" data-size="medium" title="Medium">M</button>
+                  <button type="button" class="img-tb-btn" data-size="large"  title="Large">L</button>
+                  <button type="button" class="img-tb-btn" data-size="full"   title="Full width">Full</button>
+                </div>
+                <div class="img-tb-sep"></div>
+                <div class="img-tb-group" id="img-tb-row-group">
+                  <button type="button" class="img-tb-btn" id="img-tb-row-add" title="Add this image to a side-by-side row">⧉ Row</button>
+                  <button type="button" class="img-tb-btn" id="img-tb-row-out" title="Take out of the row" style="display:none">⤢ Unrow</button>
+                </div>
+                <div class="img-tb-sep"></div>
+                <button type="button" class="img-tb-btn img-tb-remove" id="img-tb-remove" title="Remove image">🗑</button>
+              </div>
+
+              <div class="rich-editor" id="news-content" contenteditable="true" placeholder="Write your article here…"></div>
+            </div>
+            <div class="news-editor-actions">
+              <div class="news-status-controls">
+                <div class="news-status-row">
+                  <label class="form-label" style="font-size:0.65rem;letter-spacing:1.5px">Status</label>
+                  <div class="news-status-btns" id="news-status-btns">
+                    <button type="button" class="status-btn active" data-status="draft">Draft</button>
+                    <button type="button" class="status-btn" data-status="published">Live</button>
+                    <button type="button" class="status-btn" data-status="archived">Archived</button>
+                  </div>
+                  <input type="hidden" id="news-status" value="draft">
+                </div>
+                <div class="news-status-row">
+                  <label class="publish-toggle">
+                    <input type="checkbox" id="news-pinned">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    <span class="toggle-label">📌 Pin to homepage</span>
+                  </label>
+                </div>
+                <div class="news-status-row">
+                  <label class="form-label" style="font-size:0.65rem;letter-spacing:1.5px;margin-bottom:4px">Expires (optional)</label>
+                  <input type="date" id="news-expires" class="form-control" style="max-width:180px" title="Article drops off homepage after this date">
+                  <span style="font-size:0.7rem;color:var(--muted2)">Hides from homepage after this date</span>
+                </div>
+              </div>
+              <div class="news-action-btns">
+                <button class="btn btn-primary" id="save-news-btn">Save Article</button>
+                <button class="btn btn-danger" id="delete-news-btn" style="display:none">Delete</button>
+              </div>
+            </div>
+            <div class="upload-success" id="news-success" style="display:none">✅ Article saved!</div>
+            <div class="upload-error" id="news-error" style="display:none"></div>
+          </div>
+        </div>
+
+      </div>
+
+
+    <!-- ── TAB: FANTASY ── -->
+    <div class="tab-panel" id="tab-fantasy" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Fantasy cricket</h3>
+          <p>Player values, participants, rounds and scoring. The pick pool is senior adults only — youth squads and registered minors are excluded.</p>
+        </div>
+      </div>
+
+      <div class="mx-metrics" id="fantasy-metrics"></div>
+
+      <!-- Player Values -->
+      <div class="mx-panel">
+        <div class="mx-subhead" style="justify-content:space-between">
+          <h4>Player values</h4>
+          <button class="btn-new-article" id="save-values-btn">Save all values</button>
+        </div>
+        <p class="mx-subhead-note">Set each player's value (R1–R20). Total budget per participant is R100. Higher value = stronger player.</p>
+        <input type="text" class="form-control" id="fv-search" placeholder="Search players…" aria-label="Search players" style="margin-bottom:8px">
+        <div class="players-list-count" id="fv-count"></div>
+        <div class="fv-scroll">
+          <div id="player-values-grid"><div class="mx-empty">Loading players…</div></div>
+        </div>
+        <div class="upload-success" id="values-success" style="display:none;margin-top:8px">Values saved.</div>
+        <div class="upload-error"   id="values-error"   style="display:none;margin-top:8px"></div>
+      </div>
+
+      <!-- Pending Registrations -->
+      <div class="mx-subhead" style="margin-top:26px"><h4>Pending registrations</h4></div>
+      <p class="mx-subhead-note">Review and approve or reject new league applications.</p>
+      <div id="pending-list"><div class="mx-empty">Loading…</div></div>
+
+      <!-- Participants -->
+      <div class="mx-subhead" style="margin-top:26px"><h4>Approved participants</h4></div>
+      <div class="mx-panel" style="margin-top:10px">
+        <div id="participants-list"><div class="mx-empty">Loading…</div></div>
+      </div>
+      <div class="mx-panel">
+        <div class="mx-subhead" style="justify-content:space-between">
+          <h4>Rounds</h4>
+          <button class="btn-new-article" id="new-round-btn">New round</button>
+        </div>
+        <div id="rounds-list"><div class="mx-empty">Loading rounds…</div></div>
+
+        <!-- New round form -->
+        <div id="round-form" style="display:none;margin-top:20px">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Round Name</label>
+              <input type="text" class="form-control" id="round-name" placeholder="e.g. Week 1 — vs Parow CC">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pick Deadline</label>
+              <input type="datetime-local" class="form-control" id="round-deadline">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:8px">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.8rem;color:var(--muted2)">
+              <input type="checkbox" id="round-wildcard" style="accent-color:#5b6ef2;width:16px;height:16px">
+              Wildcard round — captain scores triple instead of double
+            </label>
+          </div>
+          <div class="form-group" style="margin-top:6px">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.8rem;color:var(--muted2)">
+              <input type="checkbox" id="round-h2h" style="accent-color:#3a7ef0;width:16px;height:16px">
+              Head-to-head round — participants play 1v1 this round
+            </label>
+          </div>
+          <div class="form-group" style="margin-top:6px">
+            <label class="form-label">Linked fixtures <span style="font-size:0.72rem;color:var(--muted)">(hold Ctrl/Cmd to select multiple)</span></label>
+            <select class="form-control" id="round-fixtures" multiple style="min-height:90px">
+            </select>
+            <div id="round-fixtures-count" style="font-size:0.72rem;color:var(--muted);margin-top:3px"></div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:3px">Select the match(es) this round covers. Used for live scoring and auto-score pipeline.</div>
+          </div>
+          <div class="form-group" style="margin-top:6px">
+            <label class="form-label">Round boost</label>
+            <select class="form-control" id="round-boost">
+              <option value="">No boost — standard round</option>
+              <option value="bowlers_double">Bowlers double — bowling pts ×2</option>
+              <option value="batters_double">Batters double — batting pts ×2</option>
+              <option value="allrounders_boost">All-rounders boost — AR pts ×1.5</option>
+              <option value="bonus_economy">Economy bonus weekend — economy bonuses ×2</option>
+              <option value="potm_double">POTM double — player of match bonus ×2</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="save-round-btn" style="margin-top:12px">Create round</button>
+          <div class="upload-error" id="round-error" style="display:none;margin-top:8px"></div>
+        </div>
+
+        <!-- Edit round form -->
+        <div id="edit-round-form" style="display:none;margin-top:20px;padding:18px;background:var(--bg3);border-radius:12px;border:1px solid rgba(255,255,255,0.08)">
+          <h4 class="mx-panel-title" style="margin-bottom:12px">Edit round</h4>
+          <input type="hidden" id="edit-round-id">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Round Name</label>
+              <input type="text" class="form-control" id="edit-round-name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pick Deadline</label>
+              <input type="datetime-local" class="form-control" id="edit-round-deadline">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:8px">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.8rem;color:var(--muted2)">
+              <input type="checkbox" id="edit-round-wildcard" style="accent-color:#5b6ef2;width:16px;height:16px">
+              Wildcard round
+            </label>
+          </div>
+          <div class="form-group" style="margin-top:6px">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.8rem;color:var(--muted2)">
+              <input type="checkbox" id="edit-round-h2h" style="accent-color:#3a7ef0;width:16px;height:16px">
+              Head-to-head round
+            </label>
+          </div>
+          <div class="form-group" style="margin-top:6px">
+            <label class="form-label">Linked fixtures <span style="font-size:0.72rem;color:var(--muted)">(hold Ctrl/Cmd to select multiple)</span></label>
+            <select class="form-control" id="edit-round-fixtures" multiple style="min-height:90px">
+            </select>
+            <div id="edit-round-fixtures-count" style="font-size:0.72rem;color:var(--muted);margin-top:3px"></div>
+          </div>
+          <div class="form-group" style="margin-top:6px">
+            <label class="form-label">Round boost</label>
+            <select class="form-control" id="edit-round-boost">
+              <option value="">No boost — standard round</option>
+              <option value="bowlers_double">Bowlers double — bowling pts ×2</option>
+              <option value="batters_double">Batters double — batting pts ×2</option>
+              <option value="allrounders_boost">All-rounders boost — AR pts ×1.5</option>
+              <option value="bonus_economy">Economy bonus weekend — economy bonuses ×2</option>
+              <option value="potm_double">POTM double — player of match bonus ×2</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <button class="btn btn-primary" id="save-edit-round-btn">Save changes</button>
+            <button class="btn btn-outline-muted" id="edit-round-cancel-btn">Cancel</button>
+          </div>
+          <div class="upload-error" id="edit-round-error" style="display:none;margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- H2H Fixtures Panel -->
+      <div class="mx-panel" id="h2h-fixtures-panel" style="display:none">
+        <div class="mx-subhead" style="justify-content:space-between">
+          <h4 id="h2h-panel-title">H2H fixtures</h4>
+          <button class="mx-btn mx-btn-sm mx-btn-ghost" onclick="document.getElementById('h2h-fixtures-panel').style.display='none'">Close</button>
+        </div>
+        <p class="form-hint" style="margin:8px 0 12px">Pairings are generated automatically. Use <strong>Fixtures</strong> to create/regenerate pairings before the deadline, and <strong>Resolve H2H</strong> after scores are saved to record results.</p>
+        <div id="h2h-fixtures-body"></div>
+      </div>
+
+      <!-- Enter scores -->
+      <div class="mx-panel" id="scores-section" style="display:none">
+        <h4 class="mx-panel-title">Scores — <span id="scores-round-name"></span></h4>
+        <p class="form-hint" style="margin:8px 0 16px">Enter scores per match. Only add players who actually played. Add multiple matches if players played more than once this round — scores accumulate.</p>
+
+        <!-- Import / template bar -->
+        <div class="scores-import-bar">
+          <a href="tcc-fantasy-scores-template.xlsx" download class="btn-sm">Download template</a>
+          <label class="btn-sm scores-import-label">
+            Import CSV / Excel
+            <input type="file" id="scores-import-file" accept=".csv,.xlsx,.xls" style="display:none">
+          </label>
+          <span class="scores-import-hint">Import will add a new match tab with the file's data</span>
+        </div>
+        <div class="upload-error" id="import-error" style="display:none;margin-bottom:8px"></div>
+
+        <!-- Match tabs -->
+        <div class="scores-match-bar">
+          <div class="scores-match-tabs" id="scores-match-tabs"></div>
+          <button class="btn-sm" id="add-match-btn">Add match</button>
+        </div>
+
+        <!-- Active match score entry -->
+        <div id="scores-match-content"></div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="save-scores-btn">Save scores</button>
+          <button class="btn btn-outline-muted" id="notify-scores-btn">Notify participants</button>
+        </div>
+        <div class="upload-success" id="scores-success" style="display:none;margin-top:8px">Scores saved.</div>
+        <div class="upload-success" id="notify-success" style="display:none;margin-top:8px">Notifications sent.</div>
+        <div class="upload-error"   id="scores-error"   style="display:none;margin-top:8px"></div>
+      </div>
+
+    </div>
+
+    <!-- ══ BIOS TAB ══ -->
+    <div class="tab-panel" id="tab-bios" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Bios</h3>
+          <p>Review player bio submissions and publish them to the website.</p>
+        </div>
+      </div>
+
+      <div class="mx-panel">
+        <h4 class="mx-panel-title">Share bio form link</h4>
+        <p class="mx-panel-sub">Generate a personalised link for a player. Their name is pre-filled and locked so there's no ambiguity.</p>
+        <div class="mx-actions" style="margin-top:12px">
+          <select class="mx-select" id="bio-link-player-select" style="max-width:260px">
+            <option value="">Select a player…</option>
+          </select>
+          <button class="mx-btn mx-btn-ghost" id="bio-link-generate-btn">Generate link</button>
+          <button class="mx-btn mx-btn-ghost" id="bio-link-copy-btn" style="display:none">Copy link</button>
+        </div>
+        <div id="bio-link-output" class="mx-link-output" style="display:none"></div>
+      </div>
+
+      <div class="mx-metrics" id="bio-metrics"></div>
+
+      <div class="mx-subhead"><h4>Pending submissions</h4></div>
+      <p class="mx-subhead-note">Approving writes the bio directly to the player's profile on the website.</p>
+      <div id="bio-pending-list"><div class="mx-empty">Loading…</div></div>
+
+      <div class="mx-subhead" style="margin-top:30px"><h4>Approved bios</h4></div>
+      <div id="bio-approved-list"><div class="mx-empty">Loading…</div></div>
+    </div>
+
+    <!-- ══ PLAYERS TAB ══ -->
+    <!-- ══════════ TIMESHEET ══════════ -->
+    <div class="tab-panel" id="tab-timesheet" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Timesheet</h3>
+          <p>Log your hours, submit them for approval, then they go on the payment run.</p>
+        </div>
+        <div class="mx-actions">
+          <button class="mx-btn mx-btn-primary" id="ts-new-btn">+ Log hours</button>
+        </div>
+      </div>
+
+      <div class="mx-metrics" id="ts-metrics"></div>
+
+      <!-- not set up as a worker -->
+      <div class="ts-notice" id="ts-not-worker" style="display:none">
+        You are not set up to log hours yet. An administrator needs to add you
+        on the <b>People &amp; rates</b> tab below.
+      </div>
+
+      <div class="ts-tabs" id="ts-tabs">
+        <button class="ts-tab on" data-ts="mine">My hours</button>
+        <button class="ts-tab" data-ts="review" style="display:none">To approve <span class="ts-count" id="ts-review-count"></span></button>
+        <button class="ts-tab" data-ts="pay" style="display:none">Payment run</button>
+        <button class="ts-tab" data-ts="people" style="display:none">People &amp; rates</button>
+      </div>
+
+      <!-- ── My hours ── -->
+      <div class="ts-view" id="ts-view-mine">
+        <div class="ts-bar">
+          <label class="form-label" for="ts-from">From</label>
+          <input type="date" class="form-control" id="ts-from" style="max-width:170px">
+          <label class="form-label" for="ts-to">To</label>
+          <input type="date" class="form-control" id="ts-to" style="max-width:170px">
+          <button class="mx-btn mx-btn-sm mx-btn-ghost" id="ts-mine-refresh">Show</button>
+          <button class="mx-btn mx-btn-sm mx-btn-primary" id="ts-submit-btn" style="margin-left:auto">Submit drafts</button>
+        </div>
+        <div id="ts-mine-list"></div>
+      </div>
+
+      <!-- ── To approve ── -->
+      <div class="ts-view" id="ts-view-review" style="display:none">
+        <div class="ts-bar">
+          <span class="ts-hint">Tick the entries you are signing off. You cannot approve your own hours.</span>
+          <button class="mx-btn mx-btn-sm mx-btn-ghost" id="ts-reject-btn">Reject&hellip;</button>
+          <button class="mx-btn mx-btn-sm mx-btn-primary" id="ts-approve-btn">Approve selected</button>
+        </div>
+        <div id="ts-review-list"></div>
+      </div>
+
+      <!-- ── Payment run ── -->
+      <div class="ts-view" id="ts-view-pay" style="display:none">
+        <div class="ts-bar">
+          <label class="form-label" for="ts-pay-from">From</label>
+          <input type="date" class="form-control" id="ts-pay-from" style="max-width:170px">
+          <label class="form-label" for="ts-pay-to">To</label>
+          <input type="date" class="form-control" id="ts-pay-to" style="max-width:170px">
+          <button class="mx-btn mx-btn-sm mx-btn-ghost" id="ts-pay-run">Calculate</button>
+          <button class="mx-btn mx-btn-sm mx-btn-ghost" id="ts-pay-csv">Download CSV</button>
+          <button class="mx-btn mx-btn-sm mx-btn-primary" id="ts-pay-mark">Mark ticked as paid</button>
+        </div>
+        <div id="ts-pay-list"></div>
+      </div>
+
+      <!-- ── People & rates ── -->
+      <div class="ts-view" id="ts-view-people" style="display:none">
+        <div class="ts-bar">
+          <span class="ts-hint">Rates and monthly fees are only visible on this tab.</span>
+          <button class="mx-btn mx-btn-sm mx-btn-primary" id="ts-worker-new" style="margin-left:auto">+ Add person</button>
+        </div>
+        <div id="ts-people-list"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-players" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Players</h3>
+          <p>Edit player profiles, photos, status and badges.</p>
+        </div>
+      </div>
+
+      <!-- Split layout: list left, editor right -->
+      <div class="players-admin-layout">
+
+        <!-- Player list -->
+        <div class="players-admin-list-col">
+          <button class="mx-btn mx-btn-ghost" id="new-player-btn" style="width:100%;justify-content:center;margin-bottom:14px">+ Add player</button>
+          <input type="text" class="form-control" id="player-search" placeholder="Search by name or role…" aria-label="Search players" style="margin-bottom:10px">
+          <div class="players-admin-filters">
+            <button class="pf-btn active" data-filter="active">Active</button>
+            <button class="pf-btn" data-filter="all">All</button>
+            <button class="pf-btn" data-filter="inactive">Inactive</button>
+          </div>
+          <div class="players-admin-filters" id="player-squad-filters" style="margin-top:6px">
+            <button class="pf-btn active" data-squad="all">All squads</button>
+            <button class="pf-btn" data-squad="senior">Senior</button>
+            <button class="pf-btn" data-squad="youth">Youth</button>
+          </div>
+          <div class="players-list-count" id="player-count"></div>
+          <div class="players-list-scroll">
+            <div id="players-admin-list"><div class="mx-empty">Loading…</div></div>
+          </div>
+        </div>
+
+        <!-- Player editor -->
+        <div class="players-admin-editor-col">
+          <div id="players-editor-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--muted);text-align:center;padding:40px">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <p style="font-size:0.85rem">Select a player to edit<br>or add a new one</p>
+          </div>
+          <div id="players-editor-content" style="display:none">
+            <input type="hidden" id="player-id">
+
+            <!-- Photo -->
+            <div class="fantasy-admin-section" style="padding-bottom:16px">
+              <h3 class="card-title" style="margin-bottom:14px">Profile Photo</h3>
+              <div class="player-photo-row">
+                <div class="player-photo-current" id="player-photo-current">
+                  <div class="player-avatar-fallback-admin" id="player-photo-fallback">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  </div>
+                  <img id="player-photo-img" src="" alt="" style="display:none">
+                </div>
+                <div class="player-photo-actions">
+                  <label class="btn-sm" style="cursor:pointer">
+                    ⬆ Upload Photo
+                    <input type="file" id="player-photo-file" accept="image/jpeg,image/png,image/webp" style="display:none">
+                  </label>
+                  <button class="btn-sm danger" id="player-photo-remove-btn" style="display:none">Remove</button>
+                  <div class="upload-error" id="player-photo-error" style="display:none;margin-top:6px"></div>
+                </div>
+              </div>
+              <input type="hidden" id="player-photo-url">
+            </div>
+
+            <!-- Core info -->
+            <div class="fantasy-admin-section">
+              <h3 class="card-title" style="margin-bottom:14px">Player Info</h3>
+              <div class="form-row" style="margin-bottom:12px">
+                <div>
+                  <label class="form-label">Full Name *</label>
+                  <input type="text" class="form-control" id="player-name" placeholder="First Last">
+                </div>
+                <div>
+                  <label class="form-label">Role *</label>
+                  <select class="form-control" id="player-role">
+                    <option value="">Select…</option>
+                    <option>Batter</option>
+                    <option>Bowler</option>
+                    <option>All-Rounder</option>
+                    <option>Wicketkeeper</option>
+                    <option>Wicketkeeper-Batter</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row" style="margin-bottom:12px">
+                <div>
+                  <label class="form-label">Date of birth</label>
+                  <div class="player-dob-row">
+                    <select class="form-control" id="player-dob-d" aria-label="Day"><option value="">Day</option></select>
+                    <select class="form-control" id="player-dob-m" aria-label="Month"><option value="">Month</option></select>
+                    <select class="form-control" id="player-dob-y" aria-label="Year"><option value="">Year</option></select>
+                  </div>
+                  <input type="hidden" id="player-dob">
+                  <p style="font-size:0.72rem;color:var(--muted2);margin:5px 0 0">
+                    Drives the calendar birthday reminders and the under-18 checks.
+                    Leave blank if unknown.
+                  </p>
+                </div>
+              </div>
+              <div class="form-row" style="margin-bottom:12px">
+                <div>
+                  <label class="form-label">Member type</label>
+                  <select class="form-control" id="player-member-type">
+                    <option value="player">Playing member</option>
+                    <option value="executive">Executive / committee</option>
+                    <option value="non_playing">Non-playing member</option>
+                  </select>
+                  <p style="font-size:0.72rem;color:var(--muted2);margin:5px 0 0">
+                    Executive and non-playing members are hidden from the public players
+                    page and from fantasy squad selection, but still appear in the admin
+                    calendar (birthdays) and in this list.
+                  </p>
+                </div>
+              </div>
+              <div class="form-row" style="margin-bottom:12px">
+                <div>
+                  <label class="form-label">Squad</label>
+                  <select class="form-control" id="player-squad">
+                    <option value="senior">Senior</option>
+                    <option value="youth">Youth</option>
+                  </select>
+                  <p style="font-size:0.72rem;color:var(--muted2);margin:5px 0 0">
+                    Which side they play for — <strong>not</strong> their age. A junior who plays
+                    senior cricket goes in the Senior squad and stays legally a minor.
+                  </p>
+                </div>
+                <div>
+                  <p id="player-minor-note" style="display:none;font-size:0.74rem;color:#e0c96a;
+                     background:rgba(201,162,39,0.1);border:1px solid rgba(201,162,39,0.32);
+                     border-radius:5px;padding:9px 11px;margin:22px 0 0"></p>
+                </div>
+              </div>
+              <div class="form-row" style="margin-bottom:12px">
+                <div>
+                  <label class="form-label">Batting Hand</label>
+                  <select class="form-control" id="player-batting">
+                    <option value="">Select…</option>
+                    <option>Right-hand bat</option>
+                    <option>Left-hand bat</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Bowling Style</label>
+                  <select class="form-control" id="player-bowling">
+                    <option value="">Select…</option>
+                    <option>Right-arm fast</option>
+                    <option>Right-arm medium</option>
+                    <option>Right-arm medium-fast</option>
+                    <option>Right-arm off-spin</option>
+                    <option>Right-arm leg-spin</option>
+                    <option>Left-arm fast</option>
+                    <option>Left-arm medium</option>
+                    <option>Left-arm orthodox</option>
+                    <option>Left-arm chinaman</option>
+                    <option>Don't bowl</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row" style="margin-bottom:12px">
+                <div>
+                  <label class="form-label">Nickname</label>
+                  <input type="text" class="form-control" id="player-nickname" placeholder="e.g. Stormy">
+                </div>
+                <div>
+                  <label class="form-label">Years at TCC</label>
+                  <input type="number" class="form-control" id="player-years" min="0" max="50" placeholder="e.g. 5">
+                </div>
+              </div>
+              <div class="form-row" style="margin-bottom:12px">
+                <div>
+                  <label class="form-label">Favourite Shot</label>
+                  <input type="text" class="form-control" id="player-shot" placeholder="e.g. Cover drive">
+                </div>
+                <div>
+                  <label class="form-label">Cricket Hero</label>
+                  <input type="text" class="form-control" id="player-hero" placeholder="e.g. AB de Villiers">
+                </div>
+              </div>
+              <div style="margin-bottom:12px">
+                <label class="form-label">Fantasy value (R)</label>
+                <input type="number" class="form-control" id="player-fantasy-value" min="1" max="25" value="5" style="max-width:100px">
+                <p id="player-fantasy-note" style="display:none;font-size:0.74rem;color:#e0bc6a;margin:6px 0 0">
+                  Youth squad players are excluded from the fantasy league, so this value has no effect.
+                </p>
+              </div>
+              <div style="margin-bottom:12px">
+                <label class="form-label">Bio</label>
+                <textarea class="form-control" id="player-bio" rows="3" placeholder="Short player biography…" style="resize:vertical"></textarea>
+              </div>
+            </div>
+
+            <!-- Status & badges -->
+            <div class="fantasy-admin-section">
+              <h3 class="card-title" style="margin-bottom:14px">Status & Badges</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:20px">
+                <label class="publish-toggle">
+                  <input type="checkbox" id="player-active" checked>
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  <span class="toggle-label">Active Squad</span>
+                </label>
+                <label class="publish-toggle">
+                  <input type="checkbox" id="player-captain">
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  <span class="toggle-label">Captain</span>
+                </label>
+                <label class="publish-toggle">
+                  <input type="checkbox" id="player-vc">
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  <span class="toggle-label">Vice Captain</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="news-editor-actions" style="margin-top:4px">
+              <div></div>
+              <div class="news-action-btns">
+                <button class="btn btn-primary" id="save-player-btn">Save Player</button>
+                <button class="btn btn-danger" id="delete-player-btn" style="display:none">Delete</button>
+              </div>
+            </div>
+            <div class="upload-success" id="player-success" style="display:none;margin-top:10px">✅ Player saved!</div>
+            <div class="upload-error"   id="player-error"   style="display:none;margin-top:10px"></div>
+          </div>
+        </div>
+
+      </div>
+	    </div>
+    <!-- ── TAB: FIXTURES ── -->
+    <div class="tab-panel" id="tab-fixtures" style="display:none">
+
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Fixtures</h3>
+          <p>View, edit, and add fixtures.</p>
+        </div>
+      </div>
+
+      <!-- Sub-tab switcher -->
+      <div class="fix-subtabs">
+        <button class="fix-subtab active" id="fix-sub-list" data-sub="list">View &amp; edit</button>
+        <button class="fix-subtab" id="fix-sub-add" data-sub="add">Add fixture</button>
+      </div>
+
+      <!-- ── VIEW / EDIT panel ── -->
+      <div id="fix-panel-list">
+        <div class="fix-list-toolbar">
+          <select id="fix-filter-team" class="form-control fix-filter-select">
+            <option value="">All teams</option>
+          </select>
+          <select id="fix-filter-season" class="form-control fix-filter-select">
+            <option value="">All seasons</option>
+          </select>
+        </div>
+
+        <div id="fix-loading" class="album-list-loading">Loading fixtures…</div>
+
+        <div class="fix-table-wrap" id="fix-list"></div>
+
+        <!-- Inline edit drawer -->
+        <div class="fix-edit-drawer" id="fix-edit-drawer" style="display:none">
+          <div class="fix-drawer-header">
+            <span class="fix-drawer-title" id="fix-editor-title">Edit Fixture</span>
+            <button class="fix-drawer-close" id="fix-cancel-btn">✕</button>
+          </div>
+          <div class="fix-drawer-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Date <span class="required">*</span></label>
+                <input type="date" id="fix-date" class="form-control">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Team <span class="required">*</span></label>
+                <select id="fix-team" class="form-control">
+                  <option value="">Select team…</option>
+                  <option value="1st Team">1st Team</option>
+                  <option value="2nd Team">2nd Team</option>
+                  <option value="3rd Team">3rd Team</option>
+                  <option value="4th Team">4th Team</option>
+                  <option value="U13">U13</option>
+                  <option value="U12">U12</option>
+                  <option value="U11">U11</option>
+                  <option value="U10">U10</option>
+                  <option value="Mini Cricket">Mini Cricket</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Opponent <span class="required">*</span></label>
+              <input type="text" id="fix-opponent" class="form-control" placeholder="e.g. Bellville CC">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Venue</label>
+                <input type="text" id="fix-venue" class="form-control" placeholder="e.g. Florida Park">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Division</label>
+                <input type="text" id="fix-division" class="form-control" placeholder="e.g. Div A">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Season <span class="required">*</span></label>
+                <input type="text" id="fix-season" class="form-control" placeholder="e.g. 2025-26">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Result</label>
+                <select id="fix-result" class="form-control">
+                  <option value="">— Upcoming —</option>
+                  <option value="Won">Won</option>
+                  <option value="Lost">Lost</option>
+                  <option value="Draw">Draw</option>
+                  <option value="Abandoned">Abandoned</option>
+                </select>
+              </div>
+            </div>
+            <div class="upload-error" id="fix-status" style="display:none"></div>
+            <div class="fix-drawer-actions">
+              <button class="btn btn-danger" id="fix-delete-btn" style="display:none">Delete</button>
+              <button class="btn btn-primary" id="fix-save-btn">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ADD FIXTURE panel ── -->
+      <div id="fix-panel-add" style="display:none">
+        <div class="fix-add-wrap">
+
+          <!-- CSV Import -->
+          <div class="upload-form-card" style="margin-bottom:28px">
+            <h3 class="card-title">Import from CSV</h3>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:4px">
+              Upload a CSV file to add multiple fixtures at once. Required columns:
+              <code style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:3px;font-size:0.78rem">date, team, opponent</code>.
+              Optional: <code style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:3px;font-size:0.78rem">venue, division, season, result</code>.
+              Date format: <code style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:3px;font-size:0.78rem">YYYY-MM-DD</code>.
+            </p>
+            <a id="fix-csv-template-btn" href="#" style="font-size:0.78rem;color:#8fa0f5;text-underline-offset:3px">
+              ↓ Download template CSV
+            </a>
+            <div class="file-drop" id="fix-csv-drop">
+              <input type="file" id="fix-csv-input" accept=".csv,text/csv" style="display:none">
+              <div class="file-drop-icon">📄</div>
+              <div class="file-drop-text">Drop CSV here or <span class="file-drop-link">browse</span></div>
+              <div class="file-drop-hint">CSV files only</div>
+            </div>
+            <!-- Preview table -->
+            <div id="fix-csv-preview" style="display:none">
+              <div style="font-size:0.8rem;color:var(--muted);margin-bottom:8px">
+                <span id="fix-csv-count"></span> — review before importing:
+              </div>
+              <div style="overflow-x:auto;border-radius:6px;border:1px solid rgba(255,255,255,0.07)">
+                <table id="fix-csv-table" style="width:100%;border-collapse:collapse;font-size:0.78rem"></table>
+              </div>
+              <div class="upload-error" id="fix-csv-errors" style="display:none;margin-top:10px"></div>
+              <div style="display:flex;gap:10px;margin-top:14px">
+                <button class="btn btn-outline-muted" id="fix-csv-clear-btn">Clear</button>
+                <button class="btn btn-primary" id="fix-csv-import-btn">Import All →</button>
+              </div>
+            </div>
+            <div class="upload-success" id="fix-csv-success" style="display:none"></div>
+          </div>
+          <div class="upload-form-card">
+            <h3 class="card-title">New Fixture</h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Date <span class="required">*</span></label>
+                <input type="date" id="fix-new-date" class="form-control">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Team <span class="required">*</span></label>
+                <select id="fix-new-team" class="form-control">
+                  <option value="">Select team…</option>
+                  <option value="1st Team">1st Team</option>
+                  <option value="2nd Team">2nd Team</option>
+                  <option value="3rd Team">3rd Team</option>
+                  <option value="4th Team">4th Team</option>
+                  <option value="U13">U13</option>
+                  <option value="U12">U12</option>
+                  <option value="U11">U11</option>
+                  <option value="U10">U10</option>
+                  <option value="Mini Cricket">Mini Cricket</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Opponent <span class="required">*</span></label>
+              <input type="text" id="fix-new-opponent" class="form-control" placeholder="e.g. Bellville CC">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Venue</label>
+                <input type="text" id="fix-new-venue" class="form-control" placeholder="e.g. Florida Park (Home)">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Division</label>
+                <input type="text" id="fix-new-division" class="form-control" placeholder="e.g. Div A">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Season <span class="required">*</span></label>
+                <input type="text" id="fix-new-season" class="form-control" placeholder="e.g. 2025-26">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Result <span class="optional">(leave blank if upcoming)</span></label>
+                <select id="fix-new-result" class="form-control">
+                  <option value="">— Upcoming —</option>
+                  <option value="Won">Won</option>
+                  <option value="Lost">Lost</option>
+                  <option value="Draw">Draw</option>
+                  <option value="Abandoned">Abandoned</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="upload-error" id="fix-new-status" style="display:none"></div>
+            <div class="upload-success" id="fix-new-success" style="display:none">✅ Fixture added!</div>
+
+            <button class="btn btn-primary" id="fix-new-save-btn">Add Fixture →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── TAB: COACHING ANALYTICS ── -->
+        <!-- ══ SHOP TAB ══ -->
+    <div class="tab-panel" id="tab-shop" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Shop</h3>
+          <p>Manage orders and the product catalogue.</p>
+        </div>
+      </div>
+
+      <div class="fix-subtabs">
+        <button class="fix-subtab active" id="shop-sub-orders" data-shopsub="orders">Orders</button>
+        <button class="fix-subtab" id="shop-sub-products" data-shopsub="products">Products</button>
+      </div>
+
+      <!-- ── ORDERS ── -->
+      <div id="shop-panel-orders">
+        <div class="mx-subhead"><h4>Orders</h4></div>
+        <p class="mx-subhead-note">Paid orders to prepare, then confirm ready (emails the buyer), then mark collected once handed over.</p>
+        <div class="mx-actions" style="margin-bottom:16px">
+          <select class="mx-select" id="shop-order-filter">
+            <option value="awaiting_preparation">To prepare</option>
+            <option value="ready_for_collection">Ready for collection</option>
+            <option value="collected">Collected</option>
+            <option value="awaiting_payment">Awaiting payment</option>
+            <option value="all">All orders</option>
+          </select>
+          <button class="mx-btn mx-btn-ghost" id="shop-orders-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+          <button class="mx-btn mx-btn-ghost" id="shop-orders-sweep">Clear stuck orders</button>
+        </div>
+        <div class="mx-metrics" id="shop-metrics"></div>
+        <div id="shop-orders-list"><div class="mx-empty">Loading…</div></div>
+      </div>
+
+      <!-- ── PRODUCTS ── -->
+      <div id="shop-panel-products" style="display:none">
+        <div class="fantasy-admin-section">
+          <div class="mx-subhead" style="justify-content:space-between">
+            <h4>Catalogue</h4>
+            <button class="mx-btn mx-btn-sm mx-btn-ghost" id="shop-add-product">New product</button>
+          </div>
+          <div id="shop-products-list" style="margin-top:12px"><div class="album-list-loading">Loading…</div></div>
+        </div>
+
+        <!-- product editor (hidden until add/edit) -->
+        <div class="fantasy-admin-section" id="shop-editor" style="display:none">
+          <div class="card-title-row">
+            <h3 class="card-title" id="shop-editor-title">New product</h3>
+            <button class="btn-sm" id="shop-editor-close">✕ Close</button>
+          </div>
+
+          <div class="shop-form-grid">
+            <label class="shop-field">
+              <span>Name</span>
+              <input type="text" id="sp-name" class="form-control">
+            </label>
+            <label class="shop-field">
+              <span>Slug <small>(url id, e.g. playing-shirt)</small></span>
+              <input type="text" id="sp-slug" class="form-control">
+            </label>
+            <label class="shop-field">
+              <span>Price (Rand)</span>
+              <input type="number" id="sp-price" class="form-control" min="0" step="0.01" placeholder="450.00">
+            </label>
+            <label class="shop-field">
+              <span>Category <small>(free text)</small></span>
+              <input type="text" id="sp-category" class="form-control" placeholder="apparel">
+            </label>
+            <label class="shop-field shop-field--full">
+              <span>Description</span>
+              <textarea id="sp-desc" class="form-control" rows="2"></textarea>
+            </label>
+
+            <div class="shop-field shop-field--full">
+              <span>Image</span>
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                <div id="sp-image-preview" class="sp-image-preview"></div>
+                <label class="btn-sm" style="cursor:pointer">
+                  📁 Upload
+                  <input type="file" id="sp-image-file" accept="image/*" style="display:none">
+                </label>
+                <span id="sp-image-status" style="font-size:0.78rem;color:var(--muted2)"></span>
+              </div>
+            </div>
+
+            <label class="shop-check shop-field--full">
+              <input type="checkbox" id="sp-active" checked>
+              <span>Active (visible in the shop)</span>
+            </label>
+            <label class="shop-check shop-field--full">
+              <input type="checkbox" id="sp-hasvariants">
+              <span>Has sizes/options (manage stock per option below)</span>
+            </label>
+          </div>
+
+          <!-- variants -->
+          <div id="sp-variants-block" style="display:none;margin-top:18px">
+            <div class="card-title-row">
+              <h4 style="margin:0;font-size:0.95rem">Sizes &amp; stock</h4>
+              <button class="btn-sm" id="sp-add-variant">+ Add size</button>
+            </div>
+            <p style="font-size:0.74rem;color:var(--muted2);margin:4px 0 10px">
+              Leave price blank to use the product price. Stock is what shows as available in the shop.
+            </p>
+            <div id="sp-variants-list"></div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:20px">
+            <button class="btn btn-primary" id="sp-save">Save product</button>
+            <button class="btn btn-secondary btn-sm" id="sp-delete" style="display:none;margin-left:auto">🗑 Delete</button>
+          </div>
+          <p id="sp-save-status" style="font-size:0.8rem;margin-top:10px"></p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══ PLAYER REGISTRATIONS TAB ══ -->
+    <div class="tab-panel" id="tab-registrations" style="display:none">
+      <div class="mx-head">
+        <div class="mx-head-titles">
+          <h3>Registrations</h3>
+          <p>Submissions from the public registration form. Approving records who reviewed it and when — adding the player to the site is done from Create / link profile.</p>
+        </div>
+        <div class="mx-actions">
+          <select class="mx-select" id="preg-status-filter" aria-label="Status">
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <select class="mx-select" id="preg-squad-filter" aria-label="Squad">
+            <option value="all">All squads</option>
+            <option value="youth">Youth (≤17)</option>
+            <option value="senior">Senior (18+)</option>
+          </select>
+          <select class="mx-select" id="preg-export-scope" aria-label="Export scope">
+            <option value="filter">Current filter only</option>
+            <option value="all" selected>All registrations</option>
+          </select>
+          <button class="mx-btn mx-btn-ghost" id="preg-export-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+          <label class="mx-check"><input type="checkbox" id="preg-export-medical"> Include medical info</label>
+        </div>
+      </div>
+
+      <div class="mx-metrics" id="preg-metrics"></div>
+
+      <div id="preg-list"><div class="mx-empty">Loading&hellip;</div></div>
+    </div>
+
+<div class="tab-panel" id="tab-coaching" style="display:none">
+  <div class="mx-head">
+    <div class="mx-head-titles">
+      <h3>Coaching analytics</h3>
+      <p>Match, training and player-development metrics across teams.</p>
+    </div>
+  </div>
+
+  <!-- Global filter bar -->
+  <div class="ca-filter-bar" style="margin-bottom:24px;">
+    <select class="mx-select" id="ca-team-filter" style="max-width:200px">
+      <option value="">All teams</option>
+      <option value="1st Team">1st Team</option>
+      <option value="2nd Team">2nd Team</option>
+      <option value="3rd Team">3rd Team</option>
+      <option value="4th Team">4th Team</option>
+      <option value="U13">U13</option>
+      <option value="U12">U12</option>
+      <option value="U11">U11</option>
+      <option value="U10">U10</option>
+      <option value="Mini Cricket">Mini Cricket</option>
+    </select>
+    <input type="month" class="mx-select" id="ca-month-filter" style="max-width:180px">
+    <button class="mx-btn mx-btn-primary" id="ca-filter-btn">Apply filter</button>
+    <button class="mx-btn mx-btn-ghost" id="ca-filter-clear-btn">Clear</button>
+  </div>
+
+  <!-- Sub-tab navigation -->
+  <div class="ca-tabs">
+    <button class="ca-tab active" data-ca-tab="dashboard">Dashboard</button>
+    <button class="ca-tab" data-ca-tab="matches">Matches</button>
+    <button class="ca-tab" data-ca-tab="training">Training</button>
+    <button class="ca-tab" data-ca-tab="development">Player Dev</button>
+    <button class="ca-tab" data-ca-tab="skills">Skill Matrix</button>
+    <button class="ca-tab" data-ca-tab="kpi">KPI Targets</button>
+    <button class="ca-tab" data-ca-tab="charts">Charts</button>
+    <button class="ca-tab" data-ca-tab="report">Monthly Report</button>
+  </div>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="ca-panel active" id="ca-panel-dashboard">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="ca-section-label" style="margin:0 0 6px">Team Health</div>
+        <div class="ca-health green" id="ca-health-badge">
+          <span class="ca-health-dot"></span>
+          <span id="ca-health-label">Performing above target</span>
+        </div>
+      </div>
+      <div class="form-hint" id="ca-health-desc" style="max-width:360px;text-align:right">Showing data across all teams for the selected period.</div>
+    </div>
+
+    <div class="ca-section-label">Match Performance</div>
+    <div class="ca-kpi-grid">
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Matches Played</div><div class="ca-kpi-value" id="kpi-played">—</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Wins</div><div class="ca-kpi-value" id="kpi-wins" style="color:#5ec98a">—</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Losses</div><div class="ca-kpi-value" id="kpi-losses" style="color:#e07070">—</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Win %</div><div class="ca-kpi-value" id="kpi-winpct">—</div><div class="ca-kpi-sub">Target: <span id="kpi-winpct-target">60</span>%</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Runs Scored</div><div class="ca-kpi-value" id="kpi-runs-scored">—</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Runs Conceded</div><div class="ca-kpi-value" id="kpi-runs-conceded">—</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Wickets Taken</div><div class="ca-kpi-value" id="kpi-wkts-taken" style="color:#5ec98a">—</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Wickets Lost</div><div class="ca-kpi-value" id="kpi-wkts-lost" style="color:#e07070">—</div></div>
+    </div>
+
+    <div class="ca-section-label" style="margin-top:20px">Training Activity</div>
+    <div class="ca-kpi-grid">
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Sessions Conducted</div><div class="ca-kpi-value" id="kpi-sessions">—</div><div class="ca-kpi-sub">Target: <span id="kpi-sessions-target">8</span>/month</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Avg Attendance</div><div class="ca-kpi-value" id="kpi-attendance">—</div><div class="ca-kpi-sub">Target: <span id="kpi-attend-target">80</span>%</div></div>
+      <div class="ca-kpi-card"><div class="ca-kpi-label">Players Promoted</div><div class="ca-kpi-value" id="kpi-promotions">—</div></div>
+    </div>
+
+    <div class="ca-section-label" style="margin-top:20px">Recent Matches</div>
+    <div class="ca-table-wrap">
+      <table class="ca-table">
+        <thead><tr><th>Date</th><th>Team</th><th>Opponent</th><th>Result</th><th>Runs Scored</th><th>Runs Conc.</th><th>Wkts Tkn</th><th>Wkts Lost</th></tr></thead>
+        <tbody id="ca-dash-matches-body"><tr><td colspan="8" class="ca-empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ MATCHES ═══ -->
+  <div class="ca-panel" id="ca-panel-matches">
+    <div class="ca-grid-12">
+      <div class="ca-card">
+        <div class="ca-card-title"><span class="ca-card-title-text">Add / Edit Match</span></div>
+        <input type="hidden" id="ca-match-id">
+        <div class="form-group"><label class="form-label">Match Date <span class="required">*</span></label><input type="date" class="form-control" id="ca-match-date"></div>
+        <div class="form-group"><label class="form-label">Team <span class="required">*</span></label>
+          <select class="form-control" id="ca-match-team"><option value="">Select team…</option><option>1st Team</option><option>2nd Team</option><option>3rd Team</option><option>4th Team</option><option>U13</option><option>U12</option><option>U11</option><option>U10</option><option>Mini Cricket</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Opponent <span class="required">*</span></label><input type="text" class="form-control" id="ca-match-opponent" placeholder="e.g. Parow CC"></div>
+        <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-control" id="ca-match-venue" placeholder="e.g. Florida Park"></div>
+        <div class="form-group"><label class="form-label">Result</label>
+          <select class="form-control" id="ca-match-result"><option value="Win">Win</option><option value="Loss">Loss</option><option value="Draw">Draw</option><option value="No Result">No Result</option></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Runs Scored</label><input type="number" class="form-control" id="ca-match-runs-scored" min="0" placeholder="0"></div>
+          <div class="form-group"><label class="form-label">Runs Conceded</label><input type="number" class="form-control" id="ca-match-runs-conceded" min="0" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Wickets Taken</label><input type="number" class="form-control" id="ca-match-wkts-taken" min="0" max="10" placeholder="0"></div>
+          <div class="form-group"><label class="form-label">Wickets Lost</label><input type="number" class="form-control" id="ca-match-wkts-lost" min="0" max="10" placeholder="0"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Coach Notes</label><textarea class="form-control" id="ca-match-notes" rows="3" placeholder="Performance summary, key moments…" style="resize:vertical"></textarea></div>
+        <div class="upload-success" id="ca-match-success" style="display:none">✅ Match saved!</div>
+        <div class="upload-error" id="ca-match-error" style="display:none"></div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn btn-primary" id="ca-match-save-btn" style="flex:1">Save Match →</button>
+          <button class="btn btn-outline-muted" id="ca-match-clear-btn" style="width:auto;padding:12px 16px">✕</button>
+        </div>
+      </div>
+      <div>
+        <div class="ca-card-title" style="margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <span style="font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:0;color:var(--white)">Match History</span>
+          <span class="form-hint" id="ca-match-count">0 matches</span>
+        </div>
+        <div class="ca-table-wrap">
+          <table class="ca-table">
+            <thead><tr><th>Date</th><th>Team</th><th>Opponent</th><th>Result</th><th>Scored</th><th>Conc.</th><th>Actions</th></tr></thead>
+            <tbody id="ca-matches-body"><tr><td colspan="7" class="ca-empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TRAINING ═══ -->
+  <div class="ca-panel" id="ca-panel-training">
+    <div class="ca-grid-12">
+      <div class="ca-card">
+        <div class="ca-card-title"><span class="ca-card-title-text">Add / Edit Session</span></div>
+        <input type="hidden" id="ca-session-id">
+        <div class="form-group"><label class="form-label">Session Date <span class="required">*</span></label><input type="date" class="form-control" id="ca-session-date"></div>
+        <div class="form-group"><label class="form-label">Team <span class="required">*</span></label>
+          <select class="form-control" id="ca-session-team">
+            <option value="">Select team…</option>
+            <optgroup label="── Joint Sessions ──">
+              <option value="All Senior Teams">All Senior Teams</option>
+              <option value="All Junior Teams">All Junior Teams</option>
+              <option value="All Teams">All Teams</option>
+            </optgroup>
+            <optgroup label="── Senior ──">
+              <option>1st Team</option>
+              <option>2nd Team</option>
+              <option>3rd Team</option>
+              <option>4th Team</option>
+            </optgroup>
+            <optgroup label="── Junior ──">
+              <option>U13</option>
+              <option>U12</option>
+              <option>U11</option>
+              <option>U10</option>
+              <option>Mini Cricket</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Session Type</label>
+          <select class="form-control" id="ca-session-type"><option value="Batting">Batting</option><option value="Bowling">Bowling</option><option value="Fielding">Fielding</option><option value="Fitness">Fitness</option><option value="Tactics">Tactics</option><option value="Mixed" selected>Mixed</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Focus Area</label><input type="text" class="form-control" id="ca-session-focus" placeholder="e.g. Top-order batting, Death bowling"></div>
+        <div class="form-group"><label class="form-label">Coach Notes</label><textarea class="form-control" id="ca-session-notes" rows="3" placeholder="Session highlights, player standouts…" style="resize:vertical"></textarea></div>
+        <div class="form-group">
+          <label class="form-label">Attendance — Players Present</label>
+          <div class="ca-player-picker" id="ca-attend-picker"><div class="ca-empty" style="padding:16px">Select a team first to see players.</div></div>
+          <div class="ca-attend-summary" id="ca-attend-summary">0 of 0 players selected (0%)</div>
+        </div>
+        <div class="upload-success" id="ca-session-success" style="display:none">✅ Session saved!</div>
+        <div class="upload-error" id="ca-session-error" style="display:none"></div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn btn-primary" id="ca-session-save-btn" style="flex:1">Save Session →</button>
+          <button class="btn btn-outline-muted" id="ca-session-clear-btn" style="width:auto;padding:12px 16px">✕</button>
+        </div>
+      </div>
+      <div>
+        <div class="ca-card-title" style="margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <span style="font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:0;color:var(--white)">Session History</span>
+          <span class="form-hint" id="ca-session-count">0 sessions</span>
+        </div>
+        <div class="ca-table-wrap">
+          <table class="ca-table">
+            <thead><tr><th>Date</th><th>Team</th><th>Type</th><th>Focus</th><th>Players</th><th>Attend %</th><th>Actions</th></tr></thead>
+            <tbody id="ca-sessions-body"><tr><td colspan="7" class="ca-empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PLAYER DEVELOPMENT ═══ -->
+  <div class="ca-panel" id="ca-panel-development">
+    <div class="ca-grid-12">
+      <div class="ca-card">
+        <div class="ca-card-title"><span class="ca-card-title-text">Add / Edit Player Record</span></div>
+        <input type="hidden" id="ca-dev-id">
+        <div class="form-group"><label class="form-label">Player Name <span class="required">*</span></label><input type="text" class="form-control" id="ca-dev-player" placeholder="Full name"></div>
+        <div class="form-group"><label class="form-label">Team <span class="required">*</span></label>
+          <select class="form-control" id="ca-dev-team"><option value="">Select team…</option><option>1st Team</option><option>2nd Team</option><option>3rd Team</option><option>4th Team</option><option>U13</option><option>U12</option><option>U11</option><option>U10</option><option>Mini Cricket</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Month</label><input type="month" class="form-control" id="ca-dev-month"></div>
+        <div class="form-group"><label class="form-label">Development Notes</label><textarea class="form-control" id="ca-dev-notes" rows="3" placeholder="Progress, areas to improve…" style="resize:vertical"></textarea></div>
+        <div class="form-group"><label class="form-label">Milestone Achieved</label><input type="text" class="form-control" id="ca-dev-milestone" placeholder="e.g. First senior 50, Hat-trick"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Promotion Candidate?</label><select class="form-control" id="ca-dev-candidate"><option value="false">No</option><option value="true">Yes</option></select></div>
+          <div class="form-group"><label class="form-label">Promoted This Month?</label><select class="form-control" id="ca-dev-promoted"><option value="false">No</option><option value="true">Yes</option></select></div>
+        </div>
+        <div class="form-group" id="ca-dev-promoted-to-wrap" style="display:none">
+          <label class="form-label">Promoted To</label>
+          <select class="form-control" id="ca-dev-promoted-to"><option value="">Select team…</option><option>1st Team</option><option>2nd Team</option><option>3rd Team</option><option>4th Team</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Junior Integrated Into Senior Team?</label><select class="form-control" id="ca-dev-junior"><option value="false">No</option><option value="true">Yes</option></select></div>
+        <div class="upload-success" id="ca-dev-success" style="display:none">✅ Record saved!</div>
+        <div class="upload-error" id="ca-dev-error" style="display:none"></div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn btn-primary" id="ca-dev-save-btn" style="flex:1">Save Record →</button>
+          <button class="btn btn-outline-muted" id="ca-dev-clear-btn" style="width:auto;padding:12px 16px">✕</button>
+        </div>
+      </div>
+      <div>
+        <div class="ca-card" id="ca-dev-summary-card">
+          <div class="ca-card-title"><span class="ca-card-title-text">Monthly Summary</span></div>
+          <div class="ca-kpi-grid">
+            <div class="ca-kpi-card"><div class="ca-kpi-label">Promotions</div><div class="ca-kpi-value" id="dev-kpi-promo">—</div></div>
+            <div class="ca-kpi-card"><div class="ca-kpi-label">Juniors Integrated</div><div class="ca-kpi-value" id="dev-kpi-junior" style="color:#5ec98a">—</div></div>
+            <div class="ca-kpi-card"><div class="ca-kpi-label">Milestones</div><div class="ca-kpi-value" id="dev-kpi-milestone">—</div></div>
+            <div class="ca-kpi-card"><div class="ca-kpi-label">Candidates</div><div class="ca-kpi-value" id="dev-kpi-candidates">—</div></div>
+          </div>
+        </div>
+        <div class="ca-table-wrap" style="margin-top:16px">
+          <table class="ca-table">
+            <thead><tr><th>Player</th><th>Team</th><th>Month</th><th>Candidate</th><th>Promoted</th><th>To</th><th>Milestone</th><th>Actions</th></tr></thead>
+            <tbody id="ca-dev-body"><tr><td colspan="8" class="ca-empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KPI TARGETS ═══ -->
+  <div class="ca-panel" id="ca-panel-kpi">
+    <div class="ca-card" style="margin-bottom:24px">
+      <div class="ca-card-title"><span class="ca-card-title-text">Configure Targets</span></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Team</label>
+          <select class="form-control" id="ca-kpi-team-select"><option value="">Select team…</option><option>1st Team</option><option>2nd Team</option><option>3rd Team</option><option>4th Team</option><option>U13</option><option>U12</option><option>U11</option><option>U10</option><option>Mini Cricket</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Season</label><input type="text" class="form-control" id="ca-kpi-season" value="2025/26"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Win % Target</label><input type="number" class="form-control" id="ca-kpi-win-target" min="0" max="100" placeholder="60"></div>
+        <div class="form-group"><label class="form-label">Training Sessions / Month Target</label><input type="number" class="form-control" id="ca-kpi-sessions-target" min="0" placeholder="8"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Attendance % Target</label><input type="number" class="form-control" id="ca-kpi-attend-target" min="0" max="100" placeholder="80"></div>
+        <div class="form-group"><label class="form-label">Promotions Target / Month</label><input type="number" class="form-control" id="ca-kpi-promo-target" min="0" placeholder="1"></div>
+      </div>
+      <div class="upload-success" id="ca-kpi-success" style="display:none">✅ Targets saved!</div>
+      <div class="upload-error" id="ca-kpi-error" style="display:none"></div>
+      <button class="btn btn-primary" id="ca-kpi-save-btn" style="margin-top:8px">Save Targets →</button>
+      <button class="btn btn-outline-muted" id="ca-kpi-clear-btn" style="margin-top:8px;margin-left:8px">Clear Form</button>
+    </div>
+    <div class="ca-card" style="margin-bottom:24px">
+      <div class="ca-card-title"><span class="ca-card-title-text">Saved Targets</span></div>
+      <div class="form-hint" style="margin-bottom:16px">All targets currently configured. Click Load to edit a team's targets in the form above.</div>
+      <div class="ca-kpi-table-wrap">
+        <table class="ca-table">
+          <thead><tr><th>Team</th><th>Season</th><th>Win %</th><th>Sessions/mo</th><th>Attend %</th><th>Promotions</th><th>Actions</th></tr></thead>
+          <tbody id="ca-kpi-saved-body"><tr><td colspan="7" class="ca-empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="ca-card">
+      <div class="ca-card-title"><span class="ca-card-title-text">Performance vs Targets</span></div>
+      <div class="form-hint" style="margin-bottom:16px">Actuals for the month/team selected in the filter above. Joint sessions (All Senior / All Junior / All Teams) count toward each participating team's training totals.</div>
+      <div class="ca-kpi-table-wrap">
+        <table class="ca-table">
+          <thead><tr><th>Team</th><th>KPI</th><th>Target</th><th>Actual</th><th>Variance</th><th>Status</th></tr></thead>
+          <tbody id="ca-kpi-body"><tr><td colspan="6" class="ca-empty">Apply filter to see actuals.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CHARTS ═══ -->
+  <!-- ═══ SKILL MATRIX ═══ -->
+  <div class="ca-panel" id="ca-panel-skills">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:12px;">
+      <div class="ca-card-title"><span class="ca-card-title-text">Skill Matrix</span></div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span class="ca-save-status" id="ca-sk-status"><span class="ca-save-dot" id="ca-sk-dot"></span><span id="ca-sk-status-text">All changes saved</span></span>
+        <button class="btn btn-outline-muted" id="ca-sk-collapse-btn" style="width:auto;padding:9px 14px">▾ Hide grid</button>
+        <button class="btn btn-outline-muted" id="ca-sk-manage-btn" style="width:auto;padding:9px 14px">⚙ Manage skills</button>
+        <button class="btn btn-primary" id="ca-sk-save-btn" style="width:auto;padding:9px 18px">Save</button>
+      </div>
+    </div>
+    <div class="form-hint" style="margin-bottom:16px">
+      Rate each player 1–10 per skill for the month selected in the filter bar above. Scores save automatically; only changed cells are recorded.
+    </div>
+
+    <!-- Manage skills drawer (hidden until toggled) -->
+    <div class="ca-card" id="ca-sk-manage" style="display:none;margin-bottom:20px">
+      <div class="ca-card-title"><span class="ca-card-title-text">Manage Skills</span></div>
+      <div class="form-hint" style="margin-bottom:12px">One club-wide skill list. Add, rename or remove — removed skills keep their history but drop off the grid.</div>
+      <div class="ca-sk-deflist" id="ca-sk-deflist"></div>
+      <div class="form-row" style="margin-top:12px;align-items:flex-end">
+        <div class="form-group" style="flex:2"><label class="form-label">New skill name</label><input type="text" class="form-control" id="ca-sk-new-name" placeholder="e.g. Reverse Sweep"></div>
+        <div class="form-group" style="flex:1"><label class="form-label">Group</label>
+          <select class="form-control" id="ca-sk-new-group"><option>Batting</option><option>Bowling</option><option>Fielding</option><option selected>General</option></select>
+        </div>
+        <div class="form-group" style="flex:0 0 auto"><button class="btn btn-primary" id="ca-sk-add-def-btn" style="width:auto;padding:11px 16px">+ Add</button></div>
+      </div>
+      <div class="upload-error" id="ca-sk-manage-error" style="display:none;margin-top:8px"></div>
+    </div>
+
+    <!-- The editable matrix — grid (desktop) + cards (mobile), CSS picks one -->
+    <div id="ca-sk-views">
+      <div class="ca-sk-grid-wrap" id="ca-sk-grid-wrap">
+        <table class="ca-sk-grid" id="ca-sk-grid">
+          <thead><tr id="ca-sk-head"><th class="ca-sk-namecol">Player</th></tr></thead>
+          <tbody id="ca-sk-body"></tbody>
+        </table>
+      </div>
+      <div class="ca-sk-cards" id="ca-sk-cards"></div>
+    </div>
+    <div id="ca-sk-empty" class="ca-empty" style="padding:30px;text-align:center;display:none"></div>
+
+    <div id="ca-sk-grid-footer">
+      <!-- Player search (hidden until Add player) -->
+      <div class="ca-sk-search-box" id="ca-sk-search-box" style="display:none">
+        <input type="text" class="form-control" id="ca-sk-search-input" placeholder="Search players…" autocomplete="off">
+        <div class="ca-sk-search-results" id="ca-sk-search-results"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-outline-muted" id="ca-sk-add-player-btn" style="width:auto;padding:10px 16px">+ Add player</button>
+        <div class="ca-sk-legend">
+          <span>1</span>
+          <span class="ca-sk-legend-bar"></span>
+          <span>10</span>
+          <span style="margin-left:6px;color:var(--muted)">weak → strong</span>
+        </div>
+      </div>
+    </div>
+    <div class="upload-error" id="ca-sk-error" style="display:none;margin-top:12px"></div>
+
+    <!-- Player detail: radar + trend -->
+    <div class="ca-sk-detail" id="ca-sk-detail" style="display:none">
+      <div class="ca-card ca-sk-detail-card">
+        <div class="ca-card-title"><span class="ca-card-title-text" id="ca-sk-detail-name">Player</span><span class="ca-card-title-sub">current profile</span></div>
+        <div class="ca-chart-canvas-wrap" style="height:240px"><canvas id="ca-sk-radar"></canvas></div>
+      </div>
+      <div class="ca-card ca-sk-detail-card">
+        <div class="ca-card-title">
+          <span class="ca-card-title-text">Trend</span>
+          <select class="form-control" id="ca-sk-trend-skill" style="width:auto;min-width:150px;margin-left:auto;padding:6px 10px;font-size:0.85rem"></select>
+        </div>
+        <div class="ca-chart-canvas-wrap" style="height:200px"><canvas id="ca-sk-trend"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ca-panel" id="ca-panel-charts">
+    <div class="ca-charts-grid">
+      <div class="ca-chart-wrap"><div class="ca-chart-title">Wins vs Losses Trend</div><div class="ca-chart-canvas-wrap"><canvas id="ca-chart-results"></canvas></div></div>
+      <div class="ca-chart-wrap"><div class="ca-chart-title">Runs Scored Trend</div><div class="ca-chart-canvas-wrap"><canvas id="ca-chart-runs"></canvas></div></div>
+      <div class="ca-chart-wrap"><div class="ca-chart-title">Training Attendance Trend (%)</div><div class="ca-chart-canvas-wrap"><canvas id="ca-chart-attendance"></canvas></div></div>
+      <div class="ca-chart-wrap"><div class="ca-chart-title">Training Sessions Per Month</div><div class="ca-chart-canvas-wrap"><canvas id="ca-chart-sessions"></canvas></div></div>
+    </div>
+    <div class="upload-error" id="ca-charts-error" style="display:none;margin-top:12px"></div>
+  </div>
+
+  <!-- ═══ MONTHLY REPORT ═══ -->
+  <div class="ca-panel" id="ca-panel-report">
+    <div class="ca-card" style="margin-bottom:20px">
+      <div class="ca-card-title"><span class="ca-card-title-text">Generate Report</span></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Month</label><input type="month" class="form-control" id="ca-report-month"></div>
+        <div class="form-group"><label class="form-label">Team</label>
+          <select class="form-control" id="ca-report-team"><option value="">All Teams</option><option>1st Team</option><option>2nd Team</option><option>3rd Team</option><option>4th Team</option><option>U13</option><option>U12</option><option>U11</option><option>U10</option><option>Mini Cricket</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Coach Commentary</label><textarea class="form-control" id="ca-report-commentary" rows="4" placeholder="Monthly summary from the coaching staff — key highlights, challenges, goals for next month…" style="resize:vertical"></textarea></div>
+      <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="ca-report-generate-btn" style="flex:1;min-width:180px">Generate Report →</button>
+        <button class="btn btn-outline-muted" id="ca-report-print-btn" style="width:auto;padding:12px 16px" disabled>🖨 Print / PDF</button>
+        <button class="btn btn-outline-muted" id="ca-report-save-btn" style="width:auto;padding:12px 16px" disabled>💾 Save to DB</button>
+      </div>
+      <div class="upload-error" id="ca-report-error" style="display:none;margin-top:10px"></div>
+    </div>
+    <div class="ca-report-preview" id="ca-report-preview" style="display:none">
+      <div class="ca-report-header">
+        <img src="images/tcc-logo.png" alt="TCC" class="ca-report-logo">
+        <div class="ca-report-title-block">
+          <div class="ca-report-club">Tygerberg Cricket Club</div>
+          <div class="ca-report-sub">Coaching Analytics Report</div>
+        </div>
+        <div class="ca-report-meta" id="ca-report-meta"></div>
+      </div>
+      <div class="ca-report-section">
+        <div class="ca-report-section-title">Match Performance</div>
+        <div class="ca-report-stat-row"><span class="label">Matches Played</span><span class="value" id="rpt-played">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Wins</span><span class="value" id="rpt-wins">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Losses</span><span class="value" id="rpt-losses">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Draws / No Results</span><span class="value" id="rpt-draws">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Win Percentage</span><span class="value" id="rpt-winpct">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Total Runs Scored</span><span class="value" id="rpt-runs-scored">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Total Runs Conceded</span><span class="value" id="rpt-runs-conceded">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Total Wickets Taken</span><span class="value" id="rpt-wkts-taken">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Total Wickets Lost</span><span class="value" id="rpt-wkts-lost">—</span></div>
+      </div>
+      <div class="ca-report-section">
+        <div class="ca-report-section-title">Training Activity</div>
+        <div class="ca-report-stat-row"><span class="label">Sessions Conducted</span><span class="value" id="rpt-sessions">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Average Attendance</span><span class="value" id="rpt-attendance">—</span></div>
+      </div>
+      <div class="ca-report-section">
+        <div class="ca-report-section-title">Player Development</div>
+        <div class="ca-report-stat-row"><span class="label">Players Promoted</span><span class="value" id="rpt-promoted">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Junior Players Integrated</span><span class="value" id="rpt-juniors">—</span></div>
+        <div class="ca-report-stat-row"><span class="label">Development Milestones</span><span class="value" id="rpt-milestones">—</span></div>
+      </div>
+      <div class="ca-report-section">
+        <div class="ca-report-section-title">Coach Commentary</div>
+        <div class="ca-report-commentary" id="rpt-commentary">—</div>
+      </div>
+      <div class="ca-report-actions">
+        <button class="btn btn-outline-muted" onclick="window.print()" style="width:auto;padding:12px 24px">🖨 Print / Save as PDF</button>
+        <button class="btn btn-primary" id="ca-report-save-btn-2" style="width:auto;padding:12px 24px">💾 Save Report</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-coaching -->
+
+<!-- Confirm modal -->
+<!-- Birthday card — full-size preview -->
+<div class="modal-overlay" id="cal-card-modal" style="display:none">
+  <div class="modal cal-card-modal">
+    <div class="modal-title">Birthday card</div>
+    <img id="cal-card-full" alt="Birthday card preview" class="cal-card-full">
+    <div class="modal-actions">
+      <button class="mx-btn mx-btn-ghost" id="cal-card-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Calendar event editor -->
+<div class="modal-overlay" id="cal-event-modal" style="display:none">
+  <div class="modal cal-modal">
+    <div class="modal-title" id="cal-modal-title">New event</div>
+    <div class="modal-body cal-form">
+      <div>
+        <label class="form-label" for="cal-f-title">Title</label>
+        <input class="form-control" id="cal-f-title" maxlength="120" placeholder="e.g. Club AGM">
+      </div>
+      <div class="cal-form-row">
+        <div>
+          <label class="form-label" for="cal-f-date">Date</label>
+          <input class="form-control" type="date" id="cal-f-date">
+        </div>
+        <div>
+          <label class="form-label" for="cal-f-type">Type</label>
+          <select class="form-control" id="cal-f-type">
+            <option value="social">Social</option>
+            <option value="meeting">Meeting</option>
+            <option value="training">Training</option>
+            <option value="fixture">Fixture</option>
+            <option value="other" selected>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="cal-form-row">
+        <div>
+          <label class="form-label" for="cal-f-start">Start time</label>
+          <input class="form-control" type="time" id="cal-f-start">
+        </div>
+        <div>
+          <label class="form-label" for="cal-f-end">End time</label>
+          <input class="form-control" type="time" id="cal-f-end">
+        </div>
+      </div>
+      <div>
+        <label class="form-label" for="cal-f-venue">Venue</label>
+        <input class="form-control" id="cal-f-venue" maxlength="120" placeholder="e.g. Florida Park">
+      </div>
+      <div>
+        <label class="form-label" for="cal-f-desc">Description</label>
+        <textarea class="form-control" id="cal-f-desc" rows="3" maxlength="1000"></textarea>
+      </div>
+      <div>
+        <label class="form-label">Poster image</label>
+        <div class="cal-img-row">
+          <div class="cal-img-preview" id="cal-img-preview" title="Drag to reposition">
+            <span id="cal-img-empty">No image</span>
+            <img id="cal-img-thumb" alt="" draggable="false" style="display:none">
+          </div>
+          <div class="cal-img-actions">
+            <input type="file" id="cal-f-image-file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
+            <button type="button" class="mx-btn mx-btn-sm mx-btn-ghost" id="cal-img-upload-btn">Upload image</button>
+            <button type="button" class="mx-btn mx-btn-sm mx-btn-ghost" id="cal-img-remove-btn" style="display:none">Remove</button>
+            <button type="button" class="mx-btn mx-btn-sm mx-btn-ghost" id="cal-img-center-btn" style="display:none">Re-centre</button>
+            <div class="cal-img-status" id="cal-img-status"></div>
+          </div>
+          <div class="cal-img-hint" id="cal-img-hint" style="display:none">Drag the image to choose which part shows on the website card (16:9 crop).</div>
+        </div>
+        <input type="hidden" id="cal-f-image">
+        <input type="hidden" id="cal-f-image-pos" value="50% 50%">
+      </div>
+      <label class="mx-check cal-public-check">
+        <input type="checkbox" id="cal-f-public">
+        Show this event on the public website
+      </label>
+      <div class="cal-form-err" id="cal-form-err" style="display:none"></div>
+    </div>
+    <div class="modal-actions cal-modal-actions">
+      <button class="mx-btn mx-btn-danger" id="cal-delete-btn" style="display:none">Delete</button>
+      <button class="mx-btn mx-btn-ghost" id="cal-cancel-btn">Cancel</button>
+      <button class="mx-btn mx-btn-primary" id="cal-save-btn">Save event</button>
+    </div>
+  </div>
+</div>
+
+<!-- Log / edit hours -->
+<div class="modal-overlay" id="ts-entry-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="ts-entry-title">Log hours</div>
+    <div class="modal-body ts-form">
+      <div>
+        <label class="form-label" for="ts-f-date">Date</label>
+        <input type="date" class="form-control" id="ts-f-date">
+      </div>
+      <div class="ts-form-row">
+        <div>
+          <label class="form-label" for="ts-f-start">Start</label>
+          <input type="time" class="form-control" id="ts-f-start">
+        </div>
+        <div>
+          <label class="form-label" for="ts-f-end">End</label>
+          <input type="time" class="form-control" id="ts-f-end">
+        </div>
+        <div>
+          <label class="form-label" for="ts-f-break">Break (min)</label>
+          <input type="number" class="form-control" id="ts-f-break" value="0" min="0" max="600">
+        </div>
+      </div>
+      <p class="ts-calc" id="ts-f-calc">&nbsp;</p>
+      <div>
+        <label class="form-label" for="ts-f-notes">What you did</label>
+        <textarea class="form-control" id="ts-f-notes" rows="3" maxlength="400"
+          placeholder="e.g. Under-13 training session, nets setup"></textarea>
+      </div>
+      <div id="ts-f-extra-wrap" style="display:none">
+        <label class="mx-check"><input type="checkbox" id="ts-f-extra"> Extra hours</label>
+        <p class="ts-w-hint">Tick for work outside your monthly fee, like a tournament weekend.
+          Extra hours are paid at your hourly rate on top of the fee.</p>
+      </div>
+      <p class="modal-error" id="ts-f-err"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="mx-btn mx-btn-danger" id="ts-f-delete" style="display:none;margin-right:auto">Delete</button>
+      <button class="mx-btn mx-btn-ghost" id="ts-f-cancel">Cancel</button>
+      <button class="mx-btn mx-btn-primary" id="ts-f-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Person & rate -->
+<div class="modal-overlay" id="ts-worker-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="ts-worker-title">Add person</div>
+    <div class="modal-body ts-form">
+      <div>
+        <label class="form-label" for="ts-w-name">Name</label>
+        <input type="text" class="form-control" id="ts-w-name" maxlength="80">
+      </div>
+      <div class="ts-form-row2">
+        <div>
+          <label class="form-label" for="ts-w-title">Job title</label>
+          <input type="text" class="form-control" id="ts-w-title" maxlength="60" placeholder="Groundsman">
+        </div>
+        <div>
+          <label class="form-label" for="ts-w-pay">Paid</label>
+          <select class="form-control" id="ts-w-pay">
+            <option value="hourly">By the hour</option>
+            <option value="monthly">Fixed monthly fee</option>
+          </select>
+        </div>
+      </div>
+      <div class="ts-form-row2">
+        <div id="ts-w-fee-wrap" style="display:none">
+          <label class="form-label" for="ts-w-fee">Monthly fee (R)</label>
+          <input type="number" class="form-control" id="ts-w-fee" min="0" step="0.01" placeholder="0.00">
+        </div>
+        <div>
+          <label class="form-label" for="ts-w-rate" id="ts-w-rate-label">Hourly rate (R)</label>
+          <input type="number" class="form-control" id="ts-w-rate" min="0" step="0.01" value="0">
+          <p class="ts-w-hint" id="ts-w-rate-hint" style="display:none">Only used for hours they mark as extra. Leave at 0 if they never claim extras.</p>
+        </div>
+      </div>
+      <div>
+        <label class="form-label" for="ts-w-user">Admin account</label>
+        <select class="form-control" id="ts-w-user"><option value="">None — an admin logs for them</option></select>
+        <p style="font-size:0.72rem;color:var(--muted2);margin:5px 0 0">
+          Linking an account lets this person log their own hours. Leave blank for
+          casuals without a login.
+        </p>
+      </div>
+      <label class="mx-check"><input type="checkbox" id="ts-w-active" checked> Active</label>
+      <p class="modal-error" id="ts-w-err"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="mx-btn mx-btn-ghost" id="ts-w-cancel">Cancel</button>
+      <button class="mx-btn mx-btn-primary" id="ts-w-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Are you sure?</div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline-muted" id="modal-cancel">Cancel</button>
+      <button class="btn btn-danger" id="modal-confirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ADMIN USERS TAB ════ -->
+<!-- ── TAB: WARNINGS ── -->
+<div class="tab-panel" id="tab-warnings" style="display:none">
+  <div class="mx-head">
+    <div class="mx-head-titles">
+      <h3>Player warnings</h3>
+      <p>Raise a disciplinary document, send the player a link, keep the signed copy. The wording below is a starting point, not legal advice &mdash; have the committee read it once and make it match the club constitution and the CSA and WPCA codes of conduct. Everything is editable before you send it.</p>
+    </div>
+    <div class="mx-actions">
+      <select class="mx-select" id="wn-filter" aria-label="Filter by status">
+        <option value="all">Everything</option>
+        <option value="open">Waiting for a signature</option>
+        <option value="signed">Signed</option>
+        <option value="void">Withdrawn</option>
+      </select>
+      <button class="mx-btn mx-btn-primary" id="wn-new-btn">New warning</button>
+    </div>
+  </div>
+
+  <div class="mx-metrics" id="wn-metrics"></div>
+  <div id="wn-list"><div class="mx-table-wrap"><div class="mx-empty">Loading&hellip;</div></div></div>
+</div>
+
+<!-- ── TAB: AGREEMENTS ── -->
+<div class="tab-panel" id="tab-agreements" style="display:none">
+  <div class="mx-head">
+    <div class="mx-head-titles">
+      <h3>Agreements</h3>
+      <p>Send an agreement out for signature. Drop in the PDF the committee approved, check the text that comes out of it, sign it, and send the link. The other party reads it and signs on any phone &mdash; no app, no download.</p>
+    </div>
+    <div class="mx-actions">
+      <select class="mx-select" id="ag-filter" aria-label="Filter by status">
+        <option value="all">Everything</option>
+        <option value="open">Waiting for a signature</option>
+        <option value="signed">Signed</option>
+        <option value="void">Withdrawn</option>
+      </select>
+      <button class="mx-btn mx-btn-primary" id="ag-new-btn">New agreement</button>
+    </div>
+  </div>
+  <div class="mx-metrics" id="ag-metrics"></div>
+  <div id="ag-list"><div class="mx-table-wrap"><div class="mx-empty">Loading&hellip;</div></div></div>
+</div>
+
+<div class="tab-panel" id="tab-confidentiality" style="display:none">
+  <div class="mx-head">
+    <div class="mx-head-titles">
+      <h3>Confidentiality</h3>
+      <p>Executive members and captains who have signed the undertaking. Export the register as a spreadsheet, or save the full signed records &mdash; one page each, with signature and audit trail &mdash; as a PDF.</p>
+    </div>
+    <div class="mx-actions">
+      <select class="mx-select" id="conf-version" aria-label="Filter by version">
+        <option value="all">All versions</option>
+      </select>
+      <button class="mx-btn mx-btn-ghost" id="conf-csv-btn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+      <button class="mx-btn mx-btn-primary" id="conf-pdf-btn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>Save as PDF</button>
+    </div>
+  </div>
+
+  <div class="mx-metrics" id="conf-metrics"></div>
+
+  <div id="conf-list"><div class="mx-table-wrap"><div class="mx-empty">Loading&hellip;</div></div></div>
+</div>
+
+<div class="tab-panel" id="tab-admin" style="display:none">
+  <div class="mx-head">
+    <div class="mx-head-titles">
+      <h3>Admin users</h3>
+      <p>Manage who has access to the admin panel and what they can do. Only super admins can access this tab.</p>
+    </div>
+  </div>
+
+    <div id="admin-users-list" style="margin-bottom:28px"></div>
+
+    <!-- Create new user form -->
+    <div class="mx-panel">
+      <h4 class="mx-panel-title" style="margin-bottom:16px">Add admin user</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" id="new-user-name" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" id="new-user-username" placeholder="login username" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" class="form-control" id="new-user-password" placeholder="Temporary password" autocomplete="new-password" style="flex:1;font-family:monospace">
+            <button type="button" class="btn-sm" id="gen-password-btn" title="Generate password">Generate</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          <!-- Filled from ROLE_LABELS in admin.js, so a new role appears here
+               by existing rather than by being remembered twice. -->
+          <select class="form-control" id="new-user-role"></select>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="create-user-btn">Create user</button>
+      <div class="upload-success" id="create-user-success" style="display:none;margin-top:10px">User created.</div>
+      <div class="upload-error"   id="create-user-error"   style="display:none;margin-top:10px"></div>
+    </div>
+</div>
+
+    </div><!-- /admin-content -->
+</div><!-- /admin-panel -->
+
+
+<!-- ── WARNING: raise one ── -->
+<div class="modal-overlay" id="wn-modal" style="display:none">
+  <div class="modal wn-modal">
+    <div class="modal-title" id="wn-modal-title">New warning</div>
+
+    <div class="wn-grid">
+      <div class="form-group">
+        <label class="form-label" for="wn-level">Level</label>
+        <select class="form-control" id="wn-level"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="wn-months">Stays on the record</label>
+        <select class="form-control" id="wn-months">
+          <option value="6">6 months</option>
+          <option value="12" selected>12 months</option>
+          <option value="24">24 months</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="wn-grid">
+      <div class="form-group">
+        <label class="form-label" for="wn-player">Player</label>
+        <input type="text" class="form-control" id="wn-player" placeholder="Full name" autocomplete="off" list="wn-players">
+        <datalist id="wn-players"></datalist>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="wn-team">Team or section</label>
+        <input type="text" class="form-control" id="wn-team" placeholder="1st XI, U15, &hellip;" autocomplete="off">
+      </div>
+    </div>
+
+    <label class="wn-check">
+      <input type="checkbox" id="wn-minor"> The player is under 18
+    </label>
+    <div class="form-group" id="wn-guardian-wrap" style="display:none">
+      <label class="form-label" for="wn-guardian">Parent or guardian</label>
+      <input type="text" class="form-control" id="wn-guardian" placeholder="Full name" autocomplete="off">
+    </div>
+    <p class="wn-hint">Names only. No ID number, date of birth, phone number or address is stored in this record.</p>
+
+    <div class="wn-grid wn-grid-3">
+      <div class="form-group">
+        <label class="form-label" for="wn-date">Date of the incident</label>
+        <input type="date" class="form-control" id="wn-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="wn-place">Where</label>
+        <input type="text" class="form-control" id="wn-place" placeholder="Tygerberg Oval">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="wn-code">Rule or clause</label>
+        <input type="text" class="form-control" id="wn-code" placeholder="clause 4.2 of the code of conduct">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="wn-incident">What happened</label>
+      <textarea class="form-control wn-area" id="wn-incident" placeholder="Set out the facts plainly &mdash; what was done, said, when and in front of whom."></textarea>
+      <p class="wn-hint">Written in the second person: &ldquo;You disputed the umpire&rsquo;s decision at length and used abusive language towards the square-leg umpire.&rdquo;</p>
+    </div>
+
+    <div id="wn-suspend" style="display:none">
+      <div class="wn-grid wn-grid-3">
+        <div class="form-group"><label class="form-label" for="wn-sfrom">Suspended from</label><input type="date" class="form-control" id="wn-sfrom"></div>
+        <div class="form-group"><label class="form-label" for="wn-sto">Until</label><input type="date" class="form-control" id="wn-sto"></div>
+        <div class="form-group"><label class="form-label" for="wn-smatches">Or matches</label><input type="number" class="form-control" id="wn-smatches" min="1" max="50"></div>
+      </div>
+    </div>
+
+    <div id="wn-hearing" style="display:none">
+      <div class="wn-grid">
+        <div class="form-group"><label class="form-label" for="wn-hwhen">Hearing &mdash; when</label><input type="datetime-local" class="form-control" id="wn-hwhen"></div>
+        <div class="form-group"><label class="form-label" for="wn-hwhere">Where</label><input type="text" class="form-control" id="wn-hwhere" placeholder="The clubhouse"></div>
+      </div>
+    </div>
+
+    <div class="wn-grid">
+      <div class="form-group">
+        <label class="form-label" for="wn-expected">What is expected (optional)</label>
+        <textarea class="form-control wn-area wn-area-sm" id="wn-expected" placeholder="Leave blank for the standard wording."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="wn-consequence">If it happens again (optional)</label>
+        <textarea class="form-control wn-area wn-area-sm" id="wn-consequence" placeholder="Leave blank for the standard wording."></textarea>
+      </div>
+    </div>
+
+    <div class="wn-grid wn-grid-3">
+      <div class="form-group"><label class="form-label" for="wn-by">Issued by</label><input type="text" class="form-control" id="wn-by" autocomplete="off"></div>
+      <div class="form-group"><label class="form-label" for="wn-role">Role</label><input type="text" class="form-control" id="wn-role" placeholder="Club Captain" autocomplete="off"></div>
+      <div class="form-group"><label class="form-label" for="wn-appeal">Days to appeal</label>
+        <select class="form-control" id="wn-appeal"><option value="7" selected>7</option><option value="14">14</option><option value="21">21</option></select></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your signature</label>
+      <div class="wn-sigtabs">
+        <button type="button" class="wn-sigtab on" id="wn-sig-draw-tab">Draw it</button>
+        <button type="button" class="wn-sigtab" id="wn-sig-type-tab">Type it</button>
+      </div>
+      <div id="wn-sig-draw">
+        <div class="wn-padwrap">
+          <canvas class="wn-pad" id="wn-pad"></canvas>
+          <div class="wn-padline"></div>
+          <div class="wn-padghost" id="wn-pad-ghost">Sign here</div>
+          <div class="wn-padbar"><button type="button" class="wn-padclear" id="wn-pad-clear">Clear</button></div>
+        </div>
+      </div>
+      <div id="wn-sig-type" style="display:none">
+        <input type="text" class="form-control" id="wn-sign" placeholder="Type your full name" autocomplete="off">
+      </div>
+      <p class="wn-hint">The club signs first. A document that reaches a player unsigned asks them to sign something nobody has put their name to.</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="wn-doc">The document</label>
+      <textarea class="form-control wn-doc" id="wn-doc"></textarea>
+      <p class="wn-hint">Built from the fields above. Edit it freely &mdash; what is saved and signed is this text, exactly as it stands.</p>
+    </div>
+
+    <div id="wn-made" style="display:none">
+      <div class="form-group">
+        <label class="form-label" for="wn-link">The link to send</label>
+        <div class="wn-linkrow">
+          <input type="text" class="form-control wn-mono" id="wn-link" readonly>
+          <button class="mx-btn mx-btn-ghost" id="wn-copy-link">Copy</button>
+        </div>
+        <p class="wn-hint">Anyone with this link can open and sign the document, so send it to the player and nobody else.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="wn-send-msg">A message to send with it</label>
+        <textarea class="form-control wn-area" id="wn-send-msg"></textarea>
+        <button class="mx-btn mx-btn-ghost" id="wn-copy-msg" style="margin-top:8px">Copy the message</button>
+      </div>
+    </div>
+
+    <div class="modal-body" id="wn-msg"></div>
+    <div class="modal-actions">
+      <button class="mx-btn mx-btn-ghost" id="wn-rebuild">Rebuild the wording</button>
+      <button class="mx-btn mx-btn-primary" id="wn-create">Create and get the link</button>
+      <button class="mx-btn mx-btn-ghost" id="wn-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── WARNING: read one ── -->
+<div class="modal-overlay" id="wn-view-modal" style="display:none">
+  <div class="modal wn-modal">
+    <div class="modal-title" id="wn-view-title">Warning</div>
+    <div id="wn-view-body"></div>
+    <div class="modal-actions">
+      <button class="mx-btn mx-btn-ghost" id="wn-view-copy">Copy the link</button>
+      <button class="mx-btn mx-btn-ghost" id="wn-view-print">Print</button>
+      <button class="mx-btn mx-btn-ghost" id="wn-view-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── AGREEMENT: raise one ── -->
+<div class="modal-overlay" id="ag-modal" style="display:none">
+  <div class="modal wn-modal">
+    <div class="modal-title">New agreement</div>
+
+    <div class="form-group">
+      <label class="form-label" for="ag-file">The approved PDF</label>
+      <input type="file" class="form-control" id="ag-file" accept="application/pdf">
+      <p class="wn-hint" id="ag-file-said">The text is read out of it here in your browser. The file is kept in a private store and handed out only behind a link that lasts five minutes.</p>
+    </div>
+
+    <div class="wn-grid">
+      <div class="form-group">
+        <label class="form-label" for="ag-title">Title</label>
+        <input type="text" class="form-control" id="ag-title" placeholder="Petrol Stipend" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ag-place">Place</label>
+        <input type="text" class="form-control" id="ag-place" placeholder="Ravensmead" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="wn-grid">
+      <div class="form-group">
+        <label class="form-label" for="ag-party">Agreement is with</label>
+        <input type="text" class="form-control" id="ag-party" placeholder="Full name" autocomplete="off" list="ag-players">
+        <datalist id="ag-players"></datalist>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ag-party-role">Their role</label>
+        <input type="text" class="form-control" id="ag-party-role" placeholder="Player" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="wn-grid wn-grid-3">
+      <div class="form-group">
+        <label class="form-label" for="ag-by">Issued by</label>
+        <input type="text" class="form-control" id="ag-by" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ag-by-role">Their role</label>
+        <input type="text" class="form-control" id="ag-by-role" placeholder="Treasurer" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ag-days">Link lasts</label>
+        <select class="form-control" id="ag-days">
+          <option value="7">7 days</option>
+          <option value="14" selected>14 days</option>
+          <option value="30">30 days</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="wn-grid">
+      <div class="form-group">
+        <label class="form-label" for="ag-retain">Keep the record until</label>
+        <input type="date" class="form-control" id="ag-retain">
+        <p class="wn-hint">After this it is deleted by the clean-up. Leave blank to keep it indefinitely.</p>
+      </div>
+      <div class="form-group" style="justify-content:flex-end">
+        <label class="wn-check"><input type="checkbox" id="ag-confidential" checked> Mark it confidential</label>
+        <p class="wn-hint">Shows a confidentiality line on the page the other party reads.</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Your signature</label>
+      <div class="wn-sigtabs">
+        <button type="button" class="wn-sigtab on" id="ag-sig-draw-tab">Draw it</button>
+        <button type="button" class="wn-sigtab" id="ag-sig-type-tab">Type it</button>
+      </div>
+      <div id="ag-sig-draw">
+        <div class="wn-padwrap">
+          <canvas class="wn-pad" id="ag-pad"></canvas>
+          <div class="wn-padline"></div>
+          <div class="wn-padghost" id="ag-pad-ghost">Sign here</div>
+          <div class="wn-padbar"><button type="button" class="wn-padclear" id="ag-pad-clear">Clear</button></div>
+        </div>
+      </div>
+      <div id="ag-sig-type" style="display:none">
+        <input type="text" class="form-control" id="ag-sign" placeholder="Type your full name" autocomplete="off">
+      </div>
+      <p class="wn-hint">The club signs first. The sample agreement has only the player&rsquo;s signature line on it &mdash; an agreement committing the club to seven months of payments ought to be signed by both.</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="ag-doc">What they will read</label>
+      <textarea class="form-control wn-doc" id="ag-doc" placeholder="Drop the PDF above, or paste the agreement here."></textarea>
+      <p class="wn-hint">Taken out of the PDF. Check it reads properly, tidy the line breaks, and remember this is what the signature is against.</p>
+    </div>
+
+    <div id="ag-made" style="display:none">
+      <div class="form-group">
+        <label class="form-label" for="ag-link">The link to send</label>
+        <div class="wn-linkrow">
+          <input type="text" class="form-control wn-mono" id="ag-link" readonly>
+          <button class="mx-btn mx-btn-ghost" id="ag-copy-link">Copy</button>
+        </div>
+        <p class="wn-hint" id="ag-link-life"></p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ag-send-msg">A message to send with it</label>
+        <textarea class="form-control wn-area" id="ag-send-msg"></textarea>
+        <button class="mx-btn mx-btn-ghost" id="ag-copy-msg" style="margin-top:8px">Copy the message</button>
+      </div>
+    </div>
+
+    <div class="modal-body" id="ag-msg"></div>
+    <div class="modal-actions">
+      <button class="mx-btn mx-btn-primary" id="ag-create">Create and get the link</button>
+      <button class="mx-btn mx-btn-ghost" id="ag-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── AGREEMENT: read one ── -->
+<div class="modal-overlay" id="ag-view-modal" style="display:none">
+  <div class="modal wn-modal">
+    <div class="modal-title" id="ag-view-title">Agreement</div>
+    <div id="ag-view-body"></div>
+    <div class="modal-actions">
+      <button class="mx-btn mx-btn-ghost" id="ag-view-file">Original PDF</button>
+      <button class="mx-btn mx-btn-ghost" id="ag-view-copy">Copy the link</button>
+      <button class="mx-btn mx-btn-ghost" id="ag-view-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="js/fantasy-scoring.js?v=1"></script>
+<script src="js/fantasy-badges.js?v=3"></script>
+<script src="js/warnings-wording.js?v=1"></script>
+<script src="js/signature-pad.js?v=1"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="js/admin.js?v=57"></script>
+<script src="js/coaching-analytics.js?v=7"></script>
+
+<!-- Auto-score Preview Modal -->
+<div class="modal-overlay" id="auto-score-modal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-card" style="max-width:640px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column">
+    <div class="modal-header">
+      <div class="modal-title" id="auto-score-title">Auto-score Preview</div>
+      <button class="modal-close" onclick="document.getElementById('auto-score-modal').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body" id="auto-score-body" style="overflow-y:auto;flex:1">
+      <div class="album-list-loading">Loading…</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="auto-score-confirm-btn" style="display:none">✓ Confirm &amp; Save Scores</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('auto-score-modal').style.display='none'">Close</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

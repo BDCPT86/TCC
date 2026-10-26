@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pick Your XI | TCC Fantasy Cricket</title>
+<meta name="theme-color" content="#050806">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="manifest" href="fantasy-manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TCC Fantasy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/pick.css?v=4">
+<link rel="stylesheet" href="css/fantasy-pwa.css">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://tygerbergcc.co.za/pick.html">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+
+<!-- ═══ TOP BAR (slim) ═══ -->
+<header class="pk-topbar">
+  <div class="pk-tb-left">
+    <a href="fantasy.html" class="pk-back">← Exit</a>
+    <div class="pk-round-name" id="pk-round-name">Loading…</div>
+  </div>
+  <div class="pk-tb-right">
+    <div class="pk-deadline" id="pk-deadline"></div>
+    <button class="pk-bell-btn" id="pk-bell-btn" title="Get deadline reminders" style="display:none">🔕</button>
+    <!-- Hidden compact submit kept for JS hooks/enabled-state; action bar button is primary -->
+    <button class="pk-submit-btn" id="pk-submit-btn" disabled style="display:none">Submit XI</button>
+
+    <!-- Account menu -->
+    <div class="pk-account">
+      <button class="pk-account-btn" id="pk-account-toggle" aria-label="Account menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+        </svg>
+      </button>
+      <div class="pk-account-menu" id="pk-account-menu" hidden>
+        <a href="profile.html" class="pk-account-item">🏏 My Team</a>
+        <button class="pk-account-item" id="pk-edit-profile-btn">⚙️ Edit profile</button>
+        <button class="pk-account-item" id="pk-signout-btn">↩ Sign out</button>
+        <div class="pk-account-sep"></div>
+        <button class="pk-account-item danger" id="pk-deregister-btn">Remove account</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ BUDGET BAR ═══ -->
+
+<!-- ═══ BUDGET BAR ═══ -->
+<div class="pk-budget-bar">
+  <div class="pk-budget-fill" id="pk-budget-fill"></div>
+</div>
+
+<!-- ═══ POOL TRIGGER (phones only — opens the squad sheet) ═══ -->
+<button class="pk-pool-trigger" id="pk-pool-trigger" aria-expanded="false" aria-controls="pk-pool">
+  <span class="pk-pt-icon" aria-hidden="true">＋</span>
+  <span class="pk-pt-label">Add players</span>
+  <span class="pk-pt-count" id="pk-pool-trigger-count">0/11</span>
+</button>
+<div class="pk-pool-scrim" id="pk-pool-scrim" hidden></div>
+
+<!-- ═══ MAIN LAYOUT ═══ -->
+<div class="pk-layout">
+
+  <!-- LEFT: Player pool -->
+  <aside class="pk-pool" id="pk-pool">
+    <button class="pk-pool-close" id="pk-pool-close" aria-label="Close squad list">✕</button>
+    <div class="pk-pool-header">
+      <span class="pk-pool-title">Squad</span>
+      <div class="pk-filters">
+        <button class="pk-filter active" data-role="all">All</button>
+        <button class="pk-filter" data-role="Batter">Bat</button>
+        <button class="pk-filter" data-role="Bowler">Bowl</button>
+        <button class="pk-filter" data-role="All-Rounder">AR</button>
+        <button class="pk-filter" data-role="Wicketkeeper">WK</button>
+      </div>
+    </div>
+    <div class="pk-search-wrap">
+      <input type="text" class="pk-search" id="pk-search" placeholder="Search player…">
+    </div>
+    <div id="pk-pool-loading" class="pk-loading"><div class="pk-spinner"></div></div>
+    <div class="pk-pool-list" id="pk-pool-list"></div>
+  </aside>
+
+  <!-- CENTRE: Pitch view (now fills the space the right rail used to take) -->
+  <main class="pk-pitch-wrap">
+    <div class="pk-pitch">
+      <!-- Pitch markings SVG -->
+      <svg class="pk-pitch-svg" viewBox="0 0 400 650" preserveAspectRatio="none">
+        <ellipse cx="200" cy="325" rx="195" ry="315" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <ellipse cx="200" cy="325" rx="130" ry="190" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="4 4"/>
+        <rect x="175" y="175" width="50" height="300" rx="2" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <line x1="165" y1="220" x2="235" y2="220" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+        <line x1="165" y1="430" x2="235" y2="430" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+        <line x1="190" y1="208" x2="190" y2="222" stroke="#b8922a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="200" y1="205" x2="200" y2="222" stroke="#b8922a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="210" y1="208" x2="210" y2="222" stroke="#b8922a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="190" y1="208" x2="200" y2="205" stroke="rgba(237,233,223,0.6)" stroke-width="1.5"/>
+        <line x1="200" y1="205" x2="210" y2="208" stroke="rgba(237,233,223,0.6)" stroke-width="1.5"/>
+        <line x1="190" y1="428" x2="190" y2="442" stroke="#b8922a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="200" y1="428" x2="200" y2="442" stroke="#b8922a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="210" y1="428" x2="210" y2="442" stroke="#b8922a" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="190" y1="428" x2="200" y2="428" stroke="rgba(237,233,223,0.6)" stroke-width="1.5"/>
+        <line x1="200" y1="428" x2="210" y2="428" stroke="rgba(237,233,223,0.6)" stroke-width="1.5"/>
+      </svg>
+
+      <!-- Zones for placing players -->
+      <div class="pk-zone pk-zone-keeper" id="zone-keeper">
+        <div class="pk-zone-label">Keeper</div>
+        <div class="pk-zone-slots" id="slots-keeper"></div>
+      </div>
+      <div class="pk-zone pk-zone-batters" id="zone-batters">
+        <div class="pk-zone-label">Batters</div>
+        <div class="pk-zone-slots" id="slots-batters"></div>
+      </div>
+      <div class="pk-zone pk-zone-allrounders" id="zone-allrounders">
+        <div class="pk-zone-label">All-Rounders</div>
+        <div class="pk-zone-slots" id="slots-allrounders"></div>
+      </div>
+      <div class="pk-zone pk-zone-bowlers" id="zone-bowlers">
+        <div class="pk-zone-label">Bowlers</div>
+        <div class="pk-zone-slots" id="slots-bowlers"></div>
+      </div>
+
+      <!-- Tip (info toggle, hidden once a team exists) -->
+      <div class="pk-pitch-tip" id="pk-pitch-tip">Tap a name to add them · tap them here for the armbands</div>
+    </div>
+
+    <!-- Hidden XI list — kept in DOM for JS (renders chips/captain detail);
+         the action bar shows the live summary. -->
+    <div class="pk-xi-list" id="pk-xi-list" hidden>
+      <div class="pk-xi-empty">No players selected yet</div>
+    </div>
+  </main>
+
+</div><!-- /pk-layout -->
+
+<!-- ═══ BOTTOM ACTION BAR ═══ -->
+<div class="pk-actionbar">
+  <div class="pk-ab-status">
+    <div class="pk-ab-stat">
+      <div class="pk-ab-val" id="pk-selected">0<span>/11</span></div>
+      <div class="pk-ab-key">Selected</div>
+    </div>
+    <div class="pk-ab-stat">
+      <div class="pk-ab-val green" id="pk-budget">R100</div>
+      <div class="pk-ab-key">Budget</div>
+    </div>
+    <div class="pk-ab-stat pk-ab-spent">
+      <div class="pk-ab-val sm" id="pk-xi-spent">R0</div>
+      <div class="pk-ab-key">Spent</div>
+    </div>
+    <div class="pk-ab-stat pk-ab-spent">
+      <div class="pk-ab-val sm green" id="pk-xi-left">R100</div>
+      <div class="pk-ab-key">Left</div>
+    </div>
+    <div class="pk-ab-sep"></div>
+    <div class="pk-ab-stat">
+      <div class="pk-ab-val sm" id="pk-captain">—</div>
+      <div class="pk-ab-key">Captain ⭐</div>
+    </div>
+    <div class="pk-ab-stat">
+      <div class="pk-ab-val sm" id="pk-vc">—</div>
+      <div class="pk-ab-key">VC 🌟</div>
+    </div>
+  </div>
+
+  <div class="pk-ab-actions">
+    <button class="pk-ab-powerups" id="pk-powerups-toggle" aria-expanded="false">
+      <span class="pk-ab-pu-icon">⚡</span>
+      <span class="pk-ab-pu-label">Power-ups</span>
+      <span class="pk-ab-pu-active" id="pk-chip-active">—</span>
+      <span class="pk-ab-pu-caret">▾</span>
+    </button>
+    <button class="pk-submit-btn-lg" id="pk-submit-btn-lg" disabled>Submit My XI →</button>
+  </div>
+</div>
+
+<!-- ═══ POWER-UPS POPOVER ═══ -->
+<div class="pk-pu-popover" id="pk-pu-popover" hidden>
+  <div class="pk-pu-pop-head">
+    <span class="pk-pu-pop-title">Power-ups</span>
+    <span class="pk-pu-pop-sub">One use each, all season</span>
+    <button class="pk-pu-pop-close" id="pk-pu-close" aria-label="Close">✕</button>
+  </div>
+  <div class="pk-chips" id="pk-chips"><!-- rendered by pick.js --></div>
+  <div class="pk-xi-tip">Tap a name to add or remove · tap a player on the pitch for Captain ⭐ (×2), VC 🌟 (×1.5) or to take them out.</div>
+</div>
+
+<!-- Notice + error live in the action bar region as a thin strip -->
+<div class="pk-msg-strip">
+  <div class="pk-xi-notice" id="pk-xi-notice" style="display:none"></div>
+  <div class="form-error" id="pk-error"></div>
+</div>
+
+<!-- ═══ SUCCESS OVERLAY ═══ -->
+<div class="pk-success-overlay" id="pk-success-overlay" style="display:none">
+  <div class="pk-success-card">
+    <div class="pk-success-ring">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(184,146,42,0.2)" stroke-width="3"/>
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#b8922a" stroke-width="3"
+          stroke-dasharray="326.7" stroke-dashoffset="326.7" id="pk-success-ring-circle"
+          stroke-linecap="round" transform="rotate(-90 60 60)"/>
+      </svg>
+      <span class="pk-success-emoji">🏆</span>
+    </div>
+    <h2 class="pk-success-title">XI Submitted!</h2>
+    <p class="pk-success-msg" id="pk-success-msg"></p>
+    <div class="pk-success-btns">
+      <a href="leaderboard.html" class="pk-success-primary">View Leaderboard →</a>
+      <button class="pk-success-ghost" id="pk-share-team-btn">📲 Share XI</button>
+      <button class="pk-success-ghost" id="pk-edit-team-btn">Edit Team</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AUTH GATE OVERLAY (if not logged in) ═══ -->
+<div class="pk-auth-overlay" id="pk-auth-overlay">
+  <div class="pk-auth-card">
+    <img loading="eager" src="images/tcc-logo.png" alt="TCC" class="pk-auth-logo">
+    <h2 class="pk-auth-title">Sign in to pick</h2>
+    <p class="pk-auth-sub">Verify your email to access the team selection.</p>
+    <a href="fantasy.html" class="pk-auth-btn">Go to Fantasy Home →</a>
+  </div>
+</div>
+
+<div class="pwa-banner" id="pwa-banner" style="display:none">
+  <div class="pwa-banner-inner">
+    <img src="images/tcc-logo.png" alt="TCC" class="pwa-banner-logo">
+    <div class="pwa-banner-text">
+      <div class="pwa-banner-title">Add to Home Screen</div>
+      <div class="pwa-banner-sub">Play TCC Fantasy from your home screen</div>
+    </div>
+    <button class="pwa-banner-btn" id="pwa-install-btn">Install</button>
+    <button class="pwa-banner-close" id="pwa-banner-close" aria-label="Dismiss">✕</button>
+  </div>
+</div>
+
+<script src="js/pick.js?v=12"></script>
+<script src="js/fantasy-pwa.js"></script>
+</body>
+</html>

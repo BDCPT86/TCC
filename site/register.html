@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Registration — Tygerberg Cricket Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/register.css?v=2">
+</head>
+<body>
+
+<header class="reg-topbar">
+  <div class="reg-topbar__brand">
+    <span class="reg-topbar__crest">TCC</span>
+    <span class="reg-topbar__name">Tygerberg Cricket Club <em>est. 1957</em></span>
+  </div>
+  <span class="reg-topbar__motto">Facta Non Verba</span>
+</header>
+
+<main class="reg-shell">
+
+  <!-- LEFT: the form -->
+  <section class="reg-form-col" aria-labelledby="reg-title">
+    <p class="reg-eyebrow">Season 2026/27 · Player Registration</p>
+    <h1 id="reg-title">Join the club.</h1>
+    <p class="reg-intro">Four short steps, about three minutes. We only ask for what we need to register you — nothing more.</p>
+
+    <!-- Progress -->
+    <ol class="reg-steps" id="regSteps" aria-label="Registration progress">
+      <li class="reg-steps__item is-active" data-step="1"><span>1</span> Player</li>
+      <li class="reg-steps__item" data-step="2"><span>2</span> Contact</li>
+      <li class="reg-steps__item" data-step="3"><span>3</span> Cricket</li>
+      <li class="reg-steps__item" data-step="4"><span>4</span> Consent</li>
+    </ol>
+    <p class="reg-steps__label" id="stepLabel">Step 1 of 4 — Player details</p>
+
+    <form id="regForm" novalidate>
+
+      <!-- honeypot: hidden from humans; bots that fill it are silently dropped -->
+      <div class="reg-hp" aria-hidden="true">
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- STEP 1 : PLAYER -->
+      <fieldset class="reg-step is-visible" data-step="1">
+        <div class="reg-row">
+          <div class="reg-field">
+            <label for="firstName">First name <b>*</b></label>
+            <input type="text" id="firstName" name="firstName" autocomplete="given-name" required>
+            <p class="reg-error" id="err-firstName"></p>
+          </div>
+          <div class="reg-field">
+            <label for="surname">Surname <b>*</b></label>
+            <input type="text" id="surname" name="surname" autocomplete="family-name" required>
+            <p class="reg-error" id="err-surname"></p>
+          </div>
+        </div>
+
+        <div class="reg-row">
+          <div class="reg-field">
+            <label for="nickname">Nickname <small>optional — for the scorecard</small></label>
+            <input type="text" id="nickname" name="nickname">
+          </div>
+          <div class="reg-field">
+            <label for="dob-day">Date of birth <b>*</b></label>
+            <div class="dob-selects">
+              <select id="dob-day" aria-label="Day">
+                <option value="" disabled selected>Day</option>
+              </select>
+              <select id="dob-month" aria-label="Month">
+                <option value="" disabled selected>Month</option>
+              </select>
+              <select id="dob-year" aria-label="Year">
+                <option value="" disabled selected>Year</option>
+              </select>
+            </div>
+            <!-- Populated as YYYY-MM-DD by the three selects; the rest of the
+                 form reads this single field, unchanged. -->
+            <input type="hidden" id="dob" name="dob" required>
+            <p class="reg-hint">Used only to place you in the correct age group.</p>
+            <p class="reg-error" id="err-dob"></p>
+            <p class="reg-agegroup" id="ageGroupHint" hidden></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 2 : CONTACT -->
+      <fieldset class="reg-step" data-step="2">
+        <div class="reg-row">
+          <div class="reg-field">
+            <label for="email">Email <b>*</b></label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+            <p class="reg-hint">For fixtures, selection and club news. Never shared.</p>
+            <p class="reg-error" id="err-email"></p>
+          </div>
+          <div class="reg-field">
+            <label for="phone">Mobile number <b>*</b></label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="e.g. 082 123 4567" required>
+            <p class="reg-error" id="err-phone"></p>
+          </div>
+        </div>
+        <div class="reg-field">
+          <label for="suburb">Suburb <small>optional</small></label>
+          <input type="text" id="suburb" name="suburb" autocomplete="address-level2">
+        </div>
+
+        <div class="reg-guardian" id="guardianBlock" hidden>
+          <h3>Parent / guardian details</h3>
+          <p class="reg-hint">Because this player is under 18, a parent or guardian must complete registration on their behalf.</p>
+          <div class="reg-row">
+            <div class="reg-field">
+              <label for="guardianName">Full name <b>*</b></label>
+              <input type="text" id="guardianName" name="guardianName">
+              <p class="reg-error" id="err-guardianName"></p>
+            </div>
+            <div class="reg-field">
+              <label for="guardianPhone">Mobile number <b>*</b></label>
+              <input type="tel" id="guardianPhone" name="guardianPhone" inputmode="tel">
+              <p class="reg-error" id="err-guardianPhone"></p>
+            </div>
+          </div>
+          <div class="reg-field">
+            <label for="guardianRel">Relationship to player <b>*</b></label>
+            <select id="guardianRel" name="guardianRel">
+              <option value="">Select…</option>
+              <option>Parent</option>
+              <option>Legal guardian</option>
+              <option>Other family member</option>
+            </select>
+            <p class="reg-error" id="err-guardianRel"></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 3 : CRICKET -->
+      <fieldset class="reg-step" data-step="3">
+        <div class="reg-row">
+          <div class="reg-field">
+            <label for="batting">Batting <b>*</b></label>
+            <select id="batting" name="batting" required>
+              <option value="">Select…</option>
+              <option>Right-hand bat</option>
+              <option>Left-hand bat</option>
+            </select>
+            <p class="reg-error" id="err-batting"></p>
+          </div>
+          <div class="reg-field">
+            <label for="bowling">Bowling</label>
+            <select id="bowling" name="bowling">
+              <option value="">None / part-time</option>
+              <option>Right-arm pace</option>
+              <option>Left-arm pace</option>
+              <option>Off spin</option>
+              <option>Leg spin</option>
+              <option>Left-arm orthodox</option>
+              <option>Left-arm wrist spin</option>
+            </select>
+          </div>
+        </div>
+        <div class="reg-row">
+          <div class="reg-field">
+            <label for="role">Preferred role <b>*</b></label>
+            <select id="role" name="role" required>
+              <option value="">Select…</option>
+              <option>Batter</option>
+              <option>Bowler</option>
+              <option>All-rounder</option>
+              <option>Wicketkeeper</option>
+            </select>
+            <p class="reg-error" id="err-role"></p>
+          </div>
+          <div class="reg-field">
+            <label for="prevClub">Previous club <small>optional — for WPCA transfer purposes</small></label>
+            <input type="text" id="prevClub" name="prevClub">
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 4 : EMERGENCY, MEDICAL & CONSENT -->
+      <fieldset class="reg-step" data-step="4">
+        <h3>Emergency contact</h3>
+        <div class="reg-row">
+          <div class="reg-field">
+            <label for="emName">Contact name <b>*</b></label>
+            <input type="text" id="emName" name="emName" required>
+            <p class="reg-error" id="err-emName"></p>
+          </div>
+          <div class="reg-field">
+            <label for="emPhone">Contact number <b>*</b></label>
+            <input type="tel" id="emPhone" name="emPhone" inputmode="tel" required>
+            <p class="reg-error" id="err-emPhone"></p>
+          </div>
+        </div>
+
+        <h3>Medical information <small>optional</small></h3>
+        <div class="reg-field">
+          <label for="medical">Conditions, allergies or medication our coaches should know about</label>
+          <textarea id="medical" name="medical" rows="3"></textarea>
+          <p class="reg-hint">This is special personal information under POPIA. It is stored securely, seen only by team management, and used solely for your safety at training and matches.</p>
+        </div>
+        <label class="reg-check" id="medicalConsentWrap" hidden>
+          <input type="checkbox" id="medicalConsent" name="medicalConsent">
+          <span>I consent to TCC processing the medical information above for player safety purposes. <b>*</b></span>
+        </label>
+        <p class="reg-error" id="err-medicalConsent"></p>
+
+        <h3>Consent</h3>
+        <div class="reg-privacy">
+          <p><strong>How we use your information.</strong> Tygerberg Cricket Club collects the details on this form to register you as a player, arrange teams and fixtures, and contact you about club matters. We keep your information only while you are a member (plus one season), never sell it, and share it only with the WPCA where league registration requires it. You may ask to see, correct or delete your information at any time by contacting the club's Information Officer at <a href="mailto:info@tygerbergcc.co.za">info@tygerbergcc.co.za</a>.</p>
+        </div>
+        <label class="reg-check">
+          <input type="checkbox" id="popiaConsent" name="popiaConsent" required>
+          <span>I have read the above and consent to TCC processing my personal information for these purposes. <b>*</b></span>
+        </label>
+        <p class="reg-error" id="err-popiaConsent"></p>
+        <label class="reg-check">
+          <input type="checkbox" id="mediaConsent" name="mediaConsent">
+          <span>TCC may use photographs and video of me in match reports, on the club website and on social media. <small>optional — you can play without this</small></span>
+        </label>
+        <h3>Disclaimer &amp; indemnity</h3>
+        <div class="reg-disclaimer" tabindex="0" aria-label="Participation disclaimer and indemnity — scrollable">
+          <h4>Tygerberg Cricket Club — Participation Disclaimer &amp; Indemnity</h4>
+          <p>By entering the club premises and/or participating in any Tygerberg Cricket Club activities, including but not limited to training sessions, matches, social events, meetings, fundraising events and the use of club facilities, all players, members, spectators, volunteers and visitors acknowledge and agree to the following:</p>
+          <ol>
+            <li><strong>Participation at Own Risk.</strong> Participation in cricket and related activities involves inherent risks, including the risk of serious injury, illness, permanent disability or death. All persons participate voluntarily and entirely at their own risk.</li>
+            <li><strong>Medical Fitness.</strong> Participants confirm that they are medically fit to take part in club activities and will notify the club of any medical conditions that may affect their participation.</li>
+            <li><strong>Indemnity.</strong> To the fullest extent permitted by law, Tygerberg Cricket Club, its committee members, coaches, officials, volunteers, sponsors and representatives shall not be held liable for any injury, illness, death, loss or damage suffered while participating in or attending any club activity, except where such loss or damage results directly from gross negligence or wilful misconduct.</li>
+            <li><strong>Personal Property.</strong> The club accepts no responsibility for the loss, theft or damage of personal belongings, equipment, vehicles or valuables brought onto club premises or to any club-related event.</li>
+            <li><strong>Medical Treatment.</strong> In the event of an emergency, the club may arrange or seek appropriate medical treatment where reasonably necessary. Any associated medical costs remain the responsibility of the participant or their parent/legal guardian.</li>
+            <li><strong>Minors.</strong> Parents or legal guardians accept this indemnity on behalf of participants under the age of 18 years and consent to their participation in club activities.</li>
+            <li><strong>Code of Conduct.</strong> All participants agree to comply with the club&rsquo;s constitution, policies, codes of conduct and the reasonable instructions of club officials. Failure to do so may result in disciplinary action or removal from club activities.</li>
+            <li><strong>Photography and Media.</strong> The club may photograph or record club activities for promotional, historical or marketing purposes. Individuals who do not wish to appear in such media should notify the club in writing.</li>
+            <li><strong>Acceptance.</strong> By registering as a member, attending or participating in any club activity, or entering club premises, you acknowledge that you have read, understood and accepted this disclaimer and indemnity.</li>
+          </ol>
+          <p class="reg-disclaimer__sign">Tygerberg Cricket Club &middot; Facta Non Verba</p>
+        </div>
+        <label class="reg-check">
+          <input type="checkbox" id="indemnityConsent" name="indemnityConsent" required>
+          <span>I have read, understood and accept the Participation Disclaimer &amp; Indemnity above, including the code of conduct (clause 7). <b>*</b></span>
+        </label>
+        <p class="reg-error" id="err-indemnityConsent"></p>
+        <label class="reg-check" id="guardianConsentWrap" hidden>
+          <input type="checkbox" id="guardianConsent" name="guardianConsent">
+          <span>As parent/guardian, I accept the Disclaimer &amp; Indemnity on behalf of the player named above and consent to their participation in club activities. <b>*</b></span>
+        </label>
+        <p class="reg-error" id="err-guardianConsent"></p>
+
+        <div class="reg-turnstile" id="turnstileWidget"></div>
+        <p class="reg-error" id="err-turnstile"></p>
+      </fieldset>
+
+      <!-- NAV -->
+      <div class="reg-nav">
+        <button type="button" class="reg-btn reg-btn--ghost" id="btnBack" hidden>Back</button>
+        <button type="button" class="reg-btn" id="btnNext">Continue</button>
+        <button type="submit" class="reg-btn" id="btnSubmit" hidden>Submit registration</button>
+      </div>
+    </form>
+
+    <!-- SUCCESS -->
+    <div class="reg-success" id="regSuccess" hidden>
+      <div class="reg-success__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h2>You're on the team sheet.</h2>
+      <p>Thanks — the club will confirm your registration by email. If you're transferring from another club, remember the WPCA 7-day registration wait applies before selection.</p>
+    </div>
+  </section>
+
+  <!-- RIGHT: live player card -->
+  <aside class="reg-card-col" aria-hidden="true">
+    <div class="reg-card" id="playerCard">
+      <div class="reg-card__seam"></div>
+      <p class="reg-card__club">Tygerberg CC · 2026/27</p>
+      <p class="reg-card__name" id="cardName">Your name</p>
+      <p class="reg-card__nick" id="cardNick"></p>
+      <dl class="reg-card__stats">
+        <div><dt>Age group</dt><dd id="cardAge">—</dd></div>
+        <div><dt>Role</dt><dd id="cardRole">—</dd></div>
+        <div><dt>Bats</dt><dd id="cardBat">—</dd></div>
+        <div><dt>Bowls</dt><dd id="cardBowl">—</dd></div>
+      </dl>
+      <p class="reg-card__motto">Facta Non Verba</p>
+    </div>
+    <p class="reg-card-col__caption">Your player card builds as you go.</p>
+  </aside>
+
+</main>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<!-- main.js provides the shared TURNSTILE_SITEKEY (window.TCC_TURNSTILE_SITEKEY) -->
+<script src="js/main.js?v=9"></script>
+<script src="js/register.js?v=9"></script>
+</body>
+</html>

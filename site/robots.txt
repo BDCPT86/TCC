@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /pick.html
+
+Sitemap: https://tygerbergcc.co.za/sitemap.xml

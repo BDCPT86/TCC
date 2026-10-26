@@ -1,0 +1,41 @@
+{
+  "name": "TCC Fantasy Cricket",
+  "short_name": "TCC Fantasy",
+  "description": "Pick your XI, score points from real TCC matches, top the leaderboard.",
+  "start_url": "/fantasy.html?pwa=1",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "scope": "/",
+  "lang": "en-ZA",
+  "categories": ["sports", "games"],
+  "icons": [
+    {
+      "src": "images/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/tcc-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Pick My XI",
+      "short_name": "Pick XI",
+      "url": "/pick.html?pwa=1",
+      "icons": [{ "src": "images/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+    {
+      "name": "Leaderboard",
+      "short_name": "Standings",
+      "url": "/leaderboard.html?pwa=1",
+      "icons": [{ "src": "images/apple-touch-icon.png", "sizes": "180x180" }]
+    }
+  ]
+}

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Stats | TCC Fantasy Cricket</title>
+<meta name="description" content="TCC Fantasy Cricket — season player statistics, performance rankings and averages.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="manifest" href="fantasy-manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/leaderboard.css">
+<link rel="stylesheet" href="css/fantasy-pwa.css">
+<style>
+/* ── Page-specific overrides ── */
+.ps-toolbar {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 28px; align-items: center;
+}
+.ps-sort-group {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto;
+}
+.sort-label {
+  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600; align-self: center;
+  white-space: nowrap; margin-right: 2px;
+}
+
+/* Stats table */
+.ps-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.ps-table th {
+  text-align: left; padding: 10px 14px;
+  font-size: 0.55rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted); font-weight: 600;
+  border-bottom: 1px solid var(--stroke); white-space: nowrap;
+  cursor: pointer; user-select: none;
+}
+.ps-table th.sortable:hover { color: var(--text); }
+.ps-table th.active { color: var(--blue1); }
+.ps-table th .sort-arrow { margin-left: 4px; opacity: 0.5; font-size: 0.6rem; }
+.ps-table th.active .sort-arrow { opacity: 1; color: var(--blue1); }
+.ps-table td { padding: 12px 14px; border-bottom: 1px solid var(--stroke); }
+.ps-row { cursor: pointer; transition: background 0.15s; }
+.ps-row:hover td { background: var(--surface); }
+
+.ps-player-name { font-weight: 600; color: var(--text); }
+.ps-role-badge {
+  display: inline-block; font-size: 0.58rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 999px; margin-left: 6px;
+  vertical-align: middle;
+}
+.role-bat  { background: rgba(137,170,204,0.12); color: var(--blue1); }
+.role-bowl { background: rgba(204,68,68,0.12);   color: #cc8888; }
+.role-ar   { background: rgba(74,170,90,0.12);   color: var(--green); }
+.role-wk   { background: rgba(201,168,76,0.12);  color: #c8a84c; }
+
+.ps-pts { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.3rem; color: var(--blue1); }
+.ps-avg { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1rem; color: var(--muted); }
+.ps-val { font-size: 0.78rem; color: var(--muted); }
+.ps-num { font-size: 0.88rem; color: var(--text); }
+.ps-zero { color: var(--muted); opacity: 0.35; }
+.ps-best { font-size: 0.78rem; color: var(--green); font-weight: 600; }
+.ps-potm { color: #c8a84c; font-size: 0.8rem; }
+.ps-form { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1rem; font-weight: 600; }
+.ps-form-up { color: var(--green); }
+.ps-form-dn { color: #e54b4a; }
+
+/* Expanded breakdown */
+.ps-breakdown-row td {
+  padding: 0; background: rgba(255,255,255,0.015);
+}
+.ps-breakdown {
+  padding: 16px 20px 16px 28px;
+  border-left: 2px solid var(--blue2);
+  margin: 0 14px 10px;
+}
+.bd-rounds-title {
+  font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--blue1); font-weight: 600; margin-bottom: 10px;
+}
+.bd-round-list { display: flex; flex-direction: column; gap: 4px; }
+.bd-round-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 0; border-bottom: 1px solid var(--stroke);
+  font-size: 0.82rem; gap: 16px;
+}
+.bd-round-row:last-child { border-bottom: none; }
+.bd-round-name { color: var(--text); font-weight: 500; flex: 1; }
+.bd-round-detail { color: var(--muted); font-size: 0.72rem; flex: 2; }
+.bd-round-pts { font-family: 'Instrument Serif', serif; font-style: italic; color: var(--blue1); white-space: nowrap; }
+.bd-no-scores { font-size: 0.82rem; color: var(--muted); font-style: italic; padding: 8px 0; }
+
+/* Trend chart */
+.ps-trend-wrap {
+  margin: 4px 0 16px;
+  padding: 12px 14px 6px;
+  background: rgba(255,255,255,0.025);
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+}
+.ps-trend-label {
+  font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--blue1); font-weight: 600; margin-bottom: 8px;
+}
+
+/* Empty / loading */
+.ps-empty {
+  text-align: center; padding: 80px 20px; color: var(--muted);
+  font-size: 0.88rem;
+}
+.ps-empty em { display: block; font-family: 'Instrument Serif', serif; font-style: italic; font-size: 2rem; color: var(--text); margin-bottom: 10px; }
+
+/* Summary row */
+.ps-summary {
+  display: flex; gap: 32px; flex-wrap: wrap;
+  padding: 20px 0; border-bottom: 1px solid var(--stroke);
+  margin-bottom: 28px;
+}
+.ps-summary-stat { display: flex; flex-direction: column; gap: 3px; }
+.ps-summary-val { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 2rem; color: var(--blue1); line-height: 1; }
+.ps-summary-label { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+@media (max-width: 680px) {
+  .ps-table th:nth-child(n+7),
+  .ps-table td:nth-child(n+7) { display: none; }
+  .ps-sort-group { margin-left: 0; }
+}
+</style>
+<link rel="stylesheet" href="css/games.css?v=1">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+<a href="#main-content" style="position:absolute;left:-9999px;top:4px;z-index:9999;padding:8px 16px;background:#b8922a;color:#000;font-weight:700;font-size:0.8rem">Skip to main content</a>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <nav class="nav-pill" id="nav-pill">
+    <div class="nav-logo-wrap">
+      <div class="nav-logo-ring">
+        <img loading="eager" src="images/tcc-logo.png" alt="TCC" class="nav-logo-img">
+      </div>
+    </div>
+    <div class="nav-sep"></div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="fantasy.html" class="nav-link">Fantasy</a></li>
+      <li><a href="leaderboard.html" class="nav-link">Leaderboard</a></li>
+      <li><a href="fantasy-stats.html" class="nav-link">Insights</a></li>
+      <li><a href="player-stats.html" class="nav-link  active">Stats</a></li>
+      <li><a href="badges.html" class="nav-link">Badges</a></li>
+      <li><a href="fantasy-guide.html" class="nav-link">Guide</a></li>
+      <li><a href="profile.html" class="nav-link" id="nav-profile-link" style="display:none">My Team</a></li>
+    </ul>
+    <div class="nav-sep"></div>
+    <button class="nav-sayhello" id="nav-enter-btn">
+      <span class="nav-sh-border"></span>
+      <span class="nav-sh-inner">Pick XI ↗</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</div>
+
+<!-- Mobile drawer -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="fantasy.html">Fantasy</a></li>
+    <li><a href="games.html"      class="nav-link nav-link-games">Games <span class="nav-games-badge">NEW</span></a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="player-stats.html"  class="active">Stats</a></li>
+    <li><a href="badges.html">Badges</a></li>
+    <li><a href="fantasy-guide.html">Guide</a></li>
+    <li><a href="profile.html" id="drawer-profile-link" style="display:none">My Team</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section class="lb-hero">
+  <div class="lb-hero-bg">
+    <img loading="eager"
+      src="images/stats-hero.webp"
+      alt="" class="lb-hero-img">
+    <div class="lb-hero-overlay"></div>
+    <div class="lb-hero-fade"></div>
+  </div>
+  <div class="lb-hero-content">
+    <div class="lb-hero-eyebrow">TCC Fantasy Cricket</div>
+    <h1 class="lb-hero-h1">Player<br><em>Stats.</em></h1>
+    <p class="lb-hero-sub">Season averages, top performers, and round-by-round breakdowns for every player.</p>
+  </div>
+  <div class="lb-hero-scroll">
+    <span>SCROLL</span>
+    <div class="scroll-line"><div class="scroll-thumb"></div></div>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<div class="lb-outer" id="main-content">
+
+  <div id="ps-loading" class="lb-state"><div class="spinner"></div><span>Loading player stats…</span></div>
+  <div id="ps-error"   class="lb-state" style="display:none"><span id="ps-error-msg">Failed to load.</span></div>
+  <div id="ps-content" style="display:none">
+
+    <!-- Summary strip -->
+    <div class="ps-summary" id="ps-summary"></div>
+
+    <!-- Toolbar: role filter + sort -->
+    <div class="ps-toolbar">
+      <div class="lb-filter-group" id="role-filter">
+        <button class="filter-btn active" data-role="all">All</button>
+        <button class="filter-btn" data-role="bat">Bat</button>
+        <button class="filter-btn" data-role="bowl">Bowl</button>
+        <button class="filter-btn" data-role="ar">All-Rounder</button>
+        <button class="filter-btn" data-role="wk">Keeper</button>
+      </div>
+      <div class="ps-sort-group">
+        <span class="sort-label">Sort</span>
+        <div class="lb-filter-group" id="sort-filter">
+          <button class="filter-btn active" data-sort="total_pts">Total pts</button>
+          <button class="filter-btn" data-sort="avg_pts">Avg pts</button>
+          <button class="filter-btn" data-sort="form">Form</button>
+          <button class="filter-btn" data-sort="runs">Runs</button>
+          <button class="filter-btn" data-sort="wickets">Wickets</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div id="ps-table-wrap">
+      <table class="ps-table">
+        <thead>
+          <tr>
+            <th style="width:32px">#</th>
+            <th>Player</th>
+            <th class="sortable active" data-col="total_pts">Total<br>pts<span class="sort-arrow">↓</span></th>
+            <th class="sortable" data-col="avg_pts">Avg<br>pts<span class="sort-arrow">↕</span></th>
+            <th class="sortable" data-col="form">Form<br><span style="font-size:0.5rem;letter-spacing:0.1em">(L3)</span><span class="sort-arrow">↕</span></th>
+            <th class="sortable" data-col="rounds">Rounds<span class="sort-arrow">↕</span></th>
+            <th class="sortable" data-col="runs">Runs<span class="sort-arrow">↕</span></th>
+            <th class="sortable" data-col="wickets">Wkts<span class="sort-arrow">↕</span></th>
+            <th class="sortable" data-col="catches">Ctch/<br>Stmp<span class="sort-arrow">↕</span></th>
+            <th class="sortable" data-col="best">Best<span class="sort-arrow">↕</span></th>
+            <th>POTM</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody id="ps-tbody"></tbody>
+      </table>
+    </div>
+
+    <div id="ps-empty" class="ps-empty" style="display:none">
+      <em>No stats yet</em>
+      No scores have been entered for this season. Check back after the first round.
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="lb-footer-img-section">
+  <img loading="lazy"
+    src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1920&q=80&auto=format&fit=crop"
+    alt="" class="lb-footer-img">
+  <div class="lb-footer-img-overlay">
+    <p class="lbfi-text"><em>Facta Non Verba</em></p>
+    <p class="lbfi-sub">Tygerberg Cricket Club · Est. 1957</p>
+  </div>
+</div>
+<footer class="lb-footer-bar">
+  <span>© <span class="copy-year"></span> Tygerberg Cricket Club</span>
+  <a href="leaderboard.html" class="lb-footer-link">Leaderboard →</a>
+</footer>
+
+<script src="js/fantasy-pwa.js"></script>
+<script>
+/* ══════════════════════════════════════
+   TCC FANTASY — PLAYER STATS PAGE
+══════════════════════════════════════ */
+const SUPABASE_URL = 'https://cgjannvzpqecwzjdzwso.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNnamFubnZ6cHFlY3d6amR6d3NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTQ2MzIsImV4cCI6MjA4ODk3MDYzMn0.tDzVTT1i8Cqzu1mGBM1tCxZHDuhVqX03efWiYcQLkH8';
+const H = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
+
+function calcPoints(score, isCaptain, isWildcard, isVC) {
+  var pts = 0;
+  var runs = score.runs || 0, wkts = score.wickets || 0;
+  pts += runs;
+  if (runs >= 50)  pts += 10;
+  if (runs >= 100) pts += 25;
+  pts += wkts * 15;
+  if (wkts >= 5)   pts += 20;
+  if (score.economy != null && score.economy > 0) {
+    var e = score.economy;
+    pts += e <= 5 ? 10 : e <= 6 ? 6 : e <= 7 ? 2 : e <= 8 ? 0 : e <= 9 ? -2 : -4;
+  }
+  pts += (score.maidens   || 0) * 10;
+  pts += (score.catches   || 0) * 10;
+  pts += (score.stumpings || 0) * 10;
+  pts += (score.runouts   || 0) * 10;
+  if (score.player_of_match) pts += 25;
+  if (isCaptain) pts = isWildcard ? pts * 3 : pts * 2;
+  else if (isVC) pts = Math.round(pts * 1.5);
+  return pts;
+}
+
+function getRoleKey(role) {
+  if (!role) return 'bat';
+  var r = role.toLowerCase().replace(/-/g,' ').trim();
+  if (r === 'wicketkeeper') return 'wk';
+  if (r.includes('rounder')) return 'ar';
+  if (r === 'bowler') return 'bowl';
+  return 'bat';
+}
+
+function roleBadge(role) {
+  var key = getRoleKey(role);
+  var labels = { bat:'BAT', bowl:'BOWL', ar:'AR', wk:'WK' };
+  return '<span class="ps-role-badge role-' + key + '">' + (labels[key]||'BAT') + '</span>';
+}
+
+function fmtNum(n) {
+  return n ? '<span class="ps-num">' + n + '</span>' : '<span class="ps-zero">—</span>';
+}
+
+// ── Data ──────────────────────────────────────────────────────────────────
+var allPlayers  = [];
+var allScores   = [];
+var allRounds   = {};
+var statsData   = [];   // aggregated per player
+var activeRole  = 'all';
+var activeSort  = 'total_pts';
+var expandedId  = null;
+
+async function loadData() {
+  try {
+    var safeArr = function(v) { return Array.isArray(v) ? v : []; };
+
+    var [pr, sr, rr] = await Promise.all([
+      fetch(SUPABASE_URL + '/rest/v1/players?active=not.eq.false&select=id,name,role,fantasy_value&order=name.asc', {headers:H}).then(function(r){ return r.ok ? r.json() : []; }),
+      fetch(SUPABASE_URL + '/rest/v1/fantasy_scores?select=*', {headers:H}).then(function(r){ return r.ok ? r.json() : []; }),
+      fetch(SUPABASE_URL + '/rest/v1/fantasy_rounds?select=id,name,wildcard&order=created_at.asc', {headers:H}).then(function(r){ return r.ok ? r.json() : []; }),
+    ]);
+
+    allPlayers = safeArr(pr);
+    allScores  = safeArr(sr);
+    safeArr(rr).forEach(function(r) { allRounds[r.id] = r; });
+
+    buildStats();
+    render();
+
+    document.getElementById('ps-loading').style.display = 'none';
+    document.getElementById('ps-content').style.display = 'block';
+  } catch(e) {
+    document.getElementById('ps-loading').style.display = 'none';
+    document.getElementById('ps-error-msg').textContent = 'Failed to load stats: ' + e.message;
+    document.getElementById('ps-error').style.display   = 'flex';
+  }
+}
+
+function buildStats() {
+  // Aggregate fantasy_scores per player
+  var agg = {};
+  allPlayers.forEach(function(p) {
+    agg[p.id] = {
+      id: p.id, name: p.name, role: p.role, value: p.fantasy_value,
+      rounds: 0, total_pts: 0, best: 0, best_round: '',
+      runs: 0, wickets: 0, catches: 0, stumpings: 0,
+      maidens: 0, runouts: 0, potm: 0,
+      economy_sum: 0, economy_count: 0,
+      round_breakdown: []  // [{round_name, pts, runs, wickets, ...}]
+    };
+  });
+
+  allScores.forEach(function(s) {
+    var a = agg[s.player_id];
+    if (!a) return;
+    var pts = calcPoints(s, false, false, false);
+    var round = allRounds[s.round_id] || {};
+    a.rounds++;
+    a.total_pts += pts;
+    a.runs       += s.runs      || 0;
+    a.wickets    += s.wickets   || 0;
+    a.catches    += s.catches   || 0;
+    a.stumpings  += s.stumpings || 0;
+    a.maidens    += s.maidens   || 0;
+    a.runouts    += s.runouts   || 0;
+    if (s.player_of_match) a.potm++;
+    if (s.economy != null && s.economy > 0) {
+      a.economy_sum += s.economy;
+      a.economy_count++;
+    }
+    if (pts > a.best) { a.best = pts; a.best_round = round.name || ''; }
+    a.round_breakdown.push({
+      round_id:   s.round_id,
+      round_name: round.name || 'Round',
+      pts:        pts,
+      runs:       s.runs      || 0,
+      wickets:    s.wickets   || 0,
+      catches:    s.catches   || 0,
+      stumpings:  s.stumpings || 0,
+      maidens:    s.maidens   || 0,
+      runouts:    s.runouts   || 0,
+      economy:    s.economy   || null,
+      potm:       !!s.player_of_match,
+      match:      s.match_label || '',
+    });
+    // Sort breakdown by round
+    a.round_breakdown.sort(function(x,y) { return x.round_name.localeCompare(y.round_name); });
+  });
+
+  statsData = Object.values(agg).filter(function(a) { return a.rounds > 0; });
+  // Compute avg pts and form (last 3 rounds avg)
+  var roundIdsSorted = Object.keys(allRounds); // created_at asc
+  statsData.forEach(function(a) {
+    a.avg_pts = a.rounds > 0 ? Math.round(a.total_pts / a.rounds) : 0;
+    a.avg_economy = a.economy_count > 0 ? (a.economy_sum / a.economy_count).toFixed(2) : null;
+    // Form: avg pts over last 3 rounds this player participated in
+    var playerRoundIds = roundIdsSorted.filter(function(rid) {
+      return a.round_breakdown.some(function(r) { return r.round_id === rid; });
+    });
+    var last3 = playerRoundIds.slice(-3);
+    if (last3.length) {
+      var formSum = last3.reduce(function(sum, rid) {
+        var r = a.round_breakdown.find(function(r) { return r.round_id === rid; });
+        return sum + (r ? r.pts : 0);
+      }, 0);
+      a.form     = Math.round(formSum / last3.length);
+      a.form_n   = last3.length; // how many rounds (could be < 3 if new player)
+    } else {
+      a.form = 0; a.form_n = 0;
+    }
+  });
+}
+
+function getSorted() {
+  var filtered = statsData.filter(function(a) {
+    if (activeRole === 'all') return true;
+    return getRoleKey(a.role) === activeRole;
+  });
+  filtered.sort(function(a, b) {
+    var diff = (b[activeSort] || 0) - (a[activeSort] || 0);
+    return diff !== 0 ? diff : b.total_pts - a.total_pts;
+  });
+  return filtered;
+}
+
+function renderSummary(rows) {
+  if (!rows.length) return;
+  var totalRuns = rows.reduce(function(s,a){return s+a.runs;},0);
+  var totalWkts = rows.reduce(function(s,a){return s+a.wickets;},0);
+  var totalPotm = rows.reduce(function(s,a){return s+a.potm;},0);
+  var topScorer = rows.slice().sort(function(a,b){return b.total_pts-a.total_pts;})[0];
+  var el = document.getElementById('ps-summary');
+  el.innerHTML =
+    stat(topScorer ? topScorer.total_pts : 0,   'Top score (pts)') +
+    stat(rows.length,                            'Players tracked') +
+    stat(totalRuns,                              'Total runs') +
+    stat(totalWkts,                              'Total wickets') +
+    stat(totalPotm,                              'POTMs awarded');
+  function stat(v, l) {
+    return '<div class="ps-summary-stat"><div class="ps-summary-val">' + v + '</div><div class="ps-summary-label">' + l + '</div></div>';
+  }
+}
+
+function render() {
+  var rows = getSorted();
+  renderSummary(statsData);
+
+  var tbody = document.getElementById('ps-tbody');
+  var empty = document.getElementById('ps-empty');
+
+  if (!rows.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = rows.map(function(a, i) {
+    var isExp = expandedId === a.id;
+    var fieldPts = (a.catches + a.stumpings);
+    return (
+      '<tr class="ps-row" data-id="' + a.id + '">' +
+        '<td><span style="font-family:\'Instrument Serif\',serif;font-style:italic;font-size:1.1rem;color:var(--muted)">' + (i+1) + '</span></td>' +
+        '<td>' +
+          '<span class="ps-player-name">' + a.name + '</span>' +
+          roleBadge(a.role) +
+          (isExp ? ' <span style="font-size:0.65rem;color:var(--blue1);margin-left:6px">\u25b4</span>' : '') +
+        '</td>' +
+        '<td><span class="ps-pts">' + a.total_pts + '</span></td>' +
+        '<td><span class="ps-avg">' + a.avg_pts + '</span></td>' +
+        '<td>' + (a.form_n > 0 ? '<span class="ps-form ps-form-' + (a.form >= a.avg_pts ? 'up' : 'dn') + '">' + a.form + '</span>' : '<span class="ps-zero">—</span>') + '</td>' +
+        '<td>' + fmtNum(a.rounds) + '</td>' +
+        '<td>' + fmtNum(a.runs) + '</td>' +
+        '<td>' + fmtNum(a.wickets) + '</td>' +
+        '<td>' + fmtNum(fieldPts) + '</td>' +
+        '<td>' + (a.best ? '<span class="ps-best">+' + a.best + '</span>' : '<span class="ps-zero">—</span>') + '</td>' +
+        '<td>' + (a.potm ? '<span class="ps-potm">\u2605 ' + a.potm + '</span>' : '<span class="ps-zero">—</span>') + '</td>' +
+        '<td><span class="ps-val">R' + (a.value || '?') + '</span></td>' +
+      '</tr>' +
+      (isExp ? '<tr class="ps-breakdown-row"><td colspan="12">' + buildBreakdown(a) + '</td></tr>' : '')
+    );
+  }).join('');
+
+  // Row click → expand
+  tbody.querySelectorAll('.ps-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+      var id = row.dataset.id;
+      expandedId = expandedId === id ? null : id;
+      render();
+    });
+  });
+}
+
+function buildTrendChart(a) {
+  var rounds = a.round_breakdown;
+  if (!rounds || rounds.length < 2) return '';
+
+  var pts    = rounds.map(function(r) { return r.pts; });
+  var maxPts = Math.max.apply(null, pts);
+  var avg    = a.avg_pts;
+  if (maxPts <= 0) return '';
+
+  var W = 560, H = 130;
+  var padL = 4, padR = 40, padT = 26, padB = 26;
+  var chartW = W - padL - padR;
+  var chartH = H - padT - padB;
+  var n      = rounds.length;
+  var barW   = Math.max(8, Math.min(36, Math.floor(chartW / n) - 5));
+  var totalUsed = barW * n;
+  var spacing   = n > 1 ? (chartW - totalUsed) / (n - 1) : 0;
+  var yScale    = chartH / maxPts;
+  var avgY      = padT + chartH - avg * yScale;
+
+  var svgParts = [];
+
+  // Grid line at max and zero
+  svgParts.push('<line x1="' + padL + '" y1="' + padT + '" x2="' + (W - padR) + '" y2="' + padT + '" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>');
+
+  // Avg line
+  if (avg > 0) {
+    svgParts.push(
+      '<line x1="' + padL + '" y1="' + avgY.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + avgY.toFixed(1) + '" stroke="rgba(201,168,76,0.45)" stroke-width="1" stroke-dasharray="4,3"/>',
+      '<text x="' + (W - padR + 6) + '" y="' + (avgY + 4).toFixed(1) + '" font-size="9" fill="rgba(201,168,76,0.65)" font-family="Inter,sans-serif">avg</text>'
+    );
+  }
+
+  // Bars + labels
+  rounds.forEach(function(r, i) {
+    var x  = padL + i * (barW + spacing);
+    var bh = Math.max(3, r.pts * yScale);
+    var y  = padT + chartH - bh;
+    var isAbove = r.pts >= avg;
+    var fill = isAbove ? '#c9a84c' : 'rgba(255,255,255,0.15)';
+    var ptsLabelY = Math.max(padT - 4, y - 4);
+
+    // Pts above bar
+    svgParts.push(
+      '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + barW + '" height="' + bh.toFixed(1) + '" rx="3" fill="' + fill + '"/>',
+      '<text x="' + (x + barW / 2).toFixed(1) + '" y="' + ptsLabelY.toFixed(1) + '" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.5)" font-family="Inter,sans-serif">' + r.pts + '</text>'
+    );
+
+    // Round label below bar — abbreviate: "Round 3" → "R3", "R3" stays, long names truncated
+    var lbl = r.round_name.replace(/^round\s*/i, 'R').slice(0, 5);
+    svgParts.push(
+      '<text x="' + (x + barW / 2).toFixed(1) + '" y="' + (padT + chartH + 14) + '" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">' + lbl + '</text>'
+    );
+  });
+
+  return '<div class="ps-trend-wrap">'
+    + '<div class="ps-trend-label">Points per round</div>'
+    + '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:' + H + 'px;display:block;overflow:visible" aria-hidden="true">'
+    + svgParts.join('')
+    + '</svg>'
+    + '</div>';
+}
+
+function buildBreakdown(a) {
+  if (!a.round_breakdown.length) {
+    return '<div class="ps-breakdown"><p class="bd-no-scores">No round scores recorded yet.</p></div>';
+  }
+  var lines = a.round_breakdown.map(function(r) {
+    var detail = [];
+    if (r.runs)     detail.push(r.runs + ' runs');
+    if (r.wickets)  detail.push(r.wickets + ' wkt' + (r.wickets>1?'s':''));
+    if (r.catches)  detail.push(r.catches + ' catch');
+    if (r.stumpings)detail.push(r.stumpings + ' stmp');
+    if (r.maidens)  detail.push(r.maidens + ' maiden' + (r.maidens>1?'s':''));
+    if (r.runouts)  detail.push(r.runouts + ' run-out');
+    if (r.economy)  detail.push('eco ' + parseFloat(r.economy).toFixed(2));
+    if (r.potm)     detail.push('\u2605 POTM');
+    if (r.match)    detail.push('\u00b7 ' + r.match);
+    return '<div class="bd-round-row">' +
+      '<span class="bd-round-name">' + r.round_name + '</span>' +
+      '<span class="bd-round-detail">' + (detail.join(' \u00b7 ') || 'No contributions') + '</span>' +
+      '<span class="bd-round-pts">' + r.pts + 'pt</span>' +
+      '</div>';
+  }).join('');
+
+  var econLine = a.avg_economy ? '<span style="font-size:0.72rem;color:var(--muted);margin-top:10px;display:block">Avg economy: ' + a.avg_economy + '</span>' : '';
+
+  return '<div class="ps-breakdown">' +
+    buildTrendChart(a) +
+    '<div class="bd-rounds-title">Round-by-round (' + a.rounds + ' round' + (a.rounds>1?'s':'') + ' \u00b7 ' + a.total_pts + 'pt total \u00b7 ' + a.avg_pts + 'pt avg)</div>' +
+    '<div class="bd-round-list">' + lines + '</div>' +
+    econLine +
+    '</div>';
+}
+
+// ── Toolbar events ────────────────────────────────────────────────────────
+document.getElementById('role-filter').addEventListener('click', function(e) {
+  var btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  activeRole = btn.dataset.role;
+  expandedId = null;
+  this.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+});
+
+document.getElementById('sort-filter').addEventListener('click', function(e) {
+  var btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  activeSort = btn.dataset.sort;
+  expandedId = null;
+  this.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  // Update column header arrow
+  document.querySelectorAll('.ps-table th.sortable').forEach(function(th) {
+    th.classList.remove('active');
+    th.querySelector('.sort-arrow').textContent = '\u2195';
+  });
+  var activeCol = document.querySelector('.ps-table th[data-col="' + activeSort + '"]');
+  if (activeCol) { activeCol.classList.add('active'); activeCol.querySelector('.sort-arrow').textContent = '\u2193'; }
+  render();
+});
+
+// Column header click also sorts
+document.querySelectorAll('.ps-table th.sortable').forEach(function(th) {
+  th.addEventListener('click', function() {
+    var col = th.dataset.col;
+    if (!col) return;
+    activeSort = col;
+    expandedId = null;
+    document.getElementById('sort-filter').querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    var sortBtn = document.querySelector('#sort-filter .filter-btn[data-sort="' + col + '"]');
+    if (sortBtn) sortBtn.classList.add('active');
+    document.querySelectorAll('.ps-table th.sortable').forEach(function(t) {
+      t.classList.remove('active');
+      t.querySelector('.sort-arrow').textContent = '\u2195';
+    });
+    th.classList.add('active');
+    th.querySelector('.sort-arrow').textContent = '\u2193';
+    render();
+  });
+});
+
+// Nav / misc
+document.getElementById('nav-enter-btn').addEventListener('click', function() {
+  window.location.href = 'pick.html';
+});
+document.querySelector('.copy-year').textContent = new Date().getFullYear();
+document.getElementById('hamburger').addEventListener('click', function() {
+  this.classList.toggle('open');
+  document.getElementById('mobile-drawer').classList.toggle('open');
+});
+window.addEventListener('scroll', function() {
+  document.getElementById('nav-pill').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+loadData();
+</script>
+</body>
+</html>

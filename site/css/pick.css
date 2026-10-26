@@ -1,0 +1,977 @@
+/* ═══════════════════════════════════════════════════════
+   PICK YOUR XI — Dark Game Dashboard
+   Tactical. Focused. Immersive.
+═══════════════════════════════════════════════════════ */
+:root{
+  --bg:#050806; --bg2:#0a0d08; --bg3:#101508; --bg4:#161c0e;
+  --pitch-light:#2d5a1a; --pitch-dark:#1f4011; --pitch-line:rgba(255,255,255,0.12);
+  --gold:#b8922a; --gold2:#d4a830; --gold3:#f0c84a;
+  --green:#4aaa5a; --red:#cc4444;
+  --white:#ede9e4; --muted:#5a6252; --muted2:#8a9278;
+  --ease:cubic-bezier(0.25,0.46,0.45,0.94);
+  --spring:cubic-bezier(0.34,1.56,0.64,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;font-size:14px;overflow:hidden}
+::selection{background:var(--gold);color:var(--bg)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--muted)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:128px}
+
+/* ═══ TOP BAR ═══ */
+.pk-topbar{
+  height:52px;background:var(--bg2);border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+  position:relative;z-index:100;gap:12px;flex-shrink:0
+}
+.pk-tb-left{display:flex;align-items:center;gap:20px;min-width:0}
+.pk-back{font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);text-decoration:none;transition:color 0.2s;white-space:nowrap}
+.pk-back:hover{color:var(--gold)}
+.pk-round-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.pk-tb-stats{display:flex;align-items:center;gap:12px;flex:1;justify-content:center}
+.pk-stat{display:flex;flex-direction:column;align-items:center;gap:1px}
+.pk-stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.3rem;letter-spacing:2px;color:var(--white);line-height:1;transition:color 0.3s}
+.pk-stat-val span{font-size:0.9rem;opacity:0.4}
+.pk-stat-val.green{color:var(--gold3)}
+.pk-stat-val.sm{font-size:0.85rem;font-family:'Barlow',sans-serif;font-weight:700;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-stat-key{font-size:0.48rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.pk-stat-sep{width:1px;height:24px;background:rgba(255,255,255,0.06)}
+
+.pk-tb-right{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.pk-deadline{font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);white-space:nowrap}
+.pk-submit-btn{background:var(--gold);color:var(--bg);border:none;padding:8px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.82rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.pk-submit-btn:hover:not(:disabled){background:var(--gold3);transform:translateY(-1px)}
+.pk-submit-btn:disabled{opacity:0.3;cursor:not-allowed}
+
+/* BUDGET BAR */
+.pk-budget-bar{height:3px;background:rgba(255,255,255,0.06);flex-shrink:0}
+.pk-budget-fill{height:100%;background:var(--gold);transition:width 0.3s var(--ease),background 0.3s;max-width:100%}
+.pk-budget-fill.danger{background:var(--red)}
+
+/* MAIN LAYOUT */
+.pk-layout{display:grid;grid-template-columns:260px 1fr 220px;height:calc(100vh - 55px);overflow:hidden}
+
+/* POOL SIDEBAR */
+.pk-pool{background:var(--bg2);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;overflow:hidden}
+.pk-pool-header{padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pk-pool-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted2)}
+.pk-filters{display:flex;gap:4px;flex-wrap:wrap}
+.pk-filter{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--muted2);padding:3px 8px;font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.pk-filter:hover{border-color:var(--gold);color:var(--gold)}
+.pk-filter.active{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+
+.pk-search-wrap{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0}
+.pk-search{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:var(--white);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:0.82rem;outline:none;transition:border-color 0.2s}
+.pk-search:focus{border-color:var(--gold)}
+.pk-search::placeholder{color:var(--muted)}
+
+.pk-pool-list{flex:1;overflow-y:auto;padding:6px 0}
+
+/* POOL PLAYER CARD */
+.pk-player-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.15s;user-select:none;position:relative}
+.pk-player-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--gold);transition:width 0.2s var(--spring)}
+.pk-player-card:hover{background:rgba(255,255,255,0.03)}
+.pk-player-card:hover::before{width:2px}
+.pk-player-card.selected{background:rgba(184,146,42,0.08)}
+.pk-player-card.selected::before{width:3px}
+.pk-player-card.captain{background:rgba(184,146,42,0.14)}
+.pk-player-card.captain::before{width:4px;background:var(--gold3);box-shadow:3px 0 12px rgba(240,200,74,0.3)}
+.pk-player-card.vc{background:rgba(74,138,244,0.1)}
+.pk-player-card.vc::before{width:4px;background:#4a8af4;box-shadow:3px 0 10px rgba(74,138,244,0.25)}
+.pk-player-card.over-budget{opacity:0.3;cursor:not-allowed}
+.pk-player-card.over-budget:hover{background:transparent}
+.pk-player-card.over-budget:hover::before{width:0}
+.pk-player-card.hidden{display:none}
+.pk-pc-left{min-width:0}
+.pk-pc-name{font-size:0.84rem;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.15s}
+.pk-player-card.selected .pk-pc-name,.pk-player-card.captain .pk-pc-name{color:var(--gold2)}
+.pk-player-card.vc .pk-pc-name{color:#a0c0ff}
+.pk-pc-meta{display:flex;align-items:center;gap:6px;margin-top:2px}
+.pk-pc-role{font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pk-pc-form{display:flex;gap:2px}
+.pk-form-dot{font-size:0.55rem;font-weight:800;padding:1px 3px;line-height:1.3}
+.pk-form-dot.hot{background:rgba(74,170,90,0.15);color:var(--green)}
+.pk-form-dot.ok{background:rgba(184,146,42,0.12);color:var(--gold2)}
+.pk-form-dot.cold{background:rgba(204,68,68,0.12);color:var(--red)}
+.pk-form-dot.empty{color:var(--muted);font-size:0.8rem}
+.pk-pc-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.pk-pc-val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;color:var(--muted2)}
+.pk-player-card.selected .pk-pc-val,.pk-player-card.captain .pk-pc-val{color:var(--gold2)}
+.pk-player-card.vc .pk-pc-val{color:#a0c0ff}
+.pk-pc-pct{font-size:0.55rem;color:var(--muted);font-weight:600;letter-spacing:0.5px}
+
+/* PITCH */
+.pk-pitch-wrap{position:relative;overflow:hidden;background:radial-gradient(ellipse 80% 70% at 50% 50%,#1f4a10 0%,#0a1a05 70%,#050806 100%)}
+.pk-pitch{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.pk-pitch-svg{position:absolute;inset:0;width:100%;height:100%;opacity:0.7}
+.pk-pitch-tip{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);white-space:nowrap;transition:opacity 0.5s;pointer-events:none}
+
+/* ZONES */
+.pk-zone{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}
+.pk-zone-keeper{bottom:8%;left:50%;transform:translateX(-50%)}
+.pk-zone-batters{bottom:32%;left:50%;transform:translateX(-50%)}
+.pk-zone-allrounders{top:30%;left:50%;transform:translateX(-50%)}
+.pk-zone-bowlers{top:8%;left:50%;transform:translateX(-50%)}
+.pk-zone-label{font-size:0.52rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);font-weight:700;margin-bottom:0}
+.pk-zone-slots{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:600px}
+
+/* PITCH PLAYER CHIP */
+.pk-pitch-chip{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;transition:transform 0.2s var(--spring);
+  animation:chipIn 0.4s var(--spring) both
+}
+@keyframes chipIn{from{opacity:0;transform:scale(0.6)}to{opacity:1;transform:scale(1)}}
+.pk-pitch-chip:hover{transform:scale(1.08)}
+.pk-chip-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--bg3);border:2px solid rgba(255,255,255,0.12);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1rem;letter-spacing:1px;
+  color:var(--white);position:relative;transition:all 0.2s;
+}
+.pk-pitch-chip.is-captain .pk-chip-avatar{
+  border-color:var(--gold3);background:rgba(184,146,42,0.2);
+  box-shadow:0 0 16px rgba(240,200,74,0.35),0 0 32px rgba(240,200,74,0.15)
+}
+.pk-pitch-chip.is-vc .pk-chip-avatar{
+  border-color:#4a8af4;background:rgba(74,138,244,0.2);
+  box-shadow:0 0 12px rgba(74,138,244,0.3),0 0 24px rgba(74,138,244,0.12)
+}
+.pk-chip-captain-badge{
+  position:absolute;top:-6px;right:-6px;background:var(--gold3);color:var(--bg);
+  border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;
+  font-size:0.6rem;font-weight:900;
+}
+.pk-chip-name{font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.85);text-align:center;max-width:64px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-chip-val{font-size:0.52rem;color:var(--gold);font-weight:700;letter-spacing:1px}
+.pk-chip-remove{
+  position:absolute;top:-2px;left:-2px;background:var(--red);color:#fff;
+  border-radius:50%;width:14px;height:14px;display:none;align-items:center;justify-content:center;
+  font-size:0.55rem;font-weight:900;cursor:pointer;
+}
+.pk-pitch-chip:hover .pk-chip-remove{display:flex}
+
+/* XI SIDEBAR */
+.pk-xi{background:var(--bg2);border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;overflow:hidden}
+.pk-xi-header{padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted2)}
+.pk-xi-list{flex:1;overflow-y:auto;padding:8px 0}
+.pk-xi-empty{padding:20px 14px;font-size:0.78rem;color:var(--muted);text-align:center;line-height:1.6}
+
+/* XI Player row */
+.pk-xi-player{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.15s;position:relative}
+.pk-xi-player:hover{background:rgba(255,255,255,0.03)}
+.pk-xi-player.is-captain{background:rgba(184,146,42,0.1)}
+.pk-xi-player.is-vc{background:rgba(74,138,244,0.08)}
+.pk-xi-avatar{width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.78rem;color:var(--white);flex-shrink:0;transition:all 0.2s}
+.pk-xi-player.is-captain .pk-xi-avatar{border-color:var(--gold3);box-shadow:0 0 8px rgba(240,200,74,0.3)}
+.pk-xi-player.is-vc .pk-xi-avatar{border-color:#4a8af4;box-shadow:0 0 8px rgba(74,138,244,0.25)}
+.pk-xi-info{flex:1;min-width:0}
+.pk-xi-name{font-size:0.8rem;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-xi-player.is-captain .pk-xi-name{color:var(--gold2)}
+.pk-xi-player.is-vc .pk-xi-name{color:#a0c0ff}
+.pk-xi-role{font-size:0.55rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pk-xi-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.pk-xi-val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;color:var(--muted2)}
+.pk-xi-cap{font-size:0.55rem;color:var(--gold3);font-weight:700;letter-spacing:1px}
+.pk-xi-remove{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--red);color:#fff;border:none;border-radius:50%;width:16px;height:16px;display:none;align-items:center;justify-content:center;font-size:0.6rem;cursor:pointer;font-family:'Barlow',sans-serif;font-weight:900}
+.pk-xi-player:hover .pk-xi-remove{display:flex}
+
+.pk-xi-footer{padding:12px 14px;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0}
+.pk-xi-cost{display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted);margin-bottom:4px}
+.pk-xi-cost:last-child{margin-bottom:0}
+.pk-xi-cost span:last-child{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;color:var(--white)}
+.pk-xi-cost span.green{color:var(--gold3)}
+.pk-xi-tip{padding:8px 14px;font-size:0.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0}
+.pk-xi-notice{padding:10px 14px;font-size:0.72rem;color:var(--gold2);background:rgba(184,146,42,0.08);border-top:1px solid rgba(184,146,42,0.15);flex-shrink:0;text-align:center;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+.form-error{padding:6px 14px;font-size:0.72rem;color:var(--red);min-height:26px;flex-shrink:0}
+
+.pk-submit-btn-lg{margin:10px 14px;background:var(--gold);color:var(--bg);border:none;padding:13px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;flex-shrink:0;position:relative;overflow:hidden}
+.pk-submit-btn-lg::before{content:'';position:absolute;inset:0;background:var(--gold3);transform:translateX(-100%);transition:transform 0.25s var(--ease)}
+.pk-submit-btn-lg:hover:not(:disabled)::before{transform:translateX(0)}
+.pk-submit-btn-lg:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px rgba(184,146,42,0.3)}
+.pk-submit-btn-lg:disabled{opacity:0.25;cursor:not-allowed}
+.pk-submit-btn-lg span{position:relative;z-index:1}
+
+.pk-footer-links{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px 12px;flex-shrink:0;flex-wrap:wrap}
+.pk-text-btn{background:none;border:none;cursor:pointer;font-family:'Barlow',sans-serif;font-size:0.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);transition:color 0.2s}
+.pk-text-btn:hover{color:var(--gold)}
+.pk-text-btn.danger:hover{color:var(--red)}
+.pk-footer-links>span{color:rgba(255,255,255,0.1);font-size:0.6rem}
+
+/* LOADING */
+.pk-loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);flex:1}
+.pk-spinner{width:22px;height:22px;border:2px solid rgba(184,146,42,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUCCESS OVERLAY */
+.pk-success-overlay{position:fixed;inset:0;z-index:500;background:rgba(5,8,6,0.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s var(--ease)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.pk-success-card{background:var(--bg2);padding:56px 48px;max-width:440px;width:90%;text-align:center;border:1px solid rgba(184,146,42,0.2);display:flex;flex-direction:column;align-items:center;gap:16px;animation:slideUp 0.5s var(--spring)}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.pk-success-ring{position:relative;width:120px;height:120px;margin-bottom:8px}
+.pk-success-ring svg{width:100%;height:100%}
+#pk-success-ring-circle{transition:stroke-dashoffset 1.2s var(--ease) 0.2s}
+.pk-success-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem}
+.pk-success-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.5rem;letter-spacing:4px;text-transform:uppercase;color:var(--white)}
+.pk-success-msg{font-size:0.88rem;color:var(--muted2);line-height:1.7;max-width:340px}
+.pk-success-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.pk-success-primary{background:var(--gold);color:var(--bg);border:none;padding:14px 28px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:all 0.2s}
+.pk-success-primary:hover{background:var(--gold3)}
+.pk-success-ghost{background:transparent;color:var(--muted2);border:1px solid rgba(255,255,255,0.1);padding:13px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.82rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.pk-success-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* AUTH GATE OVERLAY */
+.pk-auth-overlay{position:fixed;inset:0;z-index:600;background:rgba(5,8,6,0.97);display:flex;align-items:center;justify-content:center}
+.pk-auth-card{background:var(--bg2);padding:48px 44px;max-width:380px;width:90%;text-align:center;border:1px solid rgba(184,146,42,0.15);display:flex;flex-direction:column;align-items:center;gap:16px}
+.pk-auth-logo{width:48px;height:48px;object-fit:contain}
+.pk-auth-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;letter-spacing:3px;text-transform:uppercase;color:var(--white)}
+.pk-auth-sub{font-size:0.88rem;color:var(--muted2);line-height:1.7}
+.pk-auth-btn{background:var(--gold);color:var(--bg);border:none;padding:14px 32px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:background 0.2s}
+.pk-auth-btn:hover{background:var(--gold3)}
+
+/* MOBILE — stack layout */
+@media(max-width:900px){
+  html,body{overflow:auto}
+  .pk-layout{grid-template-columns:1fr;grid-template-rows:auto 420px auto;height:auto}
+  .pk-pool{max-height:300px}
+  .pk-pitch-wrap{height:420px}
+  .pk-xi{max-height:400px}
+  .pk-zone-keeper{bottom:6%}
+  .pk-zone-batters{bottom:30%}
+  .pk-zone-allrounders{top:28%}
+  .pk-zone-bowlers{top:6%}
+}
+
+/* ── TOPBAR MOBILE ── */
+@media(max-width:640px){
+  .pk-topbar{
+    height:auto; flex-wrap:wrap; padding:8px 12px; gap:6px;
+    align-items:center;
+  }
+  /* Row 1: back + round name */
+  .pk-tb-left{
+    order:1; flex:1; min-width:0; gap:10px;
+  }
+  .pk-round-name{
+    font-size:0.75rem; letter-spacing:1px;
+  }
+  /* Row 2: stats centred */
+  .pk-tb-stats{
+    order:3; flex-basis:100%; justify-content:space-around; gap:8px;
+    border-top:1px solid rgba(255,255,255,0.06); padding-top:6px; margin-top:2px;
+  }
+  .pk-stat-val{font-size:1.1rem}
+  /* Row 1 right: submit only — hide deadline text */
+  .pk-tb-right{
+    order:2; gap:8px; flex-shrink:0;
+  }
+  .pk-deadline{display:none}
+  .pk-submit-btn{padding:7px 14px; font-size:0.72rem; letter-spacing:2px}
+  /* Budget bar sits under the two-row topbar */
+  .pk-budget-bar{position:sticky;top:0;z-index:99}
+}
+
+/* Bell button — deadline push notifications */
+.pk-bell-btn{
+  display:none;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  border-radius:50%;width:32px;height:32px;font-size:1rem;cursor:pointer;
+  transition:all 0.2s;flex-shrink:0;
+}
+.pk-bell-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15)}
+.pk-bell-btn.subscribed{background:rgba(201,168,76,0.15);border-color:var(--gold);color:var(--gold)}
+
+/* ── Form guide panel ────────────────────────────────────────── */
+.pk-pc-avg {
+  font-size:0.58rem;font-weight:700;letter-spacing:0.5px;
+  color:var(--muted);margin-left:4px;
+  background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px;
+}
+.pk-form-toggle {
+  position:absolute;bottom:4px;right:6px;
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:0.75rem;padding:2px 4px;
+  line-height:1;transition:color 0.15s;z-index:2;
+}
+.pk-form-toggle:hover { color:var(--gold); }
+.pk-player-card.form-open { padding-bottom:4px; }
+
+.pk-form-panel {
+  grid-column:1/-1;
+  margin:8px -14px -9px;
+  padding:10px 14px 12px;
+  background:rgba(0,0,0,0.25);
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+.pk-fp-heading {
+  font-size:0.55rem;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);font-weight:700;margin-bottom:8px;
+}
+.pk-fp-row {
+  display:grid;grid-template-columns:52px 1fr 32px auto;
+  align-items:center;gap:6px;margin-bottom:5px;
+}
+.pk-fp-row.pk-fp-empty { opacity:0.3; }
+.pk-fp-label {
+  font-size:0.62rem;color:var(--muted);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.pk-fp-bar-wrap {
+  height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;
+}
+.pk-fp-bar { height:100%;border-radius:3px;min-width:3px; }
+.pk-fp-bar-hot  { background:var(--green); }
+.pk-fp-bar-ok   { background:var(--gold2); }
+.pk-fp-bar-cold { background:var(--red); }
+.pk-fp-pts { font-size:0.65rem;font-weight:800;text-align:right;white-space:nowrap; }
+.pk-fp-pts-hot  { color:var(--green); }
+.pk-fp-pts-ok   { color:var(--gold2); }
+.pk-fp-pts-cold { color:var(--red); }
+.pk-fp-detail {
+  grid-column:1/-1;font-size:0.58rem;color:var(--muted);
+  letter-spacing:0.3px;margin-top:-2px;padding-left:0;
+}
+.pk-fp-career {
+  margin-top:8px;padding-top:6px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  font-size:0.6rem;color:var(--muted);letter-spacing:0.3px;
+}
+
+/* ── H2H Opponent Banner ── */
+.pk-h2h-banner {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:0.72rem; padding:4px 12px; border-radius:20px;
+  background:rgba(58,126,240,0.12); color:#90c0ff;
+  border:1px solid rgba(58,126,240,0.3);
+  letter-spacing:0.5px; margin-top:6px;
+  animation: h2hFadeIn 0.4s ease;
+}
+.pk-h2h-banner strong { color:#c0d8ff; }
+@keyframes h2hFadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+
+/* ── Round Boost Banner ── */
+.pk-boost-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(56, 180, 100, 0.08);
+  border: 1px solid rgba(56, 180, 100, 0.3);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: #5ec98a;
+  margin: 8px 0;
+  line-height: 1.4;
+}
+.pk-boost-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+/* ════════════════════════════════════════════════
+   CHIPS / POWER-UPS
+════════════════════════════════════════════════ */
+.pk-chips-section {
+  margin: 18px 0 4px;
+  padding: 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+}
+.pk-chips-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pk-chips-title {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.pk-chips-sub {
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+.pk-chips-sub strong { color: var(--gold); font-weight: 600; }
+
+.pk-chips {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+@media (max-width: 480px) {
+  .pk-chips { grid-template-columns: 1fr; }
+}
+
+.pk-chip-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--transition), background var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.pk-chip-card:hover:not(:disabled) {
+  border-color: rgba(201,168,76,0.4);
+  background: rgba(201,168,76,0.04);
+  transform: translateY(-2px);
+}
+.pk-chip-card.active {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.10);
+  box-shadow: 0 0 0 1px var(--gold), 0 4px 16px rgba(201,168,76,0.15);
+}
+.pk-chip-card.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--gold), var(--gold2, #e0bc5a));
+}
+.pk-chip-card.spent {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+.pk-chip-ic { font-size: 1.6rem; line-height: 1; }
+.pk-chip-nm {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--white);
+}
+.pk-chip-ds {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+.pk-chip-state {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 4px;
+  color: var(--muted2);
+}
+.pk-chip-card.active .pk-chip-state { color: var(--gold); }
+.pk-chip-card.spent .pk-chip-state { color: var(--red); }
+
+/* ════════════════════════════════════════════════════
+   LAYOUT REWORK (visual only) — overrides the 3-column
+   layout with: slim topbar · pool + big pitch · fixed
+   bottom action bar · power-ups popover.
+   All element IDs unchanged; logic untouched.
+════════════════════════════════════════════════════ */
+
+/* Reserve room at the bottom for the fixed action bar */
+:root { --pk-actionbar-h: 88px; }
+
+/* Two columns now — pool + pitch. Right rail removed. */
+.pk-layout {
+  grid-template-columns: 260px 1fr !important;
+  height: calc(100vh - 55px - var(--pk-actionbar-h)) !important;
+}
+/* ── THE POOL ON A PHONE ──────────────────────────────────────────
+   This used to be "display:none, pool becomes a drawer trigger on mobile;
+   kept simple here". The drawer was never built, so under 760px the entire
+   player pool — search, role filters, every player — was simply gone, and
+   there was no way to pick a team on a phone at all.
+
+   It is a bottom sheet now: the pitch keeps the whole screen, and the pool
+   slides up over it when asked for. Same markup, same ids, so renderPool()
+   and every click handler carry on untouched. */
+.pk-pool-trigger { display: none; }
+.pk-pool-scrim   { display: none; }
+.pk-pool-close   { display: none; }
+
+@media (max-width: 760px) {
+  .pk-layout { grid-template-columns: 1fr !important; }
+
+  /* Room for the trigger strip between the budget bar and the pitch.
+
+     The rows matter as much as the height. The 900px block above pins the
+     pitch to 420px and leaves the pool and the old right rail as auto rows —
+     sensible when all three stacked, but with the pool now a sheet and the
+     right rail gone, it left the pitch floating in a band of dead black
+     above the action bar. One row, and it fills. */
+  body.pk-sheet-ready .pk-layout {
+    height: calc(100vh - 55px - var(--pk-actionbar-h) - 46px) !important;
+    grid-template-rows: 1fr !important;
+  }
+  body.pk-sheet-ready .pk-pitch-wrap { height: 100% !important; }
+
+  /* ── THE FALLBACK ─────────────────────────────────────────────────
+     Everything above is scoped to body.pk-sheet-ready, a class pick.js adds
+     once it has the tray wired up. If the script is stale, cached or broken,
+     the class never arrives and none of the sheet rules apply — because a
+     pool that is a sheet with nothing to open it is worse than no sheet at
+     all, which is how this page shipped in the first place.
+
+     So without it, the pool simply stacks above the pitch and scrolls. Plain,
+     but a team can be picked. */
+  body:not(.pk-sheet-ready) .pk-layout {
+    height: auto !important;
+    grid-template-rows: auto auto !important;
+    padding-bottom: var(--pk-actionbar-h);
+  }
+  body:not(.pk-sheet-ready) .pk-pool {
+    display: flex !important;
+    max-height: 46vh;
+  }
+  body:not(.pk-sheet-ready) .pk-pitch-wrap { height: 420px !important; }
+
+  /* ── The trigger: a full-width strip where the pool used to be, which is
+        where someone looks for it. ── */
+  body.pk-sheet-ready .pk-pool-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 46px;
+    padding: 0 16px;
+    background: rgba(201,168,76,0.07);
+    border: none;
+    border-bottom: 1px solid rgba(201,168,76,0.22);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.86rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    z-index: 98;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pk-pool-trigger:active { background: rgba(201,168,76,0.14); }
+  .pk-pt-icon  { font-size: 1rem; color: var(--gold2); line-height: 1; }
+  .pk-pt-label { flex: 1; text-align: left; }
+  body.pk-sheet-ready .pk-pt-count {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    color: var(--gold2);
+  }
+  .pk-pt-count.complete { color: var(--green); }
+
+  /* ── The sheet ── */
+  body.pk-sheet-ready .pk-pool {
+    display: flex !important;
+    position: fixed;
+    left: 0; right: 0; bottom: 0; top: auto;
+    z-index: 120;
+    height: min(78vh, 560px);
+    max-height: none;
+    border-right: none;
+    border-top: 1px solid rgba(201,168,76,0.3);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.6);
+    transform: translateY(100%);
+    transition: transform 0.28s var(--ease);
+    /* Off-screen but still laid out, so it cannot be tabbed into or read
+       out while shut. */
+    visibility: hidden;
+  }
+  body.pk-sheet-ready .pk-pool.pk-pool-open {
+    transform: translateY(0);
+    visibility: visible;
+  }
+  /* A grab handle, so it reads as something that slides. */
+  body.pk-sheet-ready .pk-pool::before {
+    content: '';
+    position: absolute;
+    top: 7px; left: 50%;
+    transform: translateX(-50%);
+    width: 38px; height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.18);
+  }
+  .pk-pool-header { padding-top: 20px; }
+  /* The filters need their own line on a narrow screen. */
+  .pk-pool-header { flex-wrap: wrap; }
+  .pk-filters { width: 100%; }
+  .pk-filter { flex: 1; text-align: center; padding: 6px 4px; font-size: 0.66rem; }
+  /* Bigger rows — these are thumb targets now, not mouse targets. */
+  .pk-player-card { padding: 12px 16px; }
+  .pk-pool-list { padding-bottom: 12px; }
+
+  body.pk-sheet-ready .pk-pool-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 14px; right: 10px;
+    width: 32px; height: 32px;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    color: var(--muted2);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .pk-pool-close:active { background: rgba(255,255,255,0.07); }
+
+  body.pk-sheet-ready .pk-pool-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 119;
+    background: rgba(5,8,6,0.6);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+  /* Scoped to match the rule above it. "body.pk-sheet-ready .pk-pool-scrim"
+     out-specifies a bare ".pk-pool-scrim[hidden]", so an unscoped version of
+     this left the backdrop permanently displayed over the whole page,
+     swallowing the tap meant for the trigger underneath it. */
+  body.pk-sheet-ready .pk-pool-scrim[hidden] { display: none; }
+}
+
+/* ── PLAYER MENU ───────────────────────────────────────────────────
+   Opened by tapping a player on the pitch. Replaces the hover-only ✕,
+   which no phone could ever reach, and the tap-again-to-promote cycle
+   that moved the captaincy by accident. */
+.pk-pmenu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(5,8,6,0.5);
+}
+.pk-pmenu {
+  position: fixed;
+  z-index: 301;
+  width: 248px;
+  background: rgba(16,20,16,0.99);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(201,168,76,0.28);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.65);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.12s var(--ease), transform 0.12s var(--spring);
+}
+.pk-pmenu.open { opacity: 1; transform: scale(1); }
+
+.pk-pmenu-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 10px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 5px;
+}
+.pk-pmenu-name {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pk-pmenu-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--gold2);
+  flex-shrink: 0;
+}
+
+.pk-pmenu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 10px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pk-pmenu-item:hover,
+.pk-pmenu-item:focus-visible { background: rgba(255,255,255,0.06); outline: none; }
+.pk-pmenu-item:active { background: rgba(255,255,255,0.1); }
+.pk-pmenu-item.on { background: rgba(201,168,76,0.12); color: var(--gold2); }
+.pk-pmenu-item.danger { color: #e07a7a; }
+.pk-pmenu-item.danger:hover,
+.pk-pmenu-item.danger:active { background: rgba(204,68,68,0.14); }
+
+.pk-pmenu-ic  { font-size: 0.95rem; line-height: 1; flex-shrink: 0; width: 18px; text-align: center; }
+.pk-pmenu-lbl { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pk-pmenu-tick { color: var(--gold2); font-weight: 900; flex-shrink: 0; }
+
+/* Who holds the armband right now — so moving it is an informed choice
+   rather than something you discover afterwards. */
+.pk-pmenu-note {
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: var(--muted);
+  text-transform: none;
+}
+.pk-pmenu-item.on .pk-pmenu-note { color: rgba(201,168,76,0.65); }
+
+.pk-pmenu-sep { height: 1px; background: rgba(255,255,255,0.07); margin: 5px 6px; }
+
+/* Thumb-sized rows on a phone. */
+@media (max-width: 760px) {
+  .pk-pmenu { width: min(280px, calc(100vw - 24px)); }
+  .pk-pmenu-item { padding: 13px 10px; font-size: 0.9rem; }
+}
+
+/* ── THE ACTION BAR ON A NARROW PHONE ──────────────────────────────
+   Measured at 390px and 360px: the two buttons took 311px of a 362px row,
+   leaving the status readouts 35px and 5px respectively. Selected, Budget,
+   Captain and VC were all there, in a strip too narrow to show any of them —
+   so on a phone you could not see your own budget or who you had made
+   captain.
+
+   Two rows instead of one squeezed row: the numbers across the top, the
+   buttons across the bottom. The bar grows, and --pk-actionbar-h is what
+   every other rule measures from, so the layout, the popover and the message
+   strip all follow it. */
+@media (max-width: 620px) {
+  :root { --pk-actionbar-h: 112px; }
+
+  .pk-actionbar {
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .pk-ab-status {
+    order: 1;
+    flex-basis: 100%;
+    justify-content: space-around;
+    gap: 8px;
+    overflow-x: visible;
+  }
+  .pk-ab-actions {
+    order: 2;
+    flex-basis: 100%;
+    gap: 10px;
+  }
+  .pk-actionbar .pk-submit-btn-lg {
+    flex: 1;
+    padding: 13px 10px;
+    letter-spacing: 2px;
+  }
+  .pk-ab-powerups { padding: 12px 12px; flex-shrink: 0; }
+  .pk-ab-key { letter-spacing: 1px; font-size: 0.46rem; }
+  .pk-ab-val { font-size: 1.3rem; }
+  .pk-ab-val.sm { max-width: 84px; }
+}
+
+/* The old right rail is gone from the layout grid */
+.pk-xi { display: none !important; }
+
+/* Slim top bar tweaks */
+.pk-tb-right { gap: 14px; }
+
+/* ── BOTTOM ACTION BAR ── */
+.pk-actionbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 80;
+  height: var(--pk-actionbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 clamp(14px, 3vw, 32px);
+  background: rgba(12,16,12,0.96);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(201,168,76,0.18);
+}
+.pk-ab-status {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2.4vw, 28px);
+  min-width: 0;
+  overflow-x: auto;
+}
+.pk-ab-status::-webkit-scrollbar { height: 0; }
+.pk-ab-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
+.pk-ab-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1.5rem; letter-spacing: 1px;
+  color: var(--white); line-height: 1;
+}
+.pk-ab-val span { font-size: 0.95rem; opacity: 0.4; }
+.pk-ab-val.green { color: var(--gold3, #f0c84a); }
+.pk-ab-val.sm {
+  font-size: 0.95rem; font-family: 'Barlow', sans-serif; font-weight: 700;
+  max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pk-ab-key {
+  font-size: 0.5rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); font-weight: 700;
+}
+.pk-ab-sep { width: 1px; height: 30px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+
+.pk-ab-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+/* Power-ups button */
+.pk-ab-powerups {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 0.82rem; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s;
+}
+.pk-ab-powerups:hover, .pk-ab-powerups.open {
+  background: rgba(201,168,76,0.12);
+  border-color: var(--gold, #c9a84c);
+}
+.pk-ab-pu-icon { font-size: 1rem; }
+.pk-ab-pu-active {
+  font-family: 'Barlow', sans-serif; font-weight: 700;
+  font-size: 0.72rem; letter-spacing: 0; color: var(--gold2, #e8c86a);
+  max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pk-ab-pu-caret { font-size: 0.7rem; opacity: 0.6; transition: transform 0.2s; }
+.pk-ab-powerups.open .pk-ab-pu-caret { transform: rotate(180deg); }
+
+@media (max-width: 620px) {
+  .pk-ab-pu-label, .pk-ab-spent { display: none; }
+}
+
+/* Action bar submit reuses existing .pk-submit-btn-lg styling but resets margin */
+.pk-actionbar .pk-submit-btn-lg {
+  margin: 0 !important;
+  padding: 14px 28px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* ── POWER-UPS POPOVER ── */
+.pk-pu-popover {
+  position: fixed;
+  right: clamp(14px, 3vw, 32px);
+  bottom: calc(var(--pk-actionbar-h) + 12px);
+  z-index: 85;
+  width: min(440px, calc(100vw - 28px));
+  background: rgba(16,20,16,0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.pk-pu-popover[hidden] { display: none; }
+.pk-pu-pop-head {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 14px;
+}
+.pk-pu-pop-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold, #c9a84c);
+}
+.pk-pu-pop-sub { font-size: 0.66rem; color: var(--muted); letter-spacing: 0.5px; flex: 1; }
+.pk-pu-pop-close {
+  background: none; border: none; color: var(--muted);
+  font-size: 0.9rem; cursor: pointer; padding: 4px; line-height: 1;
+}
+.pk-pu-pop-close:hover { color: var(--white); }
+
+/* Reuse existing .pk-chips grid inside the popover */
+.pk-pu-popover .pk-chips { grid-template-columns: 1fr 1fr; }
+@media (max-width: 480px) { .pk-pu-popover .pk-chips { grid-template-columns: 1fr; } }
+.pk-pu-popover .pk-xi-tip { margin-top: 12px; }
+
+/* ── Message strip + footer links (now below the bar) ── */
+.pk-msg-strip {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: var(--pk-actionbar-h);
+  z-index: 79;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  pointer-events: none;
+}
+.pk-msg-strip .pk-xi-notice,
+.pk-msg-strip .form-error { pointer-events: auto; margin: 0; }
+.pk-msg-strip .pk-xi-notice:empty,
+.pk-msg-strip .form-error:empty { display: none; }
+
+/* ── ACCOUNT MENU (top-right) ── */
+.pk-account { position: relative; }
+.pk-account-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pk-account-btn:hover, .pk-account-btn.open {
+  background: rgba(201,168,76,0.12);
+  border-color: var(--gold, #c9a84c);
+  color: var(--gold2, #e8c86a);
+}
+.pk-account-menu {
+  position: absolute;
+  top: calc(100% + 10px); right: 0;
+  z-index: 90;
+  min-width: 200px;
+  background: rgba(16,20,16,0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+}
+.pk-account-menu[hidden] { display: none; }
+.pk-account-item {
+  display: block; width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  background: none; border: none; border-radius: 8px;
+  color: var(--white);
+  font-family: 'Barlow', sans-serif; font-size: 0.85rem; font-weight: 500;
+  cursor: pointer; transition: background 0.15s;
+  text-decoration: none;
+}
+.pk-account-item:hover { background: rgba(255,255,255,0.06); }
+.pk-account-item.danger { color: #e07a7a; }
+.pk-account-item.danger:hover { background: rgba(204,68,68,0.12); }
+.pk-account-sep { height: 1px; background: rgba(255,255,255,0.08); margin: 6px 4px; }

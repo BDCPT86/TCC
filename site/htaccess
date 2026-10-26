@@ -1,0 +1,55 @@
+# ── Compression ──
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+# ── Cache lifetimes ──
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # HTML — always revalidate
+  ExpiresByType text/html "access plus 0 seconds"
+
+  # CSS and JS — 1 year (cache-bust via ?v= param)
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType text/javascript           "access plus 1 year"
+
+  # Images — 1 year
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/gif                 "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType image/x-icon              "access plus 1 year"
+
+  # Fonts
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType font/woff                 "access plus 1 year"
+</IfModule>
+
+# ── Security headers ──
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "xr-spatial-tracking=*"
+
+  # No caching for admin and pick pages
+  <FilesMatch "^(admin|pick)\.html$">
+    Header always set Cache-Control "no-store, no-cache"
+    Header always set X-Robots-Tag "noindex, nofollow"
+  </FilesMatch>
+</IfModule>
+
+# ── HTTPS redirect (excludes ACME challenge) ──
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Let Let's Encrypt validate over plain HTTP
+  RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+  RewriteCond %{HTTPS} off
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ── 404 page ──
+ErrorDocument 404 /404.html

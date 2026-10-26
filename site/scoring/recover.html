@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Match Recovery — TCC Scorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Daylight theme, same tokens as the scorer — this gets used on a phone,
+     outdoors, by someone who has just lost a match. Contrast over polish. */
+  :root {
+    --bg: #f7f6f3; --bg2: #ffffff; --bg3: #eceae3;
+    --gold: #7d6420; --gold-fill: #8a6d28;
+    --ink: #15140f; --muted: #5c5a51;
+    --red: #c0392b; --green: #2f7a41;
+    --border: rgba(0,0,0,0.14); --line: rgba(0,0,0,0.09);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'DM Sans', sans-serif; line-height: 1.55;
+    padding: calc(var(--safe-top) + 20px) 16px calc(var(--safe-bot) + 40px);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; line-height: 1; }
+  .sub { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
+  .eyebrow {
+    font-size: 0.64rem; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--gold); font-weight: 600;
+  }
+
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; margin-top: 16px;
+  }
+  .card.found  { border-left: 4px solid var(--green); }
+  .card.empty  { border-left: 4px solid var(--red); }
+
+  /* The headline of the whole page: is it here or not. */
+  .verdict { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; line-height: 1.1; }
+  .verdict.found { color: var(--green); }
+  .verdict.empty { color: var(--red); }
+
+  .score {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem;
+    letter-spacing: 2px; line-height: 1; margin: 10px 0 2px;
+  }
+  .score small { font-size: 1rem; color: var(--muted); letter-spacing: 1px; }
+
+  dl.meta { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin-top: 12px; font-size: 0.84rem; }
+  dl.meta dt { color: var(--muted); }
+  dl.meta dd { font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
+  th { text-align: left; font-size: 0.62rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 4px 0; border-bottom: 1px solid var(--line); }
+  td { padding: 5px 0; border-bottom: 1px solid var(--line); }
+  td.n, th.n { text-align: right; width: 3.2em; }
+  .how { display: block; color: var(--muted); font-size: 0.72rem; }
+
+  h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; margin-top: 22px; }
+
+  .btn {
+    display: block; width: 100%; padding: 14px; margin-top: 10px;
+    background: var(--gold-fill); color: #fff; border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer;
+  }
+  .btn.secondary { background: var(--bg3); color: var(--ink); border: 1px solid var(--border); }
+  .btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .warn {
+    background: #fdf3e7; border: 1px solid rgba(192,57,43,0.25);
+    border-radius: 10px; padding: 12px 14px; margin-top: 16px; font-size: 0.84rem;
+  }
+  .warn strong { color: var(--red); }
+
+  pre {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px; margin-top: 10px; font-size: 0.68rem; line-height: 1.4;
+    max-height: 240px; overflow: auto; white-space: pre-wrap; word-break: break-all;
+  }
+  .keys { font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+  .keys code { font-family: ui-monospace, monospace; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow">TCC Scorer</span>
+  <h1>Match recovery</h1>
+  <p class="sub">Checks this device for a saved match. Nothing is changed, uploaded or deleted — this page only reads.</p>
+
+  <div class="warn">
+    <strong>Open this on every device that scored the match</strong>, and don't start a new match
+    on any of them until you've saved a copy from each. Starting or discarding a match clears
+    what's stored here.
+  </div>
+
+  <div id="out"></div>
+
+  <h2>All scorer data on this device</h2>
+  <div class="keys" id="keys"></div>
+</div>
+
+<script>
+(function () {
+  var STATE_KEY = 'tcc_scorer_state';
+  var out = document.getElementById('out');
+  var el = function (t, c, h) { var n = document.createElement(t); if (c) n.className = c; if (h !== undefined) n.innerHTML = h; return n; };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[<>&"]/g, function (c) { return ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[c]; }); };
+
+  // Every tcc_* key, so nothing is missed if the match is under another name
+  var keys = [];
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('tcc') === 0) keys.push({ k: k, size: (localStorage.getItem(k) || '').length });
+    }
+  } catch (e) {}
+  document.getElementById('keys').innerHTML = keys.length
+    ? keys.map(function (x) { return '<code>' + esc(x.k) + '</code> — ' + x.size.toLocaleString() + ' characters'; }).join('<br>')
+    : 'No scorer data stored on this device.';
+
+  /* Matches deleted on this device, kept as a safety copy. */
+  var bin = [];
+  try { bin = JSON.parse(localStorage.getItem('tcc_scorer_deleted') || '[]'); } catch (e) { bin = []; }
+  if (bin.length) {
+    var bc = el('div', 'card found');
+    bc.appendChild(el('div', 'verdict found',
+      bin.length + ' deleted match' + (bin.length === 1 ? '' : 'es') + ' kept on this device'));
+    bin.forEach(function (entry, i) {
+      var bs = entry.state || {}, bfx = bs.fixture || {};
+      var line = el('div', null,
+        '<strong>' + esc(bfx.team || 'TCC') + ' v ' + esc(bfx.opponent || 'Opponents') + '</strong> — ' +
+        (bs.runs || 0) + '/' + (bs.wickets || 0) + ' (' + (bs.overs || 0) + '.' + (bs.balls || 0) + ' ov)' +
+        '<span class="how">deleted ' + (entry.deletedAt ? new Date(entry.deletedAt).toLocaleString() : 'unknown') + '</span>');
+      line.style.cssText = 'padding:8px 0;border-bottom:1px solid var(--line)';
+      bc.appendChild(line);
+      bc.appendChild(dl(JSON.stringify(entry, null, 2), 'tcc-deleted-' + (i + 1) + '.json'));
+    });
+    out.appendChild(bc);
+  }
+
+  var raw = null;
+  try { raw = localStorage.getItem(STATE_KEY); } catch (e) {}
+
+  if (!raw) {
+    var c = el('div', 'card empty');
+    c.appendChild(el('div', 'verdict empty', 'No saved match on this device'));
+    c.appendChild(el('p', 'sub', 'This browser holds no scorer state. Try the other device, ' +
+      'and check it is the same browser that was used to score — a match saved in Safari is not visible in Chrome.'));
+    out.appendChild(c);
+    return;
+  }
+
+  var saved, s;
+  try { saved = JSON.parse(raw); s = saved.state || {}; }
+  catch (e) {
+    var bad = el('div', 'card empty');
+    bad.appendChild(el('div', 'verdict empty', 'Saved data is unreadable'));
+    bad.appendChild(el('p', 'sub', 'Download the raw copy below and send it over — it may still be repairable by hand.'));
+    bad.appendChild(dl(raw, 'tcc-scorer-raw.json'));
+    out.appendChild(bad);
+    return;
+  }
+
+  var fx = s.fixture || {};
+  var batting = s.batting || {};
+  var bowling = s.bowling || {};
+  var hist = s.overHistory || [];
+  var ballCount = (s.currentOverBalls || []).length +
+    hist.reduce(function (n, ov) { return n + ((ov.balls || []).length); }, 0);
+
+  var card = el('div', 'card found');
+  card.appendChild(el('div', 'verdict found', 'Match found on this device'));
+  card.appendChild(el('div', 'score',
+    esc(fx.team || 'TCC') + ' v ' + esc(fx.opponent || 'Opponents') +
+    '<br>' + (s.runs || 0) + '/' + (s.wickets || 0) +
+    ' <small>(' + (s.overs || 0) + '.' + (s.balls || 0) + ' ov)</small>'));
+
+  var meta = el('dl', 'meta');
+  var rows = [
+    ['Saved at', saved.savedAt ? new Date(saved.savedAt).toLocaleString() : 'unknown'],
+    ['Innings', s.innings === 2 ? '2nd' : '1st'],
+    ['Balls recorded', ballCount + (hist.length ? ' across ' + hist.length + ' completed over' + (hist.length === 1 ? '' : 's') : '')],
+    ['Batting', s.battingTeam === 'tcc' ? (fx.team || 'TCC') : (fx.opponent || 'Opponents')],
+    ['Extras', (function (x) {
+      x = s.extras || {};
+      return 'W ' + (x.wides || 0) + ' · NB ' + (x.noballs || 0) + ' · B ' + (x.byes || 0) + ' · LB ' + (x.legbyes || 0);
+    })()],
+    ['Unsent updates', (saved.offlineQueue || []).length]
+  ];
+  rows.forEach(function (r) {
+    meta.appendChild(el('dt', null, esc(r[0])));
+    meta.appendChild(el('dd', null, esc(r[1])));
+  });
+  card.appendChild(meta);
+  card.appendChild(dl(JSON.stringify(saved, null, 2),
+    'tcc-match-' + (fx.opponent || 'match').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.json'));
+
+  var copyBtn = el('button', 'btn secondary', 'Copy everything to clipboard');
+  copyBtn.addEventListener('click', function () {
+    var txt = JSON.stringify(saved, null, 2);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(txt).then(function () { copyBtn.textContent = 'Copied'; },
+        function () { copyBtn.textContent = 'Could not copy — use the download instead'; });
+    } else { copyBtn.textContent = 'Not supported here — use the download instead'; }
+  });
+  card.appendChild(copyBtn);
+  out.appendChild(card);
+
+  // ── Scorecard, so the result can be written up straight from the screen ──
+  var bat = [];
+  if (batting.striker)    bat.push({ b: batting.striker,    note: 'not out' });
+  if (batting.nonStriker) bat.push({ b: batting.nonStriker, note: 'not out' });
+  (batting.dismissed || []).forEach(function (d) {
+    bat.push({ b: d, note: (d.how || 'out') + (d.bowler ? ' b ' + d.bowler : '') + (d.fielder ? ' (' + d.fielder + ')' : '') });
+  });
+  (batting.retiredHurt || []).forEach(function (d) { bat.push({ b: d, note: 'retired hurt' }); });
+
+  if (bat.length) {
+    out.appendChild(el('h2', null, 'Batting'));
+    var t1 = el('table', null,
+      '<thead><tr><th>Batter</th><th class="n">R</th><th class="n">B</th><th class="n">4s</th><th class="n">6s</th></tr></thead>');
+    var tb1 = el('tbody');
+    bat.forEach(function (x) {
+      tb1.appendChild(el('tr', null,
+        '<td>' + esc(x.b.name) + '<span class="how">' + esc(x.note) + '</span></td>' +
+        '<td class="n">' + (x.b.runs || 0) + '</td><td class="n">' + (x.b.balls || 0) + '</td>' +
+        '<td class="n">' + (x.b.fours || 0) + '</td><td class="n">' + (x.b.sixes || 0) + '</td>'));
+    });
+    t1.appendChild(tb1);
+    out.appendChild(t1);
+  }
+
+  if ((bowling.bowlers || []).length) {
+    out.appendChild(el('h2', null, 'Bowling'));
+    var t2 = el('table', null,
+      '<thead><tr><th>Bowler</th><th class="n">O</th><th class="n">R</th><th class="n">W</th><th class="n">NB</th><th class="n">WD</th></tr></thead>');
+    var tb2 = el('tbody');
+    bowling.bowlers.forEach(function (b) {
+      tb2.appendChild(el('tr', null,
+        '<td>' + esc(b.name) + '</td>' +
+        '<td class="n">' + (b.overs || 0) + (b.balls ? '.' + b.balls : '') + '</td>' +
+        '<td class="n">' + (b.runs || 0) + '</td><td class="n">' + (b.wickets || 0) + '</td>' +
+        '<td class="n">' + (b.noballs || 0) + '</td><td class="n">' + (b.wides || 0) + '</td>'));
+    });
+    t2.appendChild(tb2);
+    out.appendChild(t2);
+  }
+
+  if ((batting.fow || []).length) {
+    out.appendChild(el('h2', null, 'Fall of wickets'));
+    out.appendChild(el('p', 'sub', batting.fow.map(function (f) {
+      return esc(f.score + '-' + f.wicket + ' (' + f.batter + ', ' + f.overs + ')');
+    }).join(' · ')));
+  }
+
+  out.appendChild(el('h2', null, 'Raw data'));
+  out.appendChild(el('p', 'sub', 'Send this to whoever is restoring the match.'));
+  var pre = el('pre'); pre.textContent = JSON.stringify(saved, null, 2); out.appendChild(pre);
+
+  function dl(text, filename) {
+    var b = el('button', 'btn', 'Download a copy (' + filename + ')');
+    b.addEventListener('click', function () {
+      var blob = new Blob([text], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+      b.textContent = 'Downloaded — check your Files app';
+    });
+    return b;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tournament results — TCC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f1ec; --bg2:#fff; --bg3:#e7e4da; --line:rgba(0,0,0,.12);
+  --ink:#13120e; --muted:#57554c; --gold:#7a6116; --gold-fill:#c9a227;
+  --red:#b3261e; --green:#20693a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;
+  line-height:1.5;padding:20px 14px 80px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:2px;color:var(--gold)}
+h2{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:2px;margin-bottom:10px}
+.sub{color:var(--muted);font-size:.85rem;margin-bottom:22px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+
+/* ── PANELS ──────────────────────────────────────────────
+   Six sections is too much to scroll past to reach the one you want, so
+   each is a panel. Native details/summary: it works without JavaScript,
+   keyboard and screen readers get it for free, and Ctrl+F still finds
+   text inside a closed one in modern browsers. */
+.panel{padding:0;overflow:hidden}
+.panel-head{
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  padding:15px 16px;list-style:none;user-select:none;
+}
+.panel-head::-webkit-details-marker{display:none}
+.panel-head:hover{background:rgba(var(--gold-rgb,201,162,39),0.06)}
+.panel-title{
+  font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:2px;
+}
+.panel-meta{margin-left:auto;font-size:.78rem;color:var(--muted);text-align:right}
+.panel-chev{color:var(--muted);font-size:.8rem;transition:transform .2s;flex-shrink:0}
+.panel[open] .panel-chev{transform:rotate(180deg)}
+.panel[open] .panel-head{border-bottom:1px solid var(--line)}
+.panel-body{padding:16px}
+.panel-body h2{font-size:1.05rem;letter-spacing:1.5px;margin:18px 0 10px}
+.panel-body > h2:first-child{margin-top:0}
+.panel:focus-within .panel-head{outline:2px solid rgba(var(--gold-rgb,201,162,39),0.4);outline-offset:-2px}
+label{display:block;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:8px;
+  padding:10px;font:inherit;font-size:.92rem;color:var(--ink)}
+input:focus,select:focus{outline:2px solid rgba(201,162,39,.45);outline-offset:1px}
+.row{display:grid;gap:10px;margin-bottom:12px}
+.row.two{grid-template-columns:1fr 1fr}
+.row.three{grid-template-columns:1fr 1fr 1fr}
+.row.four{grid-template-columns:repeat(4,1fr)}
+@media(max-width:620px){.row.three,.row.four{grid-template-columns:1fr 1fr}}
+button{font:inherit;font-weight:700;border:none;border-radius:9px;padding:11px 16px;cursor:pointer}
+.btn{background:var(--gold-fill);color:#13120e}
+.btn.ghost{background:var(--bg3);color:var(--ink)}
+.btn.danger{background:transparent;color:var(--red);border:1px solid rgba(179,38,30,.4)}
+.btn:disabled{opacity:.55;cursor:default}
+.msg{margin-top:10px;font-size:.86rem;min-height:1.2em}
+.msg.err{color:var(--red)} .msg.ok{color:var(--green)}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.68rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+td.num,th.num{text-align:right}
+tr.club td{font-weight:700}
+.tag{display:inline-block;font-size:.66rem;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 7px;border-radius:4px;background:var(--bg3);color:var(--muted)}
+.tag.app{background:rgba(32,105,58,.14);color:var(--green)}
+.tag.manual{background:rgba(201,162,39,.18);color:var(--gold)}
+.res{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:9px 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.res:last-child{border-bottom:none}
+.hint{font-size:.76rem;color:var(--muted);margin-top:6px}
+.fx{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--bg2)}
+.fx-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fx-top strong{flex:1;min-width:180px}
+.fx-top .btn{padding:6px 10px;font-size:.78rem}
+.fx-actions{display:flex;align-items:center;gap:10px;margin-top:10px}
+.fx-actions .btn{padding:7px 14px;font-size:.82rem}
+.fx-msg{font-size:.8rem;color:var(--muted)}
+.fx-msg.ok{color:var(--green)} .fx-msg.err{color:var(--red)}
+textarea{resize:vertical;font-family:inherit;line-height:1.45}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Tournament results</h1>
+  <p class="sub" id="t-name">Loading…</p>
+
+  <!-- ── unlock ─────────────────────────────────────────── -->
+  <div class="card" id="auth-card">
+    <h2>Unlock</h2>
+    <div class="row two">
+      <div><label for="pin">Scorer PIN</label><input type="password" id="pin" inputmode="numeric" autocomplete="off"></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn" id="auth-btn">Unlock</button></div>
+    </div>
+    <p class="hint" style="margin-bottom:14px">The same PIN the scoring app uses — enough to file results.</p>
+    <details>
+      <summary style="cursor:pointer;font-size:.86rem;font-weight:700">Sign in as an admin instead — to set the fixtures up</summary>
+      <div class="row two" style="margin-top:10px">
+        <div><label for="admin-user">Username</label><input type="text" id="admin-user" autocomplete="username"></div>
+        <div><label for="admin-pass">Password</label><input type="password" id="admin-pass" autocomplete="current-password"></div>
+      </div>
+      <button class="btn ghost" id="admin-btn">Sign in</button>
+      <p class="hint">Your normal admin login. Creating and linking fixtures changes the club's fixture list, so it needs more than the scorer PIN.</p>
+    </details>
+    <div class="msg err" id="auth-err"></div>
+  </div>
+
+  <div id="main" class="hidden">
+    <p class="sub" id="admin-line" style="margin-bottom:14px">
+      Filing results. <a href="#" id="admin-link" style="color:var(--gold)">Sign in as an admin</a> to set the fixtures up.
+    </p>
+
+    <!-- ── status (admin only) ─────────────────────────────
+         The column existed and the Worker always accepted it, but
+         nothing anywhere could set it, so a finished tournament sat
+         on the homepage until somebody edited the database by hand.
+         What each value does is spelled out because it is not
+         guessable: "completed" and "archived" differ only in whether
+         the schedule stays readable. -->
+    <div class="card hidden" id="status-card">
+      <h2>Status</h2>
+      <div class="row two">
+        <div>
+          <label for="t-status">Where this tournament shows</label>
+          <select id="t-status">
+            <option value="upcoming">Upcoming — on the homepage and the fixtures page</option>
+            <option value="live">On now — homepage strip says “On now”</option>
+            <option value="completed">Finished — off the homepage, schedule and results stay</option>
+            <option value="archived">Archived — off the homepage and off the fixtures page</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn" id="status-btn">Save status</button>
+        </div>
+      </div>
+      <p class="hint" id="status-hint" style="margin-bottom:0"></p>
+      <p class="msg" id="status-msg"></p>
+    </div>
+    <!-- ── fixtures (admin only) ───────────────────────────── -->
+    <details class="card panel hidden" id="fixtures-card">
+      <summary class="panel-head">
+        <span class="panel-title">Fixtures</span>
+        <span class="panel-meta" id="fixtures-meta"></span>
+        <span class="panel-chev" aria-hidden="true">▾</span>
+      </summary>
+      <div class="panel-body">
+      <p class="hint" style="margin-bottom:12px">The tournament's matches. A fixture has to belong to the tournament before its result can be filed against it, or before the scoring app applies the tournament's rules to it.</p>
+      <div id="tfix-list"><p class="hint">Loading…</p></div>
+
+      <h2 style="margin-top:18px">Add a fixture that already exists</h2>
+      <div class="row two">
+        <div><label for="link-fixture">Fixture</label><select id="link-fixture"></select></div>
+        <div><label for="link-stage">Stage</label>
+          <select id="link-stage">
+            <option value="group">Group</option><option value="semi">Semi-final</option>
+            <option value="final">Final</option><option value="3rd">3rd place</option>
+          </select></div>
+      </div>
+      <button class="btn ghost" id="link-btn">Add to the tournament</button>
+
+      <h2 style="margin-top:22px">Or build the group stage</h2>
+      <p class="hint" style="margin-bottom:10px">Every team in a group plays every other once — six matches a group, twelve in all. Dates can be left blank and filled in later.</p>
+      <div class="row three">
+        <div><label for="gen-scope">Matches</label>
+          <select id="gen-scope">
+            <option value="all">All group matches</option>
+            <option value="club">Only Tygerberg CC's</option>
+          </select></div>
+        <div><label for="gen-start">First match day</label><input type="date" id="gen-start"></div>
+        <div><label for="gen-venue">Venue</label><input type="text" id="gen-venue" placeholder="Tygerberg Oval"></div>
+      </div>
+      <div class="row three">
+        <div><label for="gen-perday">Matches a day</label>
+          <select id="gen-perday">
+            <option value="1">1</option><option value="2" selected>2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="6">6</option><option value="99">All on one day</option>
+          </select></div>
+        <div><label for="gen-pattern">Match days</label>
+          <select id="gen-pattern">
+            <option value="sat">Saturdays</option>
+            <option value="satsun">Saturdays and Sundays</option>
+            <option value="sun">Sundays</option>
+            <option value="daily">Every day</option>
+            <option value="none">No dates — I'll fill them in</option>
+          </select></div>
+        <div><label for="gen-order">Order</label>
+          <select id="gen-order">
+            <option value="interleave">Groups alternating</option>
+            <option value="bygroup">Group A first, then B</option>
+          </select></div>
+      </div>
+      <button class="btn" id="gen-btn">Preview the fixtures</button>
+      <div id="gen-preview" class="hidden" style="margin-top:12px"></div>
+      <div class="msg" id="fix-msg"></div>
+      </div>
+    </details>
+
+    <!-- ── knockouts (admin only) ──────────────────────────── -->
+    <details class="card panel hidden" id="ko-card">
+      <summary class="panel-head">
+        <span class="panel-title">Knockouts</span>
+        <span class="panel-meta" id="ko-meta"></span>
+        <span class="panel-chev" aria-hidden="true">▾</span>
+      </summary>
+      <div class="panel-body">
+        <p class="hint" style="margin-bottom:12px">The semi-finals, the final and the play-off. Build them before the group stage ends — the sides go in as <strong>A1</strong>, <strong>B2</strong> and <strong>Winner SF1</strong> and are filled in once the results decide them.</p>
+
+        <div id="ko-build" class="hidden">
+          <h2 style="margin-top:0">Build the knockout stage</h2>
+          <div class="row three">
+            <div><label for="ko-semi-date">Semi-finals</label><input type="date" id="ko-semi-date"></div>
+            <div><label for="ko-final-date">Final</label><input type="date" id="ko-final-date"></div>
+            <div><label for="ko-venue">Venue</label><input type="text" id="ko-venue" placeholder="Tygerberg Oval"></div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;margin:4px 0 12px;cursor:pointer;font-size:.85rem">
+            <input type="checkbox" id="ko-third" style="width:16px;height:16px"> Include a 3rd-place play-off
+          </label>
+          <button class="btn" id="ko-build-btn">Create the knockout fixtures</button>
+        </div>
+
+        <div id="ko-bracket"></div>
+
+        <div id="ko-seed-wrap" class="hidden" style="margin-top:16px">
+          <h2>Fill in the sides</h2>
+          <p class="hint" style="margin-bottom:10px">Takes the group winners and runners-up from the table, and the winners and losers of the semi-finals once they are filed. Nothing is saved until you have seen it.</p>
+          <button class="btn ghost" id="ko-seed-btn">Work out who plays who</button>
+          <div id="ko-seed-preview" class="hidden" style="margin-top:12px"></div>
+        </div>
+
+        <div class="msg" id="ko-msg"></div>
+      </div>
+    </details>
+
+    <!-- ── squads (admin only) ─────────────────────────────── -->
+    <details class="card panel hidden" id="squads-card">
+      <summary class="panel-head">
+        <span class="panel-title">Squads</span>
+        <span class="panel-meta" id="squads-meta"></span>
+        <span class="panel-chev" aria-hidden="true">▾</span>
+      </summary>
+      <div class="panel-body">
+      <p class="hint" style="margin-bottom:12px">The lists the clubs submitted. Names only — no ID numbers, phone numbers or dates of birth belong in here.</p>
+      <div id="squad-summary"></div>
+
+      <h2 style="margin-top:18px">Paste a squad</h2>
+      <div class="row two">
+        <div><label for="squad-team">Team</label><select id="squad-team"></select></div>
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <button class="btn ghost" id="squad-parse-btn">Read the list</button>
+        </div>
+      </div>
+      <label for="squad-text">The list, as they sent it</label>
+      <textarea id="squad-text" rows="8" placeholder="1. Ashley Hartzenberg (c)
+2. Kyle Hartzenberg (wk)
+3. Joshua Louw - all rounder
+…"></textarea>
+      <p class="hint">Numbered or not, tabs out of a spreadsheet, (c) for captain, (wk) for keeper, a role after a dash — it reads all of those. Headers and blank lines are ignored.</p>
+      <div id="squad-preview" class="hidden" style="margin-top:12px"></div>
+      <div class="msg" id="squad-msg"></div>
+      </div>
+    </details>
+
+    <!-- ── file a result ───────────────────────────────────── -->
+    <details class="card panel" id="file-card" open>
+      <summary class="panel-head">
+        <span class="panel-title">File a result</span>
+        <span class="panel-meta" id="file-meta"></span>
+        <span class="panel-chev" aria-hidden="true">▾</span>
+      </summary>
+      <div class="panel-body">
+      <div class="row">
+        <div>
+          <label for="fixture">Fixture</label>
+          <select id="fixture"><option value="">— not linked to a fixture —</option></select>
+          <p class="hint" id="fixture-hint">Picking a fixture fills the teams and the date, and keeps one result per match.</p>
+        </div>
+      </div>
+      <div class="row two">
+        <div><label for="team-a">Batted first</label><select id="team-a"></select></div>
+        <div><label for="team-b">Batted second</label><select id="team-b"></select></div>
+      </div>
+      <div class="row four">
+        <div><label for="a-runs">Runs</label><input type="number" id="a-runs" min="0"></div>
+        <div><label for="a-wkts">Wkts</label><input type="number" id="a-wkts" min="0" max="10"></div>
+        <div><label for="a-balls">Balls faced</label><input type="number" id="a-balls" min="0"></div>
+        <div><label for="a-allout">All out?</label>
+          <select id="a-allout"><option value="">No</option><option value="1">Yes</option></select></div>
+      </div>
+      <div class="row four">
+        <div><label for="b-runs">Runs</label><input type="number" id="b-runs" min="0"></div>
+        <div><label for="b-wkts">Wkts</label><input type="number" id="b-wkts" min="0" max="10"></div>
+        <div><label for="b-balls">Balls faced</label><input type="number" id="b-balls" min="0"></div>
+        <div><label for="b-allout">All out?</label>
+          <select id="b-allout"><option value="">No</option><option value="1">Yes</option></select></div>
+      </div>
+      <p class="hint" style="margin:-4px 0 12px">All out short of the full allocation still counts the whole allocation for net run rate — the app does that for you.</p>
+      <div class="row three">
+        <div><label for="outcome">Outcome</label>
+          <select id="outcome">
+            <option value="result">Result</option>
+            <option value="tie">Tie</option>
+            <option value="no_result">No result</option>
+            <option value="abandoned">Abandoned</option>
+            <option value="forfeit">Forfeit</option>
+          </select></div>
+        <div><label for="winner">Winner</label><select id="winner"></select></div>
+        <div><label for="stage">Stage</label>
+          <select id="stage">
+            <option value="group">Group</option>
+            <option value="semi">Semi-final</option>
+            <option value="final">Final</option>
+            <option value="3rd">3rd place</option>
+          </select></div>
+      </div>
+      <div class="row two">
+        <div><label for="played-on">Played on</label><input type="date" id="played-on"></div>
+        <div><label for="potm">Player of the match</label><input type="text" id="potm" autocomplete="off"></div>
+      </div>
+      <div class="row">
+        <div><label for="result-text">Result, in words</label>
+          <input type="text" id="result-text" placeholder="Tygerberg CC won by 5 wickets (8 balls to spare)">
+          <p class="hint" id="auto-text"></p>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="save-btn">Save result</button>
+        <button class="btn ghost" id="clear-btn">Clear</button>
+        <button class="btn ghost hidden" id="pull-btn">Pull from the app</button>
+      </div>
+      <div class="msg" id="save-msg"></div>
+      </div>
+    </details>
+
+    <!-- ── what is already in ──────────────────────────────── -->
+    <details class="card panel" id="filed-card">
+      <summary class="panel-head">
+        <span class="panel-title">Results filed</span>
+        <span class="panel-meta" id="filed-meta"></span>
+        <span class="panel-chev" aria-hidden="true">▾</span>
+      </summary>
+      <div class="panel-body">
+        <div id="results-list"><p class="hint">Loading…</p></div>
+      </div>
+    </details>
+
+    <!-- ── the table ───────────────────────────────────────── -->
+    <details class="card panel" id="standings-card" open>
+      <summary class="panel-head">
+        <span class="panel-title">Standings</span>
+        <span class="panel-meta" id="standings-meta"></span>
+        <span class="panel-chev" aria-hidden="true">▾</span>
+      </summary>
+      <div class="panel-body">
+        <div id="tables"><p class="hint">Loading…</p></div>
+        <p class="hint">Net run rate is per ball, as it should be in a 100-ball tournament. Order: points, then net run rate.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+var SUPABASE_URL = 'https://cgjannvzpqecwzjdzwso.supabase.co';
+var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNnamFubnZ6cHFlY3d6amR6d3NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTQ2MzIsImV4cCI6MjA4ODk3MDYzMn0.tDzVTT1i8Cqzu1mGBM1tCxZHDuhVqX03efWiYcQLkH8';
+var WORKER_URL = 'https://tcc-admin.bydaries.workers.dev';
+var SLUG = new URLSearchParams(location.search).get('t') || 'hansie-2026';
+
+var _token = null, _isAdmin = false;
+try { _token = localStorage.getItem('tcc_scorer_token') || null; } catch (e) {}
+var T = null, TEAMS = [], FIXTURES = [], RESULTS = [], LIVE = {}, FREE_FIXTURES = [], _pending = [];
+
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+  return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+
+/* ── panels ──────────────────────────────────────────────────
+   A shut panel is only useful if its head still says where things
+   stand, so each one carries a count, and which panels a person
+   keeps open is remembered on the device. */
+var PANELS = ['fixtures-card', 'ko-card', 'squads-card', 'file-card', 'filed-card', 'standings-card'];
+function pMeta(id, text) { var n = $(id); if (n) n.textContent = text || ''; }
+function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+function setupPanels() {
+  PANELS.forEach(function (id) {
+    var d = $(id);
+    if (!d) return;
+    var saved = null;
+    try { saved = localStorage.getItem('tcc_panel_' + id); } catch (e) {}
+    if (saved === '1') d.open = true; else if (saved === '0') d.open = false;
+    d.addEventListener('toggle', function () {
+      try { localStorage.setItem('tcc_panel_' + id, d.open ? '1' : '0'); } catch (e) {}
+    });
+  });
+}
+
+/* The three counts that come straight off what loadAll already has. */
+function renderPanelMetas() {
+  var filed = {};
+  RESULTS.forEach(function (r) { if (r.fixture_id) filed[r.fixture_id] = true; });
+  var withResult = FIXTURES.filter(function (f) { return filed[f.id]; }).length;
+  var waiting = FIXTURES.length - withResult;
+
+  pMeta('fixtures-meta', FIXTURES.length
+    ? plural(FIXTURES.length, 'fixture') + (withResult ? ' · ' + withResult + ' played' : '')
+    : 'none yet');
+  pMeta('file-meta', FIXTURES.length
+    ? (waiting ? waiting + ' still to come' : 'all filed')
+    : 'no fixtures yet');
+  pMeta('filed-meta', RESULTS.length ? plural(RESULTS.length, 'result') : 'nothing yet');
+}
+function sbGet(path) {
+  return fetch(SUPABASE_URL + '/rest/v1/' + path,
+    { headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + ANON_KEY } }).then(function (r) { return r.json(); });
+}
+function workerCall(action, payload) {
+  return fetch(WORKER_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: action, token: _token, payload: payload })
+  });
+}
+/* ── status ──────────────────────────────────────────────
+   Two readers, and they disagree about what "off" means:
+   main.js shows the homepage strip for live/upcoming only, and
+   fixtures.js drops a tournament from the fixtures page only when it
+   is archived. So "completed" is the one that clears the homepage
+   while leaving the schedule and results where people can find them,
+   and that difference is the whole reason this control says more than
+   four bare words. */
+var STATUS_NOTE = {
+  upcoming:  'Shows on the homepage and the fixtures page.',
+  live:      'Shows on the homepage as “On now”, and on the fixtures page.',
+  completed: 'Gone from the homepage. The schedule and results stay on the fixtures page.',
+  archived:  'Gone from the homepage and from the fixtures page entirely.',
+};
+function renderStatus() {
+  var sel = $('t-status');
+  if (!sel || !T) return;
+  /* An unexpected value must not silently reset to "upcoming" and put
+     a finished tournament back on the homepage on the next save. */
+  var cur = T.status || 'upcoming';
+  if (!STATUS_NOTE[cur]) {
+    sel.insertAdjacentHTML('afterbegin',
+      '<option value="' + cur.replace(/"/g, '&quot;') + '">' + cur + ' (not a known status)</option>');
+  }
+  sel.value = cur;
+  $('status-hint').textContent = STATUS_NOTE[cur] || 'This status is not one the site knows about.';
+}
+async function saveStatus() {
+  var sel = $('t-status'), btn = $('status-btn');
+  if (!sel || !T) return;
+  var want = sel.value;
+  if (want === T.status) { msg('status-msg', 'Already set to that.', ''); return; }
+
+  btn.disabled = true;
+  msg('status-msg', 'Saving…', '');
+  try {
+    var res = await workerCall('tournament.save', { tournament: { id: T.id, status: want } });
+    var body = await res.json().catch(function () { return {}; });
+    if (!res.ok) {
+      msg('status-msg', body.error || ('Could not save (' + res.status + ').'), 'err');
+      return;
+    }
+    T.status = want;
+    $('status-hint').textContent = STATUS_NOTE[want] || '';
+    msg('status-msg', 'Saved. ' + (STATUS_NOTE[want] || ''), 'ok');
+  } catch (e) {
+    msg('status-msg', 'Could not reach the server.', 'err');
+  } finally { btn.disabled = false; }
+}
+
+function msg(el, text, kind) {
+  var n = $(el); n.textContent = text || '';
+  n.className = 'msg' + (kind ? ' ' + kind : '');
+}
+
+/* ── unlocking ───────────────────────────────────────────── */
+async function auth() {
+  var pin = $('pin').value.trim();
+  if (!pin) { msg('auth-err', 'Enter the scorer PIN.', 'err'); return; }
+  $('auth-btn').disabled = true;
+  try {
+    var r = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'scoring.auth', payload: { pin: pin } })
+    });
+    if (r.status === 401) { msg('auth-err', 'That PIN was not accepted.', 'err'); return; }
+    if (!r.ok)            { msg('auth-err', 'Could not reach the server.', 'err'); return; }
+    var d = await r.json();
+    if (!d.token)         { msg('auth-err', 'No token returned — try again.', 'err'); return; }
+    _token = d.token;
+    try { localStorage.setItem('tcc_scorer_token', d.token); } catch (e) {}
+    start();
+  } catch (e) {
+    msg('auth-err', 'Could not reach the server.', 'err');
+  } finally { $('auth-btn').disabled = false; }
+}
+
+/* Signing in as an admin unlocks the fixture side as well. */
+async function adminAuth() {
+  var u = $('admin-user').value.trim(), p = $('admin-pass').value;
+  if (!u || !p) { msg('auth-err', 'Enter your admin username and password.', 'err'); return; }
+  $('admin-btn').disabled = true;
+  try {
+    var r = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'admin.login', payload: { username: u, password: p } })
+    });
+    if (r.status === 401) { msg('auth-err', 'That login was not accepted.', 'err'); return; }
+    if (!r.ok)            { msg('auth-err', 'Could not reach the server.', 'err'); return; }
+    var d = await r.json();
+    if (!d.token)         { msg('auth-err', 'No token returned — try again.', 'err'); return; }
+    _token = d.token; _isAdmin = true;
+    start();
+  } catch (e) {
+    msg('auth-err', 'Could not reach the server.', 'err');
+  } finally { $('admin-btn').disabled = false; }
+}
+
+/* ── loading ─────────────────────────────────────────────── */
+async function start() {
+  $('auth-card').classList.add('hidden');
+  $('main').classList.remove('hidden');
+  $('status-card').classList.toggle('hidden', !_isAdmin);
+  $('fixtures-card').classList.toggle('hidden', !_isAdmin);
+  $('ko-card').classList.toggle('hidden', !_isAdmin);
+  $('squads-card').classList.toggle('hidden', !_isAdmin);
+  $('admin-line').classList.toggle('hidden', _isAdmin);
+  await loadAll();
+}
+
+async function loadAll() {
+  var ts = await sbGet('tournaments?public_slug=eq.' + encodeURIComponent(SLUG) + '&select=*');
+  T = ts && ts[0];
+  if (!T) { $('t-name').textContent = 'No tournament found for "' + SLUG + '".'; return; }
+  $('t-name').textContent = T.name + (T.season ? ' · ' + T.season : '');
+  renderStatus();
+
+  var out = await Promise.all([
+    sbGet('tournament_teams?tournament_id=eq.' + T.id + '&select=*&order=group_name.asc,team_name.asc'),
+    sbGet('fixtures?tournament_id=eq.' + T.id + '&select=id,team,opponent,date,venue,tournament_stage,tournament_slot&order=date.asc'),
+    sbGet('tournament_results?tournament_id=eq.' + T.id + '&select=*&order=played_on.asc'),
+    sbGet('live_scores?status=eq.completed&select=id,fixture_id,result,updated_at&order=updated_at.desc&limit=100')
+  ]);
+  TEAMS = out[0] || []; FIXTURES = out[1] || []; RESULTS = out[2] || [];
+  if (_isAdmin) {
+    /* Fixtures not yet in any tournament, from a fortnight back — the window
+       a tournament's matches realistically sit in. */
+    var from = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
+    FREE_FIXTURES = await sbGet('fixtures?tournament_id=is.null&date=gte.' + from +
+                                '&select=id,team,opponent,date,venue&order=date.asc') || [];
+  }
+  LIVE = {};
+  (out[3] || []).forEach(function (m) { if (m.fixture_id && !LIVE[m.fixture_id]) LIVE[m.fixture_id] = m; });
+
+  fillTeamPickers();
+  fillFixturePicker();
+  renderResults();
+  renderStandings();
+  renderPanelMetas();
+  if (_isAdmin) { renderTournamentFixtures(); renderKnockouts(); fillLinkPicker(); fillSquadTeams(); renderSquadSummary(); }
+}
+
+function fillTeamPickers() {
+  var names = TEAMS.map(function (t) { return t.team_name; });
+  ['team-a', 'team-b'].forEach(function (id) {
+    $(id).innerHTML = '<option value="">—</option>' + names.map(function (n) {
+      return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('');
+  });
+  syncWinner();
+}
+function fillFixturePicker() {
+  var done = {};
+  RESULTS.forEach(function (r) { if (r.fixture_id) done[r.fixture_id] = true; });
+  $('fixture').innerHTML = '<option value="">— not linked to a fixture —</option>' +
+    FIXTURES.map(function (f) {
+      var label = (f.date || '') + '  ' + f.team + ' v ' + f.opponent + (done[f.id] ? '  ✓ filed' : '');
+      return '<option value="' + f.id + '">' + esc(label) + '</option>';
+    }).join('');
+}
+
+/* The winner list only ever offers the two sides actually playing. */
+function syncWinner() {
+  var a = $('team-a').value, b = $('team-b').value;
+  var cur = $('winner').value;
+  var opts = ['<option value="">—</option>'];
+  if (a) opts.push('<option value="' + esc(a) + '">' + esc(a) + '</option>');
+  if (b && b !== a) opts.push('<option value="' + esc(b) + '">' + esc(b) + '</option>');
+  $('winner').innerHTML = opts.join('');
+  if (cur === a || cur === b) $('winner').value = cur;
+  var isResult = $('outcome').value === 'result';
+  $('winner').disabled = !isResult;
+  if (!isResult) $('winner').value = '';
+  suggestText();
+}
+
+/* A plain sentence, offered rather than imposed — the scorer can overwrite it. */
+function suggestText() {
+  var a = $('team-a').value, b = $('team-b').value;
+  var ar = parseInt($('a-runs').value, 10), br = parseInt($('b-runs').value, 10);
+  var outcome = $('outcome').value, note = '';
+  if (outcome === 'no_result')      note = 'No result';
+  else if (outcome === 'abandoned') note = 'Match abandoned';
+  else if (outcome === 'tie')       note = 'Match tied';
+  else if (outcome === 'forfeit')   note = 'Match forfeited';
+  else if (a && b && isFinite(ar) && isFinite(br)) {
+    if (ar > br)      note = a + ' won by ' + (ar - br) + ' run' + (ar - br === 1 ? '' : 's');
+    else if (br > ar) {
+      var wk = parseInt($('b-wkts').value, 10);
+      note = isFinite(wk) ? b + ' won by ' + (10 - wk) + ' wicket' + (10 - wk === 1 ? '' : 's') : b + ' won';
+    }
+  }
+  $('auto-text').textContent = note ? 'Suggested: ' + note : '';
+  if (note && !$('result-text').value.trim()) $('result-text').placeholder = note;
+  return note;
+}
+
+/* ── filing one ──────────────────────────────────────────── */
+function formResult() {
+  var fixtureId = $('fixture').value ? parseInt($('fixture').value, 10) : null;
+  var allocation = T.format === 'hundred' ? 100 : (T.max_overs || 0) * 6;
+  var n = function (id) { var v = $(id).value.trim(); return v === '' ? null : parseInt(v, 10); };
+  return {
+    fixture_id: fixtureId,
+    stage: $('stage').value,
+    played_on: $('played-on').value || null,
+    team_a: $('team-a').value, team_b: $('team-b').value,
+    a_runs: n('a-runs'), a_wickets: $('a-allout').value ? 10 : n('a-wkts'), a_balls: n('a-balls'),
+    b_runs: n('b-runs'), b_wickets: $('b-allout').value ? 10 : n('b-wkts'), b_balls: n('b-balls'),
+    outcome: $('outcome').value,
+    winner: $('winner').value || null,
+    result_text: $('result-text').value.trim() || suggestText() || null,
+    potm: $('potm').value.trim() || null,
+    full_allocation_balls: allocation || null
+  };
+}
+
+async function saveResult() {
+  msg('save-msg', '');
+  var r = formResult();
+  if (!r.team_a || !r.team_b) { msg('save-msg', 'Pick both teams.', 'err'); return; }
+  $('save-btn').disabled = true;
+  try {
+    var res = await workerCall('tournament.saveResult', { tournamentId: T.id, result: r });
+    var body = await res.json().catch(function () { return {}; });
+    if (!res.ok) { msg('save-msg', body.error || ('Could not save (' + res.status + ').'), 'err'); return; }
+    msg('save-msg', 'Filed — the table is updated.', 'ok');
+    clearForm();
+    await loadAll();
+  } catch (e) {
+    msg('save-msg', 'Could not reach the server.', 'err');
+  } finally { $('save-btn').disabled = false; }
+}
+
+/* A fixture our own app scored can be filed without typing anything. */
+async function pullFromApp() {
+  var fixtureId = parseInt($('fixture').value, 10);
+  var live = LIVE[fixtureId];
+  if (!live) return;
+  $('pull-btn').disabled = true;
+  msg('save-msg', '');
+  try {
+    var res = await workerCall('tournament.captureFromMatch', { liveScoreId: live.id });
+    var body = await res.json().catch(function () { return {}; });
+    if (!res.ok) { msg('save-msg', body.error || ('Could not pull it in (' + res.status + ').'), 'err'); return; }
+    msg('save-msg', 'Pulled in from the app.', 'ok');
+    clearForm();
+    await loadAll();
+  } catch (e) {
+    msg('save-msg', 'Could not reach the server.', 'err');
+  } finally { $('pull-btn').disabled = false; }
+}
+
+function clearForm() {
+  ['a-runs','a-wkts','a-balls','b-runs','b-wkts','b-balls','potm','result-text'].forEach(function (id) { $(id).value = ''; });
+  ['a-allout','b-allout'].forEach(function (id) { $(id).value = ''; });
+  $('outcome').value = 'result';
+  $('fixture').value = ''; $('team-a').value = ''; $('team-b').value = '';
+  $('pull-btn').classList.add('hidden');
+  syncWinner();
+}
+
+/* ══════════════════════════════════════════════════════════
+   SQUADS — admin only
+   The parser takes whatever shape a club sent and turns it into names.
+══════════════════════════════════════════════════════════ */
+/* Clubs send squads in whatever shape they like: numbered, tab-separated out
+   of a spreadsheet, with (c) and (wk) marks, roles after a dash, headers on
+   top. This turns any of that into a list of players. Kept separate so it
+   can be tested on real-world paste shapes. */
+function parseSquad(text, teamName) {
+  var ROLES = {
+    bat:'Batter', batter:'Batter', batsman:'Batter',
+    bowl:'Bowler', bowler:'Bowler',
+    all:'All-rounder', allrounder:'All-rounder', 'all-rounder':'All-rounder', ar:'All-rounder',
+    wk:'Keeper', keeper:'Keeper', wicketkeeper:'Keeper', 'wicket-keeper':'Keeper', gk:'Keeper'
+  };
+  var out = [], seen = {};
+
+  String(text || '').split(/\r?\n/).forEach(function (raw) {
+    var line = String(raw).replace(/ /g, ' ').trim();
+    if (!line) return;
+
+    /* A header the club typed above the list — the team's own name, "squad",
+       "players", or a column heading. Dropped rather than saved as a player. */
+    if (/^(squad|players?|team|name|no\.?|#|list)\b[:\s]*$/i.test(line)) return;
+    if (/^(group\s+[ab]|tournament)\b/i.test(line)) return;
+    /* The club's own name as a heading — on its own, or with "squad",
+       "players", "team" or "XI" either side of it. */
+    if (teamName) {
+      var t = String(teamName).toLowerCase().replace(/\s+/g, ' ').trim();
+      var l = line.toLowerCase().replace(/[:\-–]/g, ' ').replace(/\s+/g, ' ').trim();
+      var word = '(squad|squad list|players|team|xi|list)';
+      var re = new RegExp('^(' + word + ' )?' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') +
+                          '( ' + word + ')?$', 'i');
+      if (re.test(l)) return;
+    }
+
+    var captain = false, keeper = false, role = null, shirt = null;
+
+    /* Columns out of a spreadsheet: "no, name, role". Tabs are columns for
+       certain. Runs of spaces are only columns when they read like columns —
+       a number first, or a role second — because "Ashley  Hartzenberg" with
+       a double space is a typo in a name, not two fields. */
+    var isRole = function (t) { return !!ROLES[String(t || '').toLowerCase().replace(/[^a-z-]/g, '')]; };
+    var cols = line.indexOf('\t') !== -1
+      ? line.split('\t')
+      : line.split(/\s{2,}/);
+    cols = cols.map(function (c) { return c.trim(); }).filter(Boolean);
+    var columnar = cols.length > 1 &&
+      (line.indexOf('\t') !== -1 || /^\d{1,2}$/.test(cols[0]) || isRole(cols[1]) || isRole(cols[2]));
+
+    var name;
+    if (columnar) {
+      if (/^\d{1,2}$/.test(cols[0])) { shirt = parseInt(cols[0], 10); cols = cols.slice(1); }
+      name = cols[0] || '';
+      if (isRole(cols[1])) role = ROLES[String(cols[1]).toLowerCase().replace(/[^a-z-]/g, '')];
+    } else {
+      name = line;
+    }
+
+    /* Leading numbering: "1.", "2)", "03 -" */
+    name = name.replace(/^\s*(\d{1,2})\s*[.)\-:]\s*/, function (m, n) {
+      if (shirt === null) shirt = parseInt(n, 10);
+      return '';
+    });
+
+    /* Marks in brackets or after a dagger/asterisk */
+    name = name.replace(/\(([^)]*)\)/g, function (m, inner) {
+      var t = inner.toLowerCase().replace(/[^a-z-]/g, '');
+      if (/^(c|capt|captain)$/.test(t)) { captain = true; return ''; }
+      if (/^(wk|keeper|wicketkeeper|wicket-keeper|gk)$/.test(t)) { keeper = true; return ''; }
+      if (ROLES[t]) { role = ROLES[t]; return ''; }
+      return '';                       // anything else in brackets is not a name
+    });
+    if (/[†✝]/.test(name)) { keeper = true; name = name.replace(/[†✝]/g, ''); }
+    if (/\*$/.test(name))  { captain = true; name = name.replace(/\*+$/, ''); }
+
+    /* A role after a dash or comma: "Ashley Hartzenberg - all-rounder" */
+    var dash = name.match(/^(.*?)\s*[-–,]\s*([A-Za-z\- ]{2,20})$/);
+    if (dash) {
+      var rk2 = dash[2].toLowerCase().replace(/[^a-z-]/g, '');
+      if (ROLES[rk2]) { role = ROLES[rk2]; name = dash[1]; }
+      else if (/^(c|capt|captain)$/.test(rk2)) { captain = true; name = dash[1]; }
+    }
+
+    name = name.replace(/\s+/g, ' ').trim().replace(/[.,;]+$/, '');
+    if (!name || name.length < 2) return;
+    if (!/[a-z]/i.test(name)) return;                 // a stray number or symbol
+    if (name.split(' ').length > 6) return;           // a sentence, not a name
+
+    if (keeper && !role) role = 'Keeper';
+    var key = name.toLowerCase();
+    if (seen[key]) return;                            // listed twice
+    seen[key] = true;
+    out.push({ player_name: name, role: role, shirt_no: shirt, is_captain: captain, is_keeper: keeper });
+  });
+
+  /* One captain only — the last mark wins if a club marked two by mistake. */
+  var caps = out.filter(function (p) { return p.is_captain; });
+  if (caps.length > 1) caps.slice(0, -1).forEach(function (p) { p.is_captain = false; });
+  return out;
+}
+
+var _squadPending = null;
+
+function fillSquadTeams() {
+  var sel = document.getElementById('squad-team');
+  if (!sel) return;
+  var cur = sel.value;
+  sel.innerHTML = TEAMS.map(function (t) {
+    return '<option value="' + esc(t.team_name) + '">' + esc(t.team_name) +
+           (t.group_name ? '  (' + esc(t.group_name) + ')' : '') + '</option>';
+  }).join('');
+  if (cur) sel.value = cur;
+}
+
+function renderSquadSummary() {
+  var el = document.getElementById('squad-summary');
+  if (!el) return;
+  sbGet('tournament_squad_counts?tournament_id=eq.' + T.id + '&select=*&order=group_name.asc,team_name.asc')
+    .then(function (rows) {
+      if (!rows || !rows.length) {
+        pMeta('squads-meta', 'no teams yet');
+        el.innerHTML = '<p class="hint">No teams yet.</p>'; return;
+      }
+      var inCount = rows.filter(function (r) { return Number(r.players) > 0; }).length;
+      pMeta('squads-meta', inCount + ' of ' + rows.length + ' squads in');
+      el.innerHTML = '<div style="overflow-x:auto"><table>' +
+        '<tr><th>Team</th><th>Group</th><th class="num">Players</th><th>Captain</th><th>Keeper</th><th></th></tr>' +
+        rows.map(function (r) {
+          var has = Number(r.players) > 0;
+          return '<tr><td>' + esc(r.team_name) + '</td><td>' + esc(r.group_name || '—') + '</td>' +
+            '<td class="num">' + (has ? r.players : '—') + '</td>' +
+            '<td>' + (Number(r.captains) ? '✓' : (has ? '<span style="color:var(--muted)">not marked</span>' : '—')) + '</td>' +
+            '<td>' + (Number(r.keepers) ? '✓' : (has ? '<span style="color:var(--muted)">not marked</span>' : '—')) + '</td>' +
+            '<td>' + (has ? '<button class="btn ghost" data-showsquad="' + esc(r.team_name) + '">View</button>' : '') + '</td></tr>';
+        }).join('') + '</table></div>';
+      el.querySelectorAll('[data-showsquad]').forEach(function (b) {
+        b.addEventListener('click', function () { showSquad(this.dataset.showsquad); });
+      });
+    })
+    .catch(function () { el.innerHTML = '<p class="hint">Could not load the squads.</p>'; });
+}
+
+function showSquad(team) {
+  sbGet('tournament_players?tournament_id=eq.' + T.id + '&team_name=eq.' + encodeURIComponent(team) +
+        '&select=*&order=shirt_no.asc,player_name.asc')
+    .then(function (rows) {
+      var el = document.getElementById('squad-preview');
+      el.classList.remove('hidden');
+      el.innerHTML = '<p class="hint"><strong>' + esc(team) + '</strong> — ' + rows.length + ' players</p>' +
+        '<div style="overflow-x:auto"><table><tr><th>#</th><th>Player</th><th>Role</th><th></th></tr>' +
+        rows.map(function (p) {
+          return '<tr><td>' + (p.shirt_no || '') + '</td><td>' + esc(p.player_name) +
+            (p.is_captain ? ' <span class="tag">c</span>' : '') +
+            (p.is_keeper ? ' <span class="tag">wk</span>' : '') + '</td>' +
+            '<td>' + esc(p.role || '') + '</td>' +
+            '<td><button class="btn danger" data-delplayer="' + p.id + '">Remove</button></td></tr>';
+        }).join('') + '</table></div>';
+      el.querySelectorAll('[data-delplayer]').forEach(function (b) {
+        b.addEventListener('click', async function () {
+          var res = await workerCall('tournament.deletePlayer', { id: parseInt(this.dataset.delplayer, 10) });
+          if (!res.ok) { msg('squad-msg', 'Could not remove that player.', 'err'); return; }
+          showSquad(team); renderSquadSummary();
+        });
+      });
+    });
+}
+
+/* Read the paste and show what it found before anything is saved — a list
+   parsed wrongly is easier to see than to undo. */
+function previewSquad() {
+  var team = document.getElementById('squad-team').value;
+  var players = parseSquad(document.getElementById('squad-text').value, team);
+  var el = document.getElementById('squad-preview');
+  el.classList.remove('hidden');
+  msg('squad-msg', '');
+  _squadPending = { team: team, players: players };
+
+  if (!players.length) {
+    el.innerHTML = '<p class="hint">Nothing in that looked like a name.</p>';
+    return;
+  }
+  el.innerHTML =
+    '<p class="hint"><strong>' + players.length + ' players</strong> read for ' + esc(team) +
+    '. Check them, then save — this replaces whatever squad that team has now.</p>' +
+    '<div style="overflow-x:auto"><table><tr><th>#</th><th>Player</th><th>Role</th><th>Marks</th></tr>' +
+    players.map(function (p) {
+      return '<tr><td>' + (p.shirt_no || '') + '</td><td>' + esc(p.player_name) + '</td>' +
+        '<td>' + esc(p.role || '') + '</td>' +
+        '<td>' + (p.is_captain ? '<span class="tag">captain</span> ' : '') +
+                 (p.is_keeper ? '<span class="tag">keeper</span>' : '') + '</td></tr>';
+    }).join('') + '</table></div>' +
+    '<button class="btn" id="squad-save-btn" style="margin-top:10px">Save this squad</button>';
+  document.getElementById('squad-save-btn').addEventListener('click', saveSquad);
+}
+
+async function saveSquad() {
+  if (!_squadPending || !_squadPending.players.length) return;
+  var btn = document.getElementById('squad-save-btn');
+  btn.disabled = true;
+  msg('squad-msg', 'Saving…');
+  try {
+    var res = await workerCall('tournament.saveSquad', {
+      tournamentId: T.id, teamName: _squadPending.team, players: _squadPending.players, replace: true
+    });
+    var body = await res.json().catch(function () { return {}; });
+    if (!res.ok) { msg('squad-msg', body.error || ('Could not save (' + res.status + ').'), 'err'); btn.disabled = false; return; }
+    msg('squad-msg', _squadPending.players.length + ' players saved for ' + _squadPending.team + '.', 'ok');
+    document.getElementById('squad-text').value = '';
+    document.getElementById('squad-preview').classList.add('hidden');
+    _squadPending = null;
+    renderSquadSummary();
+  } catch (e) {
+    msg('squad-msg', 'Could not reach the server.', 'err');
+    btn.disabled = false;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   FIXTURES — admin only
+══════════════════════════════════════════════════════════ */
+/* Each fixture is editable where it stands — a tournament's dates and venues
+   move around more than a league's, and going elsewhere to change one is the
+   sort of friction that leaves a wrong date on the public page. */
+function renderTournamentFixtures() {
+  var el = $('tfix-list');
+  renderPanelMetas();
+  if (!FIXTURES.length) { el.innerHTML = '<p class="hint">No fixtures in the tournament yet.</p>'; return; }
+  var stages = [['group','Group'],['semi','Semi-final'],['final','Final'],['3rd','3rd place']];
+  el.innerHTML = FIXTURES.map(function (f) {
+    var filed = RESULTS.filter(function (r) { return r.fixture_id === f.id; })[0];
+    return '<div class="fx" data-fx="' + f.id + '">' +
+      '<div class="fx-top"><strong>' + esc(f.team) + ' v ' + esc(f.opponent) + '</strong>' +
+        (filed ? '<span class="tag">result filed</span>' : '') +
+        '<button class="btn ghost fx-swap" data-swap="' + f.id + '" title="Swap home and away">\u21c4 Swap</button>' +
+        '<button class="btn danger" data-unlink="' + f.id + '">Take out</button></div>' +
+      '<div class="row three" style="margin:8px 0 0">' +
+        '<div><label>Date</label><input type="date" data-k="date" value="' + esc(f.date || '') + '"></div>' +
+        '<div><label>Venue</label><input type="text" data-k="venue" value="' + esc(f.venue || '') + '"></div>' +
+        '<div><label>Stage</label><select data-k="stage">' +
+          stages.map(function (st) {
+            return '<option value="' + st[0] + '"' + ((f.tournament_stage || 'group') === st[0] ? ' selected' : '') +
+                   '>' + st[1] + '</option>'; }).join('') +
+        '</select></div>' +
+      '</div>' +
+      '<div class="fx-actions"><button class="btn fx-save" data-save="' + f.id + '">Save</button>' +
+      '<span class="fx-msg"></span></div></div>';
+  }).join('');
+  el.querySelectorAll('[data-unlink]').forEach(function (b) {
+    b.addEventListener('click', function () { linkFixture(parseInt(this.dataset.unlink, 10), null); });
+  });
+  el.querySelectorAll('[data-save]').forEach(function (b) {
+    b.addEventListener('click', function () { saveFixture(parseInt(this.dataset.save, 10)); });
+  });
+  el.querySelectorAll('[data-swap]').forEach(function (b) {
+    b.addEventListener('click', function () { swapFixtureSides(parseInt(this.dataset.swap, 10)); });
+  });
+}
+
+function fxRow(id) { return document.querySelector('.fx[data-fx="' + id + '"]'); }
+function fxSay(id, text, kind) {
+  var n = fxRow(id) && fxRow(id).querySelector('.fx-msg');
+  if (!n) return;
+  n.textContent = text || '';
+  n.className = 'fx-msg' + (kind ? ' ' + kind : '');
+}
+
+async function saveFixture(id) {
+  var row = fxRow(id); if (!row) return;
+  var get = function (k) { return row.querySelector('[data-k="' + k + '"]').value; };
+  var date = get('date'), venue = get('venue').trim(), stage = get('stage');
+  fxSay(id, 'Saving…');
+  try {
+    /* Two writes because the stage lives with the tournament link, not on the
+       fixture's own form. Both are small and either can be repeated safely. */
+    var r1 = await workerCall('fixtures.update', { id: id, data: { date: date || null, venue: venue || null } });
+    if (!r1.ok) { fxSay(id, 'Could not save (' + r1.status + ')', 'err'); return; }
+    var current = FIXTURES.filter(function (f) { return f.id === id; })[0] || {};
+    if ((current.tournament_stage || 'group') !== stage) {
+      var r2 = await workerCall('tournament.linkFixture', { fixtureId: id, tournamentId: T.id, stage: stage });
+      if (!r2.ok) { fxSay(id, 'Saved the date, but the stage did not change.', 'err'); return; }
+    }
+    fxSay(id, 'Saved', 'ok');
+    await loadAll();
+  } catch (e) {
+    fxSay(id, 'Could not reach the server.', 'err');
+  }
+}
+
+/* Home and away the wrong way round is the other thing the generator can't
+   know, so it is one tap rather than a retype. */
+async function swapFixtureSides(id) {
+  var f = FIXTURES.filter(function (x) { return x.id === id; })[0];
+  if (!f) return;
+  fxSay(id, 'Swapping…');
+  var r = await workerCall('fixtures.update', { id: id, data: { team: f.opponent, opponent: f.team } });
+  if (!r.ok) { fxSay(id, 'Could not swap them.', 'err'); return; }
+  await loadAll();
+}
+function fillLinkPicker() {
+  $('link-fixture').innerHTML = '<option value="">—</option>' + FREE_FIXTURES.map(function (f) {
+    return '<option value="' + f.id + '">' + esc((f.date || '') + '  ' + f.team + ' v ' + f.opponent) + '</option>';
+  }).join('');
+}
+async function linkFixture(fixtureId, stage) {
+  if (!fixtureId) return;
+  msg('fix-msg', '');
+  var res = await workerCall('tournament.linkFixture', {
+    fixtureId: fixtureId, tournamentId: stage === null ? null : T.id, stage: stage || 'group'
+  });
+  if (!res.ok) {
+    var b = await res.json().catch(function () { return {}; });
+    msg('fix-msg', b.error || 'Could not change that fixture (' + res.status + ').', 'err');
+    return;
+  }
+  msg('fix-msg', stage === null ? 'Taken out of the tournament.' : 'Added to the tournament.', 'ok');
+  await loadAll();
+}
+
+/* Everyone in a group plays everyone else once. Built here and shown first —
+   nothing is created until the list has been looked at. */
+/* A date as the calendar sees it, not as UTC does. toISOString() on a local
+   midnight hands back the previous day anywhere east of Greenwich — which is
+   us — so a Saturday start was laying the first match day on the Friday. */
+function ymd(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+function roundRobin(teams) {
+  var out = [];
+  for (var i = 0; i < teams.length; i++)
+    for (var j = i + 1; j < teams.length; j++) out.push([teams[i], teams[j]]);
+  return out;
+}
+function buildFixtures() {
+  var scope = $('gen-scope').value;
+  var start = $('gen-start').value;
+  var venue = $('gen-venue').value.trim();
+  var groups = {};
+  TEAMS.forEach(function (t) { (groups[t.group_name || '—'] = groups[t.group_name || '—'] || []).push(t.team_name); });
+
+  var have = {};
+  FIXTURES.forEach(function (f) { have[[f.team, f.opponent].sort().join('|').toLowerCase()] = true; });
+
+  var perGroup = {};
+  Object.keys(groups).sort().forEach(function (g) {
+    perGroup[g] = roundRobin(groups[g]).filter(function (pair) {
+      if (scope === 'club' && !pair.some(function (n) { return /tygerberg/i.test(n); })) return false;
+      return !have[pair.slice().sort().join('|').toLowerCase()];      // already a fixture
+    }).map(function (pair) {
+      return { team: pair[0], opponent: pair[1], group: g, date: null, venue: venue || null };
+    });
+  });
+
+  var names = Object.keys(perGroup).sort(), rows = [];
+  if ($('gen-order').value === 'interleave') {
+    /* A round from each group in turn, so a day's play isn't all one group. */
+    for (var i = 0; ; i++) {
+      var any = false;
+      names.forEach(function (g) { if (perGroup[g][i]) { rows.push(perGroup[g][i]); any = true; } });
+      if (!any) break;
+    }
+  } else {
+    names.forEach(function (g) { rows = rows.concat(perGroup[g]); });
+  }
+
+  /* Dates: as many matches as fit on a match day, then on to the next one that
+     the pattern allows — a tournament is played on its match days, not one
+     game a day for a fortnight. */
+  var pattern = $('gen-pattern').value;
+  var perDay  = parseInt($('gen-perday').value, 10) || 1;
+  if (start && pattern !== 'none') {
+    var day = new Date(start + 'T00:00:00');
+    var wants = function (d) {
+      var w = d.getDay();                     // 0 Sun … 6 Sat
+      if (pattern === 'sat')    return w === 6;
+      if (pattern === 'sun')    return w === 0;
+      if (pattern === 'satsun') return w === 6 || w === 0;
+      return true;
+    };
+    var guard = 0;
+    while (!wants(day) && guard++ < 14) day = new Date(day.getTime() + 864e5);
+    rows.forEach(function (r, i) {
+      if (i > 0 && i % perDay === 0) {
+        day = new Date(day.getTime() + 864e5);
+        var g2 = 0;
+        while (!wants(day) && g2++ < 14) day = new Date(day.getTime() + 864e5);
+      }
+      r.date = ymd(day);
+    });
+  }
+  return rows;
+}
+function previewFixtures() {
+  _pending = buildFixtures();
+  var el = $('gen-preview');
+  el.classList.remove('hidden');
+  if (!_pending.length) {
+    el.innerHTML = '<p class="hint">Nothing to add — every match in that group is already a fixture.</p>';
+    return;
+  }
+  el.innerHTML = '<p class="hint">' + _pending.length + ' fixture' + (_pending.length === 1 ? '' : 's') +
+    ' will be created and added to the tournament:</p>' +
+    '<div style="overflow-x:auto"><table><tr><th>Group</th><th>Match</th><th>Date</th><th>Venue</th></tr>' +
+    _pending.map(function (r) {
+      return '<tr><td>' + esc(r.group) + '</td><td>' + esc(r.team + ' v ' + r.opponent) + '</td>' +
+             '<td>' + esc(r.date || '—') + '</td><td>' + esc(r.venue || '—') + '</td></tr>';
+    }).join('') + '</table></div>' +
+    '<button class="btn" id="gen-confirm" style="margin-top:10px">Create these fixtures</button>';
+  $('gen-confirm').addEventListener('click', createFixtures);
+}
+async function createFixtures() {
+  if (!_pending.length) return;
+  $('gen-confirm').disabled = true;
+  msg('fix-msg', 'Creating…');
+  try {
+    var made = 0;
+    for (var i = 0; i < _pending.length; i++) {
+      var r = _pending[i];
+      var res = await workerCall('fixtures.insert', { data: {
+        team: r.team, opponent: r.opponent, date: r.date, venue: r.venue,
+        division: T.short_name || T.name, tournament_id: T.id, tournament_stage: 'group'
+      }});
+      if (!res.ok) {
+        var b = await res.json().catch(function () { return {}; });
+        msg('fix-msg', 'Stopped after ' + made + '. ' + (b.error || 'The server refused fixture ' + (i + 1) + '.'), 'err');
+        break;
+      }
+      made++;
+    }
+    if (made === _pending.length) msg('fix-msg', made + ' fixtures created.', 'ok');
+    _pending = [];
+    $('gen-preview').classList.add('hidden');
+    await loadAll();
+  } catch (e) {
+    msg('fix-msg', 'Could not reach the server.', 'err');
+  }
+}
+
+/* ── what is filed ───────────────────────────────────────── */
+function renderResults() {
+  var el = $('results-list');
+  if (!RESULTS.length) { el.innerHTML = '<p class="hint">Nothing filed yet.</p>'; return; }
+  el.innerHTML = RESULTS.map(function (r) {
+    var score = (r.a_runs == null ? '—' : r.a_runs + '/' + (r.a_wickets == null ? 0 : r.a_wickets)) +
+                '  v  ' + (r.b_runs == null ? '—' : r.b_runs + '/' + (r.b_wickets == null ? 0 : r.b_wickets));
+    return '<div class="res">' +
+      '<div><strong>' + esc(r.team_a) + ' v ' + esc(r.team_b) + '</strong>' +
+        '<div class="hint">' + esc(r.played_on || '') + ' · ' + score +
+        (r.result_text ? ' · ' + esc(r.result_text) : '') + '</div></div>' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span class="tag ' + (r.source === 'app' ? 'app' : 'manual') + '">' + (r.source === 'app' ? 'app' : 'typed') + '</span>' +
+        '<button class="btn danger" data-del="' + r.id + '">Remove</button>' +
+      '</div></div>';
+  }).join('');
+  el.querySelectorAll('[data-del]').forEach(function (b) {
+    b.addEventListener('click', function () { removeResult(parseInt(this.dataset.del, 10)); });
+  });
+}
+async function removeResult(id) {
+  var r = RESULTS.filter(function (x) { return x.id === id; })[0];
+  if (!r) return;
+  if (!confirm('Remove ' + r.team_a + ' v ' + r.team_b + ' from the table?')) return;
+  var res = await workerCall('tournament.deleteResult', { id: id });
+  if (!res.ok) { msg('save-msg', 'Could not remove it.', 'err'); return; }
+  await loadAll();
+}
+
+/* ── the table ───────────────────────────────────────────── */
+function renderStandings() {
+  sbGet('tournament_standings?tournament_id=eq.' + T.id + '&select=*').then(function (rows) {
+    var el = $('tables');
+    if (!rows || !rows.length) {
+      pMeta('standings-meta', 'nothing yet');
+      el.innerHTML = '<p class="hint">Nothing to stand yet.</p>'; return;
+    }
+    var groups = {};
+    rows.forEach(function (r) { (groups[r.group_name || '—'] = groups[r.group_name || '—'] || []).push(r); });
+    var gk = Object.keys(groups);
+    pMeta('standings-meta', plural(gk.length, 'group') + ' · ' + plural(rows.length, 'team') );
+    el.innerHTML = Object.keys(groups).sort().map(function (g) {
+      var list = groups[g].sort(function (a, b) {
+        return (b.points - a.points) || (Number(b.nrr_per_ball) - Number(a.nrr_per_ball));
+      });
+      return '<h2 style="margin-top:14px">Group ' + esc(g) + '</h2>' +
+        '<div style="overflow-x:auto"><table><tr><th>Team</th><th class="num">P</th><th class="num">W</th>' +
+        '<th class="num">L</th><th class="num">T</th><th class="num">NR</th><th class="num">Pts</th><th class="num">NRR</th></tr>' +
+        list.map(function (r) {
+          var nrr = Number(r.nrr_per_ball || 0);
+          return '<tr' + (/tygerberg/i.test(r.team) ? ' class="club"' : '') + '><td>' + esc(r.team) + '</td>' +
+            '<td class="num">' + r.played + '</td><td class="num">' + r.won + '</td><td class="num">' + r.lost + '</td>' +
+            '<td class="num">' + r.tied + '</td><td class="num">' + r.no_result + '</td>' +
+            '<td class="num"><strong>' + r.points + '</strong></td>' +
+            '<td class="num">' + (nrr > 0 ? '+' : '') + nrr.toFixed(3) + '</td></tr>';
+        }).join('') + '</table></div>';
+    }).join('');
+  });
+}
+
+/* ── the knockout stage ──────────────────────────────────────
+   A tournament that stops at the group table is not a tournament. The
+   semis, the final and the play-off are fixtures like any other; what is
+   different is that they exist before anyone knows who is in them, so
+   they go in with the positions as their names and get filled in later. */
+var KO_SLOTS = [
+  { slot: 'sf1',   stage: 'semi',  label: 'Semi-final 1',       a: 'A1',         b: 'B2' },
+  { slot: 'sf2',   stage: 'semi',  label: 'Semi-final 2',       a: 'B1',         b: 'A2' },
+  { slot: '3rd',   stage: '3rd',   label: '3rd-place play-off', a: 'Loser SF1',  b: 'Loser SF2' },
+  { slot: 'final', stage: 'final', label: 'Final',              a: 'Winner SF1', b: 'Winner SF2' }
+];
+function koDef(slot) { return KO_SLOTS.filter(function (k) { return k.slot === slot; })[0]; }
+
+/* Older rows may carry only a stage. A lone 'semi' cannot say which semi it
+   is, so it is shown but left out of the automatic seeding. */
+function slotOf(f) {
+  if (f.tournament_slot) return f.tournament_slot;
+  var st = f.tournament_stage;
+  if (st === 'final' || st === '3rd') return st;
+  return null;
+}
+function koFixtures() {
+  return FIXTURES.filter(function (f) {
+    return f.tournament_stage && f.tournament_stage !== 'group';
+  });
+}
+function koBySlot(slot) {
+  return koFixtures().filter(function (f) { return slotOf(f) === slot; })[0] || null;
+}
+function koResult(f) {
+  if (!f) return null;
+  return RESULTS.filter(function (r) { return r.fixture_id === f.id; })[0] || null;
+}
+/* A placeholder is a position, not a team — "A1" is not in the team list. */
+function isPlaceholder(name) {
+  return !TEAMS.some(function (t) { return t.team_name === name; });
+}
+
+function renderKnockouts() {
+  var el = $('ko-bracket');
+  if (!el) return;
+  var ko = koFixtures();
+  var have = {};
+  ko.forEach(function (f) { var s = slotOf(f); if (s) have[s] = true; });
+
+  /* The build form is only offered while something is missing. */
+  var missing = KO_SLOTS.filter(function (k) { return !have[k.slot]; });
+  $('ko-build').classList.toggle('hidden', ko.length > 0 && missing.length === 0);
+  $('ko-seed-wrap').classList.toggle('hidden', ko.length === 0);
+
+  if (!ko.length) {
+    el.innerHTML = '<p class="hint">No knockout fixtures yet.</p>';
+    pMeta('ko-meta', 'not built');
+    return;
+  }
+
+  var order = ['sf1', 'sf2', '3rd', 'final'];
+  var rows = ko.slice().sort(function (a, b) {
+    var ia = order.indexOf(slotOf(a)); var ib = order.indexOf(slotOf(b));
+    return (ia < 0 ? 9 : ia) - (ib < 0 ? 9 : ib);
+  });
+
+  el.innerHTML = rows.map(function (f) {
+    var s = slotOf(f);
+    var def = koDef(s);
+    var r = koResult(f);
+    var name = def ? def.label : (f.tournament_stage === 'semi' ? 'Semi-final' : f.tournament_stage);
+    var pending = isPlaceholder(f.team) || isPlaceholder(f.opponent);
+    var opts = function (cur) {
+      return '<option value="">— ' + esc(cur) + ' —</option>' +
+        TEAMS.map(function (t) {
+          return '<option value="' + esc(t.team_name) + '"' +
+                 (t.team_name === cur ? ' selected' : '') + '>' + esc(t.team_name) + '</option>';
+        }).join('');
+    };
+    return '<div class="fx" data-ko="' + f.id + '">' +
+      '<div class="fx-top"><strong>' + esc(name) + '</strong>' +
+        (r ? '<span class="tag">result filed</span>'
+           : pending ? '<span class="tag">sides to come</span>' : '') +
+        '<span class="hint" style="margin-left:auto">' + esc(f.date || 'no date') +
+        (f.venue ? ' · ' + esc(f.venue) : '') + '</span></div>' +
+      '<div style="margin:6px 0 2px;font-size:.95rem">' +
+        '<strong>' + esc(f.team) + '</strong> v <strong>' + esc(f.opponent) + '</strong></div>' +
+      (r ? '<div class="hint">' + esc(r.result_text || (r.winner ? r.winner + ' won' : 'filed')) + '</div>' : '') +
+      '<div class="row two" style="margin:8px 0 0">' +
+        '<div><label>Side A</label><select data-ka>' + opts(f.team) + '</select></div>' +
+        '<div><label>Side B</label><select data-kb>' + opts(f.opponent) + '</select></div>' +
+      '</div>' +
+      '<div class="fx-actions"><button class="btn ghost" data-kosave="' + f.id + '">Set the sides</button>' +
+      '<span class="fx-msg"></span></div></div>';
+  }).join('');
+
+  el.querySelectorAll('[data-kosave]').forEach(function (b) {
+    b.addEventListener('click', function () { saveKoSides(parseInt(this.dataset.kosave, 10)); });
+  });
+
+  var filed = rows.filter(function (f) { return koResult(f); }).length;
+  var waiting = rows.filter(function (f) { return isPlaceholder(f.team) || isPlaceholder(f.opponent); }).length;
+  pMeta('ko-meta', rows.length + ' match' + (rows.length === 1 ? '' : 'es') +
+        (filed ? ' · ' + filed + ' played' : waiting ? ' · ' + waiting + ' to be decided' : ''));
+}
+
+function koRow(id) { return document.querySelector('.fx[data-ko="' + id + '"]'); }
+function koSay(id, text, kind) {
+  var n = koRow(id) && koRow(id).querySelector('.fx-msg');
+  if (!n) return;
+  n.textContent = text;
+  n.className = 'fx-msg' + (kind ? ' ' + kind : '');
+}
+
+async function saveKoSides(id) {
+  var row = koRow(id);
+  if (!row) return;
+  var f = FIXTURES.filter(function (x) { return x.id === id; })[0];
+  var a = row.querySelector('[data-ka]').value || f.team;
+  var b = row.querySelector('[data-kb]').value || f.opponent;
+  if (a === b) { koSay(id, 'Both sides cannot be the same team.', 'err'); return; }
+  koSay(id, 'Saving…');
+  var res = await workerCall('fixtures.update', { id: id, data: { team: a, opponent: b } });
+  if (!res.ok) { koSay(id, 'Could not save that.', 'err'); return; }
+  koSay(id, 'Saved.', 'ok');
+  await loadAll();
+}
+
+async function buildKnockouts() {
+  var semiDate  = $('ko-semi-date').value || null;
+  var finalDate = $('ko-final-date').value || null;
+  var venue     = $('ko-venue').value.trim() || null;
+  var third     = $('ko-third').checked;
+
+  var have = {};
+  koFixtures().forEach(function (f) { var s = slotOf(f); if (s) have[s] = true; });
+  var want = KO_SLOTS.filter(function (k) {
+    if (have[k.slot]) return false;
+    if (k.slot === '3rd' && !third) return false;
+    return true;
+  });
+  if (!want.length) { msg('ko-msg', 'Every knockout fixture already exists.', 'err'); return; }
+
+  $('ko-build-btn').disabled = true;
+  msg('ko-msg', 'Creating…');
+  var made = 0;
+  try {
+    for (var i = 0; i < want.length; i++) {
+      var k = want[i];
+      var res = await workerCall('fixtures.insert', { data: {
+        team: k.a, opponent: k.b,
+        date: k.stage === 'semi' ? semiDate : finalDate,
+        venue: venue, division: T.short_name || T.name,
+        tournament_id: T.id, tournament_stage: k.stage, tournament_slot: k.slot
+      }});
+      if (!res.ok) {
+        var body = await res.json().catch(function () { return {}; });
+        msg('ko-msg', 'Stopped after ' + made + '. ' + (body.error || 'The server refused ' + k.label + '.'), 'err');
+        break;
+      }
+      made++;
+    }
+    if (made) msg('ko-msg', made + ' knockout fixture' + (made === 1 ? '' : 's') + ' created.', 'ok');
+    await loadAll();
+  } finally { $('ko-build-btn').disabled = false; }
+}
+
+/* Who plays who, worked out rather than typed: the group winners and
+   runners-up, then the winners and losers of the semi-finals. */
+async function seedKnockouts() {
+  $('ko-seed-btn').disabled = true;
+  try {
+    var rows = await sbGet('tournament_standings?tournament_id=eq.' + T.id + '&select=*');
+    var groups = {};
+    (rows || []).forEach(function (r) {
+      if (!r.group_name) return;
+      (groups[r.group_name] = groups[r.group_name] || []).push(r);
+    });
+    var names = Object.keys(groups).sort();
+    var plan = [];
+    var notes = [];
+
+    if (names.length >= 2) {
+      names.forEach(function (g) {
+        groups[g].sort(function (a, b) {
+          return (b.points - a.points) || (Number(b.nrr_per_ball) - Number(a.nrr_per_ball));
+        });
+      });
+      var g1 = groups[names[0]], g2 = groups[names[1]];
+      if (g1.length >= 2 && g2.length >= 2) {
+        plan.push({ slot: 'sf1', a: g1[0].team, b: g2[1].team,
+                    why: names[0] + '1 v ' + names[1] + '2' });
+        plan.push({ slot: 'sf2', a: g2[0].team, b: g1[1].team,
+                    why: names[1] + '1 v ' + names[0] + '2' });
+      }
+      var tied = names.some(function (g) {
+        return groups[g].length >= 2 && groups[g][0].points === groups[g][1].points &&
+               Number(groups[g][0].nrr_per_ball) === Number(groups[g][1].nrr_per_ball);
+      });
+      if (tied) notes.push('Two teams are level on points and net run rate — check the order before you save.');
+    } else {
+      notes.push('The table does not have two groups yet, so the semi-finals cannot be worked out.');
+    }
+
+    /* The final and the play-off follow from the semis being filed. */
+    var sf1 = koBySlot('sf1'), sf2 = koBySlot('sf2');
+    var r1 = koResult(sf1), r2 = koResult(sf2);
+    var sideOf = function (r, wanted) {
+      if (!r || r.outcome !== 'result' || !r.winner) return null;
+      var loser = r.winner === r.team_a ? r.team_b : r.team_a;
+      return wanted === 'w' ? r.winner : loser;
+    };
+    var w1 = sideOf(r1, 'w'), w2 = sideOf(r2, 'w');
+    var l1 = sideOf(r1, 'l'), l2 = sideOf(r2, 'l');
+    if (w1 && w2) plan.push({ slot: 'final', a: w1, b: w2, why: 'the semi-final winners' });
+    else if (koBySlot('final')) notes.push('Both semi-finals need a filed result before the final can be filled in.');
+    if (l1 && l2 && koBySlot('3rd')) plan.push({ slot: '3rd', a: l1, b: l2, why: 'the semi-final losers' });
+
+    /* Only what would actually change is offered. */
+    plan = plan.filter(function (p) {
+      var f = koBySlot(p.slot);
+      if (!f) { notes.push('There is no ' + koDef(p.slot).label + ' fixture to fill in.'); return false; }
+      p.fixture = f;
+      return f.team !== p.a || f.opponent !== p.b;
+    });
+
+    var el = $('ko-seed-preview');
+    el.classList.remove('hidden');
+    if (!plan.length) {
+      el.innerHTML = '<p class="hint">Nothing to change.' +
+        (notes.length ? ' ' + notes.map(esc).join(' ') : '') + '</p>';
+      return;
+    }
+    _koPlan = plan;
+    el.innerHTML = (notes.length ? '<p class="hint">' + notes.map(esc).join(' ') + '</p>' : '') +
+      '<div style="overflow-x:auto"><table><tr><th>Match</th><th>Now</th><th>Becomes</th><th>From</th></tr>' +
+      plan.map(function (p) {
+        return '<tr><td>' + esc(koDef(p.slot).label) + '</td>' +
+          '<td class="hint">' + esc(p.fixture.team + ' v ' + p.fixture.opponent) + '</td>' +
+          '<td><strong>' + esc(p.a + ' v ' + p.b) + '</strong></td>' +
+          '<td class="hint">' + esc(p.why) + '</td></tr>';
+      }).join('') + '</table></div>' +
+      '<button class="btn" id="ko-seed-confirm" style="margin-top:10px">Save these sides</button>';
+    $('ko-seed-confirm').addEventListener('click', applyKoPlan);
+  } catch (e) {
+    msg('ko-msg', 'Could not read the table.', 'err');
+  } finally { $('ko-seed-btn').disabled = false; }
+}
+var _koPlan = [];
+
+async function applyKoPlan() {
+  if (!_koPlan.length) return;
+  var btn = $('ko-seed-confirm');
+  if (btn) btn.disabled = true;
+  msg('ko-msg', 'Saving…');
+  var done = 0;
+  for (var i = 0; i < _koPlan.length; i++) {
+    var p = _koPlan[i];
+    var res = await workerCall('fixtures.update', { id: p.fixture.id, data: { team: p.a, opponent: p.b } });
+    if (!res.ok) { msg('ko-msg', 'Stopped after ' + done + '.', 'err'); break; }
+    done++;
+  }
+  if (done) msg('ko-msg', done + ' match' + (done === 1 ? '' : 'es') + ' filled in.', 'ok');
+  _koPlan = [];
+  $('ko-seed-preview').classList.add('hidden');
+  await loadAll();
+}
+
+/* ── wiring ──────────────────────────────────────────────── */
+$('auth-btn').addEventListener('click', auth);
+$('admin-btn').addEventListener('click', adminAuth);
+$('status-btn').addEventListener('click', saveStatus);
+/* Say what the choice does before it is saved, not after. */
+$('t-status').addEventListener('change', function () {
+  $('status-hint').textContent = STATUS_NOTE[this.value] || '';
+  msg('status-msg', '', '');
+});
+/* A phone that already holds a scorer token still needs a way back to the
+   admin sign-in — without this it would be stuck on results for ever. */
+$('admin-link').addEventListener('click', function (e) {
+  e.preventDefault();
+  $('main').classList.add('hidden');
+  $('auth-card').classList.remove('hidden');
+  var d = document.querySelector('#auth-card details');
+  if (d) d.open = true;
+  $('admin-user').focus();
+});
+$('link-btn').addEventListener('click', function () {
+  linkFixture(parseInt($('link-fixture').value, 10), $('link-stage').value);
+});
+$('gen-btn').addEventListener('click', previewFixtures);
+$('ko-build-btn').addEventListener('click', buildKnockouts);
+$('ko-seed-btn').addEventListener('click', seedKnockouts);
+$('squad-parse-btn').addEventListener('click', previewSquad);
+$('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') auth(); });
+$('save-btn').addEventListener('click', saveResult);
+$('clear-btn').addEventListener('click', clearForm);
+$('pull-btn').addEventListener('click', pullFromApp);
+['team-a', 'team-b', 'outcome'].forEach(function (id) { $(id).addEventListener('change', syncWinner); });
+['a-runs', 'b-runs', 'b-wkts'].forEach(function (id) { $(id).addEventListener('input', suggestText); });
+
+/* Picking a fixture fills in what it already knows. */
+$('fixture').addEventListener('change', function () {
+  var f = FIXTURES.filter(function (x) { return String(x.id) === this.value; }.bind(this))[0];
+  $('pull-btn').classList.toggle('hidden', !(f && LIVE[f.id]));
+  if (!f) return;
+  $('played-on').value = f.date || '';
+  $('stage').value = f.tournament_stage || 'group';
+  /* Which side batted first isn't in the fixture, so the teams go in as
+     listed and the scorer swaps them if it was the other way round. */
+  var names = TEAMS.map(function (t) { return t.team_name; });
+  var pick = function (n) {
+    var hit = names.filter(function (x) { return x.toLowerCase() === String(n || '').toLowerCase(); })[0];
+    return hit || '';
+  };
+  $('team-a').value = pick(f.team); $('team-b').value = pick(f.opponent);
+  syncWinner();
+});
+
+setupPanels();
+if (_token) start();
+</script>
+</body>
+</html>

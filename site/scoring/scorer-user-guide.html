@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCC Scorer — User Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #111111;
+  --bg2:   #1a1a1a;
+  --bg3:   #222222;
+  --card:  #1e1e1e;
+  --gold:  #c9a84c;
+  --gold2: #e0bc5a;
+  --white: #f2ede3;
+  --muted: #6e737f;
+  --red:   #c03030;
+  --green: #3d8c4f;
+  --green2: #5ab56e;
+  --border: rgba(201,168,76,0.15);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* ── LAYOUT ── */
+.guide-wrap { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* ── HEADER ── */
+.guide-header {
+  padding: 48px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.guide-header-eyebrow {
+  font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+}
+.guide-header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.2rem; letter-spacing: 4px; color: var(--gold);
+  line-height: 1; margin-bottom: 12px;
+}
+.guide-header p {
+  color: var(--muted); font-size: 0.9rem; max-width: 520px;
+}
+
+/* ── TOC ── */
+.toc {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px 28px; margin-bottom: 56px;
+}
+.toc-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+  letter-spacing: 3px; color: var(--gold); margin-bottom: 16px;
+}
+.toc ol { padding-left: 20px; }
+.toc li { margin-bottom: 6px; }
+.toc a { color: var(--white); text-decoration: none; font-size: 0.88rem; opacity: 0.8; transition: opacity 0.15s; }
+.toc a:hover { opacity: 1; color: var(--gold); }
+
+/* ── SECTIONS ── */
+.section { margin-bottom: 64px; scroll-margin-top: 24px; }
+.section-number {
+  font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem;
+  letter-spacing: 3px; color: var(--gold); opacity: 0.5; margin-bottom: 4px;
+}
+.section h2 {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem;
+  letter-spacing: 3px; color: var(--gold); margin-bottom: 16px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.section h3 {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+  letter-spacing: 2px; color: var(--white); margin: 28px 0 10px;
+}
+.section p { color: rgba(242,237,227,0.8); margin-bottom: 12px; font-size: 0.9rem; }
+.section ul, .section ol { padding-left: 20px; margin-bottom: 12px; }
+.section li { color: rgba(242,237,227,0.8); font-size: 0.9rem; margin-bottom: 5px; }
+
+/* ── TIP / WARN CALLOUTS ── */
+.callout {
+  border-radius: 8px; padding: 13px 16px;
+  margin: 16px 0; font-size: 0.85rem; display: flex; gap: 10px; align-items: flex-start;
+}
+.callout-icon { flex-shrink: 0; font-size: 1rem; margin-top: 1px; }
+.callout.tip  { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); }
+.callout.warn { background: rgba(192,48,48,0.08);  border: 1px solid rgba(192,48,48,0.25); }
+.callout.info { background: rgba(61,140,79,0.08);  border: 1px solid rgba(61,140,79,0.25); }
+.callout p { margin: 0; color: var(--white); }
+
+/* ── MOCKUPS ── */
+.mockup-wrap {
+  margin: 24px 0;
+  display: flex; gap: 16px; flex-wrap: wrap; justify-content: flex-start;
+}
+.mockup {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  width: 220px; flex-shrink: 0;
+}
+.mockup.wide { width: 100%; max-width: 480px; }
+.mockup-label {
+  font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); padding: 10px 14px 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.mockup-body { padding: 14px; }
+
+/* ── Phone shell ── */
+.phone {
+  width: 220px; background: #0a0a0a; border-radius: 28px;
+  border: 2px solid #2a2a2a; overflow: hidden; flex-shrink: 0;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+.phone-screen { background: var(--bg); padding: 12px; min-height: 160px; }
+.phone-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0 10px;
+}
+.phone-topbar-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem;
+  letter-spacing: 3px; color: var(--gold);
+}
+.phone-status { display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: var(--green2); }
+.phone-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+/* ── Mini UI components ── */
+.mini-section-heading {
+  font-family: 'Bebas Neue', sans-serif; font-size: 0.7rem;
+  letter-spacing: 2px; color: var(--gold); margin-bottom: 8px;
+}
+.mini-fixture {
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 12px; margin-bottom: 8px; position: relative; overflow: hidden;
+}
+.mini-fixture::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--gold); opacity: 0.3;
+}
+.mini-fixture.live-fix::before { background: var(--green); opacity: 1; }
+.mini-fixture-team { font-family: 'Bebas Neue', sans-serif; font-size: 0.78rem; letter-spacing: 1.5px; color: var(--gold); }
+.mini-fixture-meta { font-size: 0.62rem; color: var(--muted); margin-top: 2px; }
+.mini-live-badge { font-size: 0.55rem; color: var(--green2); letter-spacing: 1px; text-transform: uppercase; }
+
+.mini-score-header {
+  background: var(--bg3); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+}
+.mini-score-main { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--white); }
+.mini-score-meta { font-size: 0.62rem; color: var(--muted); margin-top: 1px; }
+
+.mini-player-bar {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 10px; margin-bottom: 8px;
+}
+.mini-batter { font-size: 0.65rem; }
+.mini-batter-name { font-weight: 700; color: var(--white); }
+.mini-batter-score { color: var(--gold); font-size: 0.7rem; font-weight: 700; }
+.mini-batter-balls { color: var(--muted); font-size: 0.58rem; }
+.mini-swap { font-size: 0.75rem; color: var(--muted); align-self: center; text-align: center; }
+.mini-bowler { font-size: 0.62rem; text-align: right; }
+.mini-bowler-name { font-weight: 700; color: var(--white); }
+.mini-bowler-figs { color: var(--gold); font-size: 0.62rem; }
+
+.mini-chips { display: flex; gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
+.mini-chip {
+  width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 0.62rem; font-weight: 700;
+  background: rgba(255,255,255,0.06); color: var(--muted);
+}
+.mini-chip.four { background: rgba(201,168,76,0.15); color: var(--gold); }
+.mini-chip.six  { background: rgba(201,168,76,0.25); color: var(--gold2); }
+.mini-chip.wkt  { background: rgba(192,48,48,0.2);   color: #e07070; }
+.mini-chip.wide, .mini-chip.nb { background: rgba(110,115,127,0.15); color: var(--muted); }
+.mini-chip.pending { border: 1.5px dashed var(--muted); background: transparent; }
+
+.mini-run-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 6px;
+}
+.mini-run-btn {
+  background: var(--bg3); border: 1px solid rgba(255,255,255,0.08); border-radius: 7px;
+  padding: 7px 0; text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--white);
+}
+.mini-run-btn.four { background: rgba(201,168,76,0.1); color: var(--gold); border-color: rgba(201,168,76,0.25); }
+.mini-run-btn.six  { background: rgba(201,168,76,0.18); color: var(--gold2); border-color: rgba(201,168,76,0.35); }
+.mini-run-btn.wkt  { background: rgba(192,48,48,0.12); color: #e07070; border-color: rgba(192,48,48,0.3); }
+
+.mini-action-bar { display: flex; gap: 5px; }
+.mini-action-btn {
+  flex: 1; background: var(--bg3); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 7px; padding: 6px 0; text-align: center;
+  font-size: 0.55rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+}
+.mini-action-btn.gold { border-color: rgba(201,168,76,0.3); color: var(--gold); }
+
+.mini-extras-row {
+  display: flex; gap: 5px; margin-bottom: 6px;
+}
+.mini-extra-btn {
+  flex: 1; background: var(--bg3); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 7px; padding: 6px 0; text-align: center; font-size: 0.62rem; color: var(--muted);
+}
+
+.mini-modal-overlay {
+  background: rgba(0,0,0,0.7); border-radius: 10px; padding: 12px;
+}
+.mini-modal {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px;
+}
+.mini-modal-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem;
+  letter-spacing: 2px; color: var(--gold); margin-bottom: 8px;
+}
+.mini-dismissal-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.mini-dismissal-btn {
+  background: var(--bg3); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px; padding: 4px 8px; font-size: 0.6rem; color: var(--white);
+}
+.mini-dismissal-btn.selected { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold); }
+.mini-input {
+  background: var(--bg3); border: 1px solid rgba(255,255,255,0.1); border-radius: 7px;
+  color: var(--white); font-size: 0.7rem; padding: 6px 8px; width: 100%; margin-bottom: 6px;
+}
+.mini-btn-row { display: flex; gap: 6px; }
+.mini-btn {
+  flex: 1; border-radius: 7px; padding: 6px 0; text-align: center;
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 1px;
+}
+.mini-btn.cancel { background: var(--bg3); border: 1px solid rgba(255,255,255,0.1); color: var(--muted); }
+.mini-btn.confirm { background: var(--gold); color: #000; border: none; }
+.mini-btn.danger  { background: rgba(192,48,48,0.2); border: 1px solid rgba(192,48,48,0.4); color: #e07070; }
+
+.mini-over-summary {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gold); padding: 7px 0 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 4px;
+}
+.mini-ball-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.mini-ball-meta { font-size: 0.6rem; color: var(--muted); min-width: 22px; padding-top: 2px; }
+.mini-ball-text { flex: 1; }
+.mini-ball-delivery { font-size: 0.65rem; font-weight: 600; color: var(--white); }
+.mini-ball-comment { font-size: 0.6rem; color: var(--muted); }
+
+.mini-setup-field { margin-bottom: 8px; }
+.mini-setup-label { font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.mini-toggle-row { display: flex; gap: 5px; }
+.mini-toggle-btn {
+  flex: 1; background: var(--bg3); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 7px; padding: 6px 0; text-align: center; font-size: 0.68rem; color: var(--muted);
+}
+.mini-toggle-btn.active { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold); font-weight: 700; }
+
+.mini-overs-input {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg3); border: 1px solid rgba(255,255,255,0.08); border-radius: 7px;
+  padding: 6px 10px;
+}
+.mini-overs-val { font-size: 0.9rem; font-weight: 700; color: var(--white); }
+.mini-overs-arrows { display: flex; flex-direction: column; gap: 1px; }
+.mini-arrow { font-size: 0.55rem; color: var(--gold); cursor: pointer; }
+
+.mini-pin-dots { display: flex; gap: 8px; justify-content: center; margin: 10px 0; }
+.mini-pin-dot {
+  width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--muted);
+}
+.mini-pin-dot.filled { background: var(--gold); border-color: var(--gold); }
+
+.mini-over-confirm {
+  background: var(--bg3); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; padding: 8px 10px; margin-bottom: 6px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.mini-over-confirm-text { font-size: 0.65rem; color: var(--white); }
+.mini-over-confirm-sub  { font-size: 0.6rem; color: var(--muted); margin-top: 1px; }
+.mini-over-confirm-btns { display: flex; gap: 4px; }
+.mini-over-confirm-btn {
+  background: var(--gold); border: none; border-radius: 6px;
+  padding: 4px 8px; font-size: 0.6rem; font-weight: 700; color: #000;
+}
+.mini-over-confirm-btn.cancel {
+  background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--muted);
+}
+
+.mini-freeHit-banner {
+  background: rgba(61,140,79,0.15); border: 1px solid rgba(61,140,79,0.4);
+  border-radius: 7px; padding: 6px 10px; margin-bottom: 6px;
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 1px;
+  color: var(--green2); text-align: center;
+}
+
+.mini-end-screen { text-align: center; padding: 12px 0; }
+.mini-end-icon { font-size: 1.6rem; margin-bottom: 6px; }
+.mini-end-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; color: var(--gold); }
+.mini-end-result { font-size: 0.68rem; color: var(--green2); margin: 3px 0 8px; }
+.mini-end-btn {
+  background: var(--gold); color: #000; border: none; border-radius: 8px;
+  padding: 7px 16px; font-size: 0.68rem; font-weight: 700; letter-spacing: 1px;
+}
+
+/* ── STEP INDICATORS ── */
+.steps { counter-reset: step; }
+.step {
+  display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start;
+}
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%; background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.3); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem; color: var(--gold);
+}
+.step-body { flex: 1; }
+.step-body strong { color: var(--white); display: block; margin-bottom: 3px; font-size: 0.9rem; }
+.step-body p { margin: 0; }
+
+/* ── KEYBOARD SHORTCUT PILLS ── */
+kbd {
+  background: var(--bg3); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 5px; padding: 2px 7px; font-size: 0.78rem;
+  font-family: 'DM Sans', monospace; color: var(--white);
+}
+
+/* ── DIVIDER ── */
+.section-divider {
+  border: none; border-top: 1px solid var(--border); margin: 48px 0;
+}
+
+/* ── BADGE ── */
+.callout a, .section p a, .section li a { color: var(--gold2); text-decoration: underline; text-underline-offset: 2px; }
+.badge {
+  display: inline-block; background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.25); border-radius: 20px;
+  padding: 2px 10px; font-size: 0.72rem; color: var(--gold);
+  font-weight: 700; letter-spacing: 0.5px; vertical-align: middle;
+}
+.badge.green { background: rgba(61,140,79,0.12); border-color: rgba(61,140,79,0.3); color: var(--green2); }
+.badge.red   { background: rgba(192,48,48,0.12); border-color: rgba(192,48,48,0.3); color: #e07070; }
+
+/* ── PRINT ── */
+@media print {
+  @page {
+    size: A4;
+    margin: 22mm 24mm 22mm 24mm;
+    background: #111111;
+  }
+
+  /* Force dark background to print */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  html, body { background: #111111 !important; }
+
+  body { font-size: 10.5pt; line-height: 1.6; }
+
+  .guide-wrap { max-width: 100%; padding: 0 4mm; }
+
+  /* Header */
+  .guide-header { padding: 0 0 24pt; margin-bottom: 28pt; }
+  .guide-header h1 { font-size: 2.4rem; }
+
+  /* TOC on its own page */
+  .toc { page-break-after: always; break-after: page; }
+
+  /* Each section starts on a new page */
+  .section { page-break-before: always; break-before: page; margin-bottom: 0; }
+
+  /* But don't break inside a step, callout, or mockup */
+  .step, .callout, .mockup, .phone { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Keep headings with the content that follows */
+  h2, h3 { page-break-after: avoid; break-after: avoid; }
+  h3 + p, h3 + ul, h3 + ol, h3 + .steps, h3 + .mockup-wrap { page-break-before: avoid; break-before: avoid; }
+
+  /* Mockup layout — stack vertically for narrower print width */
+  .mockup-wrap { flex-direction: column; gap: 12pt; }
+  .phone { width: 180px; }
+  .mockup { width: 100%; max-width: 100%; }
+  .mockup.wide { max-width: 100%; }
+
+  /* Font size adjustments */
+  .section h2 { font-size: 1.4rem; margin-bottom: 10pt; }
+  .section h3 { font-size: 0.95rem; margin-top: 14pt; margin-bottom: 6pt; }
+  .section p, .section li { font-size: 0.88rem; }
+  .callout { font-size: 0.82rem; padding: 9pt 12pt; }
+  .toc a { font-size: 0.85rem; }
+
+  /* Steps */
+  .steps { gap: 0; }
+  .step { margin-bottom: 10pt; }
+  .step-body strong { font-size: 0.88rem; }
+  .step-body p { font-size: 0.82rem; }
+
+  /* Hide non-essential decorative elements */
+  .section-divider { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="guide-wrap">
+
+  <!-- HEADER -->
+  <header class="guide-header">
+    <div class="guide-header-eyebrow">Tygerberg Cricket Club</div>
+    <h1>TCC Scorer<br>User Guide</h1>
+    <p>A complete reference for scoring matches with the TCC Scorer PWA — from logging in to downloading the final PDF.</p>
+    <p style="font-size:0.78rem;color:var(--muted);margin-top:6px">Updated September 2026 · app version v108</p>
+    <button onclick="window.print()" style="margin-top:16px;background:var(--gold);border:none;border-radius:8px;color:#000;font-size:0.78rem;font-weight:700;padding:9px 20px;cursor:pointer;letter-spacing:1px;font-family:'DM Sans',sans-serif">⬇ Save as PDF</button>
+  </header>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-title">Contents</div>
+    <ol>
+      <li><a href="#s1">Getting Started & PIN Login</a></li>
+      <li><a href="#s2">Fixtures Screen</a></li>
+      <li><a href="#s3">Match Setup</a></li>
+      <li><a href="#s100">The Hundred — 100-ball matches</a></li>
+      <li><a href="#s4">Scoring Screen Overview</a></li>
+      <li><a href="#s5">Recording Balls</a></li>
+      <li><a href="#s6">Extras</a></li>
+      <li><a href="#s7">Wickets</a></li>
+      <li><a href="#s8">End of Over</a></li>
+      <li><a href="#s9">Editing Balls, Overs &amp; Names</a></li>
+      <li><a href="#s10">Mid-Over Bowler Change</a></li>
+      <li><a href="#s11">Free Hit</a></li>
+      <li><a href="#s12">Ending an Innings & Match</a></li>
+      <li><a href="#s13">Super Over</a></li>
+      <li><a href="#s14">Scorecard, Charts & Export</a></li>
+      <li><a href="#s15">Recent Results</a></li>
+      <li><a href="#s16">Offline Mode</a></li>
+      <li><a href="#s17">When a Match Goes Missing</a></li>
+    </ol>
+  </nav>
+
+  <!-- WHAT'S NEW -->
+  <div class="callout info" style="margin:0 0 36px">
+    <div class="callout-icon">✨</div>
+    <div>
+      <p style="margin:0 0 8px"><strong style="color:var(--white)">New in this version — read this if you have scored before.</strong></p>
+      <ul style="margin:0;padding-left:18px">
+        <li><strong>A little movement.</strong> The score bumps, the board flashes gold for a boundary and red for a wicket, the new ball lands in the strip. Turn it off under 🎨 Appearance.</li>
+        <li><strong>Match settings mid-match.</strong> <strong>Other · 5 → ⚙ Match settings</strong> changes the rules while you score. <a href="#s9-settings">Editing</a>.</li>
+        <li><strong>Wide / no-ball penalty</strong> — 2 runs in a 100-ball match, 1 elsewhere, and you can change it. <a href="#s3-extrasball">Setup</a>.</li>
+        <li><strong>Wides &amp; no-balls can use up a ball</strong> — the tournament rule, on by default for 100-ball matches. <a href="#s3-extrasball">Setup</a>.</li>
+        <li><strong>Being scored now.</strong> Any match still in progress is listed on the fixtures screen, whatever date it carries, so it can't go missing. <a href="#s2">Fixtures</a>.</li>
+        <li><strong>Choose your colours.</strong> Four themes, including a dark one for evening matches. Tap the 🎨 button at the top. <a href="#s1-theme">How</a>.</li>
+        <li><strong>Player of the match.</strong> Pick one from the end screen; it shows on the scorecard, the PDF, the website and the WhatsApp text. <a href="#s12-potm">How</a>.</li>
+        <li><strong>New scoring screen.</strong> Bigger buttons, the bowler on his own line, the current over on its own strip. <a href="#s4">See the layout</a>.</li>
+        <li><strong>5 has moved</strong> into <strong>Other · 5</strong>. <strong>Commentary</strong> is the <strong>✎</strong> button. <strong>Over history</strong> opens from <strong>History</strong> at the bottom.</li>
+        <li><strong>Bowler limits</strong> in overs matches — one-fifth of the innings unless you set your league's rule. <a href="#s3">Setup</a>.</li>
+        <li><strong>New dismissals:</strong> obstructing the field, hit the ball twice, and timed out. <a href="#s7">Wickets</a>.</li>
+        <li><strong>Run outs with runs:</strong> record runs completed before a run out, and wickets off wides, no-balls and byes. <a href="#s7">Wickets</a>.</li>
+        <li><strong>Rain:</strong> Reduce overs is now under <strong>Other → Match tools</strong>. <a href="#s12">Ending an innings</a>.</li>
+        <li><strong>Correct a misspelt name</strong> anywhere in a match, even after it has finished. <a href="#s9">Editing</a>.</li>
+        <li><strong>Undo</strong> now works while the end-of-over prompt is showing.</li>
+        <li><strong>Taking over</strong> from another phone now brings everything across — batters, bowler, first innings and toss.</li>
+        <li><strong>The PDF</strong> opens with a summary page, then each innings on its own page.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1. GETTING STARTED -->
+  <section class="section" id="s1">
+    <div class="section-number">01</div>
+    <h2>Getting Started & PIN Login</h2>
+    <p>The TCC Scorer is a Progressive Web App (PWA) — it runs in the browser and can be installed to your home screen for a native app feel. No download from an app store required.</p>
+
+    <h3>Installing to Home Screen</h3>
+    <p>On iOS (Safari): tap the Share icon → <em>Add to Home Screen</em>. On Android (Chrome): tap the menu → <em>Install App</em>. Once installed, the scorer opens full-screen with the TCC tiger icon.</p>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <p><strong style="color:var(--white)">iPhone users: use Safari, not Chrome.</strong> Apple only allows the offline cache to run in Safari and in apps added to the home screen. In Chrome, Firefox or Edge on an iPhone the scorer has <em>no offline storage at all</em> — if signal drops mid-match you lose the scoring. Open the scorer in Safari and add it to the home screen. On Android any browser is fine.</p>
+    </div>
+
+    <h3>PIN Login</h3>
+    <p>When you open the app you'll be asked to enter your scorer PIN. This is a 4-digit code assigned by your club administrator. The PIN grants access to the fixture list and match scoring.</p>
+
+    <div class="mockup-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-topbar">
+            <div class="phone-topbar-title">TCC Scorer</div>
+            <div class="phone-status"><div class="phone-status-dot"></div>Live</div>
+          </div>
+          <div style="text-align:center;padding:16px 0 8px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--gold);letter-spacing:2px">ENTER PIN</div>
+            <div style="font-size:0.65rem;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px">Scorer Access</div>
+            <div class="mini-pin-dots">
+              <div class="mini-pin-dot filled"></div>
+              <div class="mini-pin-dot filled"></div>
+              <div class="mini-pin-dot filled"></div>
+              <div class="mini-pin-dot"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px">
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">1</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">2</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">3</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">4</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">5</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">6</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">7</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">8</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">9</div>
+              <div></div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700">0</div>
+              <div style="background:var(--bg3);border-radius:50%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:var(--muted)">⌫</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>Your PIN is set when you start a new match. The same PIN must be used by anyone who wants to take over scoring mid-match. Keep it simple — you'll be typing it on a small screen.</p>
+    </div>
+  
+    <h3 id="s1-theme">Choosing the colours</h3>
+    <p>Tap <strong style="color:var(--white)">🎨</strong> at the top of any screen (or <strong style="color:var(--white)">Other · 5 → Appearance</strong> while scoring) and pick a theme. It changes as you tap, and the phone remembers it for every match after that. It is a setting on that phone only — it does not change what anyone else sees.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Gold Standard</strong><p>Club gold on white. The default, and the one built for scoring in the sun.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Pitch</strong><p>Deep green with gold accents. Sixes are green, fours gold.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Classic</strong><p>The older, flatter look if you prefer it.</p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Night match</strong><p>Dark. Easiest on the eyes indoors and after dark — and the hardest to read in direct sun.</p></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Auto</strong><p>Gold Standard by day, Night match from 6pm. A match that runs into the evening switches over by itself.</p></div></div>
+    </div>
+    <h4 style="margin-top:18px">Animations</h4>
+    <p>The same screen has an <strong style="color:var(--white)">Animations</strong> switch. On, the score bumps as it changes, the board flashes gold for a boundary and red for a wicket, the ball you just scored lands in the over strip, and the batters' cards slide when the strike changes — confirmation that a tap went in without having to read the numbers. Off, everything appears instantly. Scoring works the same either way, and buttons respond immediately in both. If your phone is set to reduce motion, the app follows that unless you switch it on here.</p>
+</section>
+
+  <!-- 2. FIXTURES SCREEN -->
+  <section class="section" id="s2">
+    <div class="section-number">02</div>
+    <h2>Fixtures Screen</h2>
+    <p>After a successful PIN entry you land on the Fixtures screen. This is the home screen of the app.</p>
+
+    <div class="mockup-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-topbar">
+            <div class="phone-topbar-title">TCC Scorer</div>
+            <div class="phone-status"><div class="phone-status-dot"></div>Live</div>
+          </div>
+          <div class="mini-section-heading" style="display:flex;justify-content:space-between">
+            <span>Being scored now</span><span style="color:var(--muted)">1 match &#9652;</span></div>
+          <div class="mini-fixture live-fix">
+            <div class="mini-fixture-team">TCC 1ST XI vs GREENFIELDS CC</div>
+            <div class="mini-fixture-meta">3 May · Tygerberg Park · <span class="mini-live-badge">● Live</span></div>
+          </div>
+          <div class="mini-section-heading" style="margin-top:12px;display:flex;justify-content:space-between">
+            <span>Today</span><span style="color:var(--muted)">2 today &middot; 1 earlier &#9652;</span></div>
+          <div class="mini-fixture">
+            <div class="mini-fixture-team">TCC 2ND XI vs COASTAL CC</div>
+            <div class="mini-fixture-meta">3 May · Away · Div 2</div>
+          </div>
+          <div class="mini-section-heading" style="margin-top:12px;display:flex;justify-content:space-between">
+            <span>Upcoming</span><span style="color:var(--muted)">3 fixtures &#9662;</span></div>
+          <div class="mini-section-heading" style="margin-top:12px;display:flex;justify-content:space-between">
+            <span>Recent results</span><span style="color:var(--muted)">8 matches &#9662;</span></div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <h3 style="margin-top:0">Four panels</h3>
+        <p>Each section folds. Tap a heading to open or shut it, and the heading carries a count so the screen tells you what is there without opening anything.</p>
+        <p><strong style="color:var(--white)">Being scored now</strong> — a match still in progress, whatever date it carries. It sits at the top with a green edge, and it is always open when it is there at all. Tap it and enter the match PIN to carry on scoring.</p>
+        <p><strong style="color:var(--white)">Today</strong> — open. Today's matches, and under them any fixture from the last fortnight that was never scored. The heading counts the two separately — <em>2 today · 1 earlier</em> — so an old fixture never masquerades as today's.</p>
+        <p><strong style="color:var(--white)">Upcoming</strong> — shut. Fixtures in the next week. Tap to start scoring when the time comes.</p>
+        <p><strong style="color:var(--white)">Recent results</strong> — shut. Completed matches from the last 30 days, with the date search inside it. Tap any result for the full scorecard and a PDF.</p>
+        <p><strong style="color:var(--white)">↻ Refresh</strong> sits above the panels and reloads all four at once.</p>
+        <p>Whichever panels you leave open are remembered on that phone, so the screen comes back the way you had it.</p>
+      </div>
+    </div>
+
+    <h3>Being scored now</h3>
+    <p>Any match still marked as in progress shows here, in its own panel at the top of the screen, <em>whatever date it carries</em> — a green edge, the score so far and which innings it is in. Tap it and enter the match PIN to carry on scoring it, exactly as when you take a match over from another phone.</p>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>This is the way back into a match whose fixture date has passed, or one with no fixture behind it at all. Fixtures from the last two weeks that were never scored also stay in the list under today's, so a rained-off or wrongly dated game is still one tap away.</p>
+    </div>
+
+    <h3>Recent Results & Date Range</h3>
+    <p>Open the <strong style="color:var(--white)">Recent results</strong> panel to reach this. It defaults to the last 30 days. Use the <strong style="color:var(--white)">From</strong> and <strong style="color:var(--white)">To</strong> date pickers to search further back, then tap <strong style="color:var(--white)">Go</strong> to reload.</p>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>Tapping a completed match opens its full scorecard — batting, bowling and fall of wickets — with <strong>⬇ PDF</strong> to download it and <strong>✎ Names</strong> to correct a misspelt player.</p>
+    </div>
+  </section>
+
+  <!-- 3. MATCH SETUP -->
+  <section class="section" id="s3">
+    <div class="section-number">03</div>
+    <h2>Match Setup</h2>
+    <p>Tapping a fixture opens the Setup screen. Fill in these details, then tap <strong style="color:var(--white)">Start Scoring →</strong>.</p>
+    <p>It is in two panels. <strong style="color:var(--white)">Match</strong> is open — the overs, the toss and who bats first, which you set every game. <strong style="color:var(--white)">Rules</strong> is folded away, because its settings change once a season rather than once a match: the format, the bowler limit, what a wide costs and whether extras use up a ball. Tap the heading to open it.</p>
+    <p>Each heading carries a summary of what is inside it, so you can check the rules without opening anything — <em>wd/nb 2 runs · extras use a ball</em>. Only settings that differ from the ordinary game appear there, so a quiet Rules heading means nothing unusual is set. Whichever panels you leave open are remembered on that phone.</p>
+
+    <div class="mockup-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:2px;color:var(--muted);margin-bottom:8px">1st Team vs Greenfields CC · 3 May</div>
+          <div class="mini-setup-field"><div class="mini-setup-label">Overs per innings</div><div class="mini-input" style="margin-bottom:0">40</div></div>
+          <div class="mini-setup-field"><div class="mini-setup-label">Match format</div><div class="mini-input" style="margin-bottom:0">Overs cricket (6-ball overs) ▾</div></div>
+          <div class="mini-setup-field"><div class="mini-setup-label">Max overs per bowler</div><div class="mini-input" style="margin-bottom:0"><span style="color:var(--muted)">Auto — one-fifth of the innings</span></div></div>
+          <div class="mini-setup-field"><div class="mini-setup-label">Toss — who won?</div><div class="mini-toggle-row"><div class="mini-toggle-btn active">TCC</div><div class="mini-toggle-btn">Opponents</div></div></div>
+          <div class="mini-setup-field"><div class="mini-setup-label">Toss decision</div><div class="mini-toggle-row"><div class="mini-toggle-btn active">Bat first</div><div class="mini-toggle-btn">Field first</div></div></div>
+          <div class="mini-setup-field"><div class="mini-setup-label">Batting team</div><div class="mini-input" style="margin-bottom:0">TCC ▾</div></div>
+          <div class="mini-setup-field"><div class="mini-setup-label">Free hits on no-balls</div><div class="mini-toggle-row"><div class="mini-toggle-btn active">On</div><div class="mini-toggle-btn">Off</div></div></div>
+          <div style="margin-top:14px">
+            <div style="background:var(--gold);color:#000;border-radius:9px;padding:8px 0;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px">Start Scoring →</div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Overs per innings</strong><p>Type the overs agreed for the match. It is saved with the match, so it survives a handover to another phone.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Match format</strong><p>Overs cricket, or The Hundred (100 balls). Choosing The Hundred hides the overs and the bowler limit — that format has its own rules. <a href="#s100">See The Hundred</a>.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Max overs per bowler</strong><p>Leave it blank for the usual rule: one-fifth of the innings, rounded up — 4 in a T20, 8 in 40 overs, 10 in 50. Type a number only if your league's rule is different.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Toss and batting team</strong><p>Who won the toss and what they chose. Check the batting team underneath is right.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Free hits</strong><p>Switch off for leagues that don't use them.</p></div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-body"><strong>Set a match PIN</strong><p>You are asked for a 4-digit PIN before scoring starts. Anyone who needs to take over scoring on another phone will need it.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Bowler limits</h3>
+    <p>When an over ends, the bowler list shows how much each bowler has left, e.g. <span class="badge">3 ov left</span>. Anyone who has bowled their full allowance is shown greyed out under <strong style="color:var(--white)">Bowled their limit</strong> and can't be picked — if you try, the app tells you why. If overs are reduced for rain, the limit adjusts on its own (a 23-over innings allows 5).</p>
+
+    <h3>Opening Players</h3>
+    <p>After the PIN, the app asks for the two opening batters and the opening bowler. The names you type are remembered for each side and offered back later in the match, so spell them the way you want them on the scorecard — though you can <a href="#s9">correct a name</a> afterwards if you need to.</p>
+  
+    <h3 id="s3-extrasball">Wides, no-balls and the penalty</h3>
+    <p><strong style="color:var(--white)">Wide / no-ball penalty</strong> sets what an illegal delivery costs before any runs taken off it: <strong style="color:var(--white)">2 runs in a 100-ball match</strong>, 1 in every other format. Change it if your competition differs — it applies to wides and no-balls alike, and to the bowler's figures.</p>
+
+    <h4 style="margin-top:18px">Wides &amp; no-balls use up a ball</h4>
+    <p>Some competitions do not re-bowl an illegal delivery — the run is given but the ball still counts, so an innings is exactly its allotted number of balls. The switch on the setup screen turns that on. It starts <strong style="color:var(--white)">on for 100-ball matches</strong> and off everywhere else; change it before you start and the app remembers your choice for that match.</p>
+    <ul>
+      <li><strong style="color:var(--white)">On:</strong> a wide is 1 run and one of the 100. A no-ball is 2 runs, one of the 100, and still brings a free hit.</li>
+      <li><strong style="color:var(--white)">The last ball of the innings is the exception</strong> — it must be legal. A wide or no-ball there is re-bowled, as many times as it takes, so an innings never ends on an illegal delivery.</li>
+      <li><strong style="color:var(--white)">Off:</strong> every wide and no-ball is re-bowled, as in the Laws.</li>
+    </ul>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>Balls faced on the batting card do not change: a batter is credited with facing a no-ball, never a wide. The bowler's figures do count the delivery, so his ball count matches what he actually bowled.</p>
+    </div>
+</section>
+
+  <!-- 100-BALL FORMAT -->
+  <section class="section" id="s100">
+    <div class="section-number">100</div>
+    <h2>The Hundred &mdash; 100-ball matches</h2>
+
+    <p>Choose <strong>The Hundred (100 balls, 5-ball sets)</strong> on the Match Setup screen. The overs field disappears &mdash; an innings is always 100 balls. Everything below applies only to this format; overs matches are unchanged.</p>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <p><strong>A set is not an over.</strong> Bowlers change every <strong>5 balls</strong>, but the batters only change ends every <strong>10 balls</strong>. So after the first set of a pair, the same batter is still on strike. The app handles this &mdash; do not swap the batters yourself.</p>
+    </div>
+
+    <h3>What is different</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>Sets of 5, not overs of 6.</strong> The scoreboard counts balls, not overs &mdash; you will see <em>63/100 balls</em> rather than <em>10.3 ov</em>. An innings is 20 sets.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>Ends change every 10 balls.</strong> Confirm the end of each set as normal; the app swaps the batters only when the ends actually change.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>A bowler may bowl two sets in a row.</strong> When the set ends, the picker offers <em>&ldquo;&hellip; &mdash; bowl 2nd set&rdquo;</em> at the top. Tap that if the captain keeps them on; otherwise choose someone else. After two consecutive sets they must be replaced.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body"><strong>20 balls per bowler, maximum.</strong> Anyone who has bowled their 20 is shown greyed out under <em>Bowled their limit</em> and can't be picked. Figures show as balls, e.g. <em>20b-0-31-2</em>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body"><strong>Powerplay is the first 25 balls.</strong> A blue strip counts down the balls remaining. Only two fielders are allowed outside the circle during it &mdash; the app does not police fielding positions, it only tells you when the powerplay is on.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body"><strong>A no-ball is worth 2 runs</strong> (not 1), plus a free hit. Score it with the <strong>NB</strong> button exactly as normal &mdash; the app adds the right penalty for the format.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body"><strong>Run rate is per ball.</strong> The Hundred&rsquo;s official measure is runs divided by balls faced, so a fast innings reads <em>RR 1.67/b</em>, not 10 an over. The <em>/b</em> suffix marks it. Bowler economy uses the same basis, and so does the chase bar: <em>Need 32 off 22 balls · RRR 1.45/b</em>.</div>
+      </div>
+    </div>
+
+    <h3>Rain and short matches</h3>
+    <div class="callout warn">
+      <div class="callout-icon">🌧</div>
+      <p>At least <strong>25 balls</strong> must be bowled to the side batting second for the match to stand. Below that, the win/lose options are hidden and the only choices are <strong>No Result</strong> or <strong>Abandoned</strong>. If the chase finishes early &mdash; target passed or all out &mdash; that is a result regardless of how few balls were bowled.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>Score a practice match before the tournament. The two things worth seeing at least once are the <em>bowl 2nd set</em> prompt and a wicket on the last ball of a set &mdash; those are the moments where hesitation costs you.</p>
+    </div>
+  </section>
+
+  <!-- 4. SCORING SCREEN OVERVIEW -->
+  <section class="section" id="s4">
+    <div class="section-number">04</div>
+    <h2>Scoring Screen Overview</h2>
+    <p>This is the real scoring screen, part-way through a chase. Everything is in the same place every ball, so it's worth knowing the six zones from top to bottom.</p>
+
+    <div class="mockup-wrap" style="align-items:flex-start">
+      <img src="data:image/jpeg;base64,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hYP4QsIIJT6vzT1S1tOBZ7sp7zzzzxf30AYwoIIIIIIIIIIJS/7hX1T33Xzzzxzzzzzzxf30B94TcwIIIIIIIIJT26L31ThN77bzzzzzzzzxf30iLCDIAIIIIIIIIJT2f7b1y168wzzzzzzzzzxf30gAAAAAAAAAAAAADb20332/DDDDDDDDDDDDDLX33333333nX3H33H3X33333333333333X3nX3X3330pz3XNC2B700YozLUlofp733333327FJf1qZ7L310001120001200000000/3333333201310121333/zzzzz7/rzLLP3r/8A242/+85yy+848488880V99U+478t++ukADDHG++85+++o2885s888M888M/99U+WP89+2+DDPjAsu2np6m+9888os888s8888/8AfVPH/PPfjvgS0AyvLnKLfrvut/PKvPPPMNPPOP8A33Lzzzyx331x8119732+z321z/zyzxzzxyzyxxf32333333333333333333333333333333333333332V777776rXl77777673mb777777v3/wC+++++K99908888888um8888888o988888888988888888/wDfVPPPPPPPKlvPPPPPPKPfPPPPPPPPfPPPPPPPP/fVPPPPPPPKlvPPPPPPKPfPPPPPPPPfPPPPPPPP/fVPPPPPPPKlvPPPPPPKPfPPPPPPPPfPPPPPPPP/AH1Tzzy7zzypbzzzbTzyj3zzyrLzzz3zzzj7zzz/AN9U88qB888qW888aU88o9888q28889888sy888/99U888x888qW888qc88o98882c88898886y888/99U8888888qW8888888o988888888988888888/8AfVPPPPPPPKlvPPPPPPKPfPPPPPPPPfPPPPPPPP8A31Tzzzzzzypbzzzzzzyj3zzzzzzzz3zzzzzzzz/31Tzzzzzzypbzzzzzzyj3zzzzzzzz3zzzzzzzz/33rzzzzzzyu/zzzzzzzCnzzzzzzzyVTzzzzzzhf330kEEEEEV30kEEEEEV310EEEEFGHFEEEEEEFX333kMEEEEHB3Xw000003/AM3999999999999999/899qDDDDDDDBk/wD/AP8A/wD/APnP33333333333333331732oMMMMMMMFT//AP8A/wD/APpA99999999999999999899qDDDDDDDBU//AP8A/wD/AP6QPfffffffffffffffffPfagwwwwwwwVP/AP8A/wD/AP8ApA99999999999999999899qDDDyDDDBU/wD/AOZ//wDpA9999999ok99999999899qDDFRBDDBU//wD3vf8A+kD3333333zL33333333z32oMMKiMMMFT/8A/dd//pA9999999qhf9999999899qDDDDDDDBU/8A/wD/AP8A/wCkD33333333333333333z32oMMMMMMMFT/AP8A/wD/AP8A6QPfffffffffffffffffPfagwwwwwwwVP/8A/wD/AP8A+kD33333333333333333z32IMMMMMMMVz/8A/wD/AP8A/tE99999999999999999899CLDDDDDFd/wDv/wD/AP8A+7bdsccccccccccccccfpffbcc88881vfQAQQQQQlfcwwwwwwyzywwwwww8PffZPvvvvvvutnvvvvvviO/vvvvvvvOxPvvvvvvlvffPvtRQPvqFPvvztfvvPvvvs1Pvvl/vvpktPvvvffPvsprPvqFPvuoRfvvPvvvntPvvl/vvlkvPvvvfWPvvvvvvvvtvvvvvvpK/vvvvvvvLVPvvvvvvlvfehjTTTTXf/AM000000t30kEEEEEG32kEEEEEEH330Zzzzzzzzzzzzzzzy5+r77777756EzzzzzzyxX31Tzzzzzfvrrnbzzzzzz7zHz7DL6r3zzztDzzz/31TzzzzxzzhkEDzzzzzz6z314zx6r3zzyy7zzz/33nzzzzzzzzzzzzzzzy/b7777776anzzzzzzzjf3357777LLLLL77LLLL93HHHHX3nGHEHX3nHHHX333/37W9z7775pT7776ztz7767Mz7776yPz7775/339e9X/7uBr6pT/LZ3yv7lI/4Lzx6bTwL5r+L7733m53X/wC++++mU++++8r+++++O8+O++4L++ee++9999999tNNNNddNNNNN9NNNNd99NNNNNttNNNNd993+++++/8A/vvvvvvvvvvvvvvvvvvvvvvt9wQQdvfVufPNtrHPvttvvvvvvvvvvvvvvvvvvtpN/M9uffVsn+lvPPC71BtPvvvvvvvvvvvvvvvv/FF+7NKffdPPPPPDvvPPPPPPPPPPPPPPPPPP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" alt="The scoring screen during a chase" style="width:260px;max-width:100%;border-radius:18px;border:1px solid var(--border);box-shadow:0 12px 32px rgba(0,0,0,0.45)">
+      <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div style="font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">① Score panel</div>
+          <p style="margin:0;font-size:0.85rem">The score, overs, run rate and extras. In a chase a gold bar shows <strong style="color:var(--white)">Need X off Y balls</strong> and the required rate.</p>
+        </div>
+        <div>
+          <div style="font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">② Batters</div>
+          <p style="margin:0;font-size:0.85rem">The striker is outlined. <strong style="color:var(--white)">⇄</strong> swaps strike. The <strong style="color:var(--white)">partnership</strong> sits between them and counts every run the pair has added, extras included. Tap a batter to retire him or record a timed out.</p>
+        </div>
+        <div>
+          <div style="font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">③ Bowler and this over</div>
+          <p style="margin:0;font-size:0.85rem">The bowler and his figures on one line — tap it to change bowler. Underneath, every delivery in the over (wides and no-balls too), then an empty box for each legal ball still to come; the next one is outlined. Tap a ball to edit it.</p>
+        </div>
+        <div>
+          <div style="font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">④ Run pad</div>
+          <p style="margin:0;font-size:0.85rem"><strong style="color:var(--white)">0 1 2 3</strong>, then <strong style="color:var(--white)">4</strong>, <strong style="color:var(--white)">6</strong> and a wide <strong style="color:#e07070">W</strong>. Below: <strong style="color:var(--white)">Wd Nb B Lb</strong>, then <strong style="color:var(--white)">Undo</strong>, <strong style="color:var(--white)">Other · 5</strong> and <strong style="color:var(--white)">✎</strong> for commentary.</p>
+        </div>
+        <div>
+          <div style="font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">⑤ Shot (optional)</div>
+          <p style="margin:0;font-size:0.85rem">Where the ball went: Off, Cvr, Str, Leg or Fine.</p>
+        </div>
+        <div>
+          <div style="font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">⑥ Bottom bar</div>
+          <p style="margin:0;font-size:0.85rem"><strong style="color:var(--white)">📋 Card</strong> for the scorecard, <strong style="color:var(--white)">History</strong> for past overs, <strong style="color:var(--white)">End</strong> to end the innings or match.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p><strong style="color:var(--white)">Long names are shortened on this screen only.</strong> If a name doesn't fit, it shows as initials and surname (<em>C Oosthuizen</em>, <em>A van der Westhuizen</em>). The scorecard, PDF and website always show the full name.</p>
+    </div>
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <p>If your phone's text size is set large, the screen scales with it. On a very small phone, scroll down a little to reach the Shot row.</p>
+    </div>
+  </section>
+
+  <!-- 5. RECORDING BALLS -->
+  <section class="section" id="s5">
+    <div class="section-number">05</div>
+    <h2>Recording Balls</h2>
+    <p>Tap the runs scored off the bat. The score, batters, bowler and over strip update straight away.</p>
+
+    <div class="mockup-wrap">
+      <div class="mockup">
+        <div class="mockup-label">Run Pad</div>
+        <div class="mockup-body">
+          <div class="mini-run-grid">
+            <div class="mini-run-btn">0</div>
+            <div class="mini-run-btn">1</div>
+            <div class="mini-run-btn">2</div>
+            <div class="mini-run-btn">3</div>
+            <div class="mini-run-btn four">4</div>
+            <div class="mini-run-btn six">6</div>
+            <div class="mini-run-btn wkt" style="grid-column:span 2">W</div>
+          </div>
+          <p style="font-size:0.72rem;color:var(--muted);margin:8px 0 0">Strike swaps automatically on odd runs.</p>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <h3 style="margin-top:0">Button reference</h3>
+        <ul>
+          <li><strong style="color:var(--white)">0</strong> — dot ball</li>
+          <li><strong style="color:var(--white)">1, 2, 3</strong> — runs</li>
+          <li><strong style="color:var(--gold)">4</strong> / <strong style="color:var(--gold2)">6</strong> — boundaries</li>
+          <li><strong style="color:#e07070">W</strong> — wicket (opens the dismissal screen)</li>
+          <li><strong style="color:var(--white)">5</strong> — rare, so it lives in <strong style="color:var(--white)">Other · 5</strong> → <em>5 runs</em></li>
+        </ul>
+        <p>Strike rotates on odd runs. After a boundary the striker stays where he is.</p>
+      </div>
+    </div>
+
+    <h3>Commentary</h3>
+    <p>Tap <strong style="color:var(--white)">✎</strong> to open a small box, type a note, then score the ball — the note is attached to that ball, shows in the ball-by-ball view, and the box folds away again. Nothing else changes if you never use it.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <p>Batter milestones are announced automatically at 50, 100, 150 and 200.</p>
+    </div>
+
+    <h3>Shot direction (optional)</h3>
+    <p>The <strong style="color:var(--white)">Shot</strong> row under the pad records where the ball went: <strong style="color:var(--white)">Off / Cvr / Str / Leg / Fine</strong>. Tap the direction <em>first</em>, then the runs — the direction is attached to that ball and clears itself afterwards. Skip it whenever you're busy; it never holds up scoring.</p>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>The more balls have a direction, the richer the analysis later — but a ball without one is perfectly fine.</p>
+    </div>
+  </section>
+
+  <!-- 6. EXTRAS -->
+  <section class="section" id="s6">
+    <div class="section-number">06</div>
+    <h2>Extras</h2>
+
+    <div class="mockup-wrap">
+      <div class="mockup">
+        <div class="mockup-label">Extras Row</div>
+        <div class="mockup-body">
+          <div class="mini-extras-row">
+            <div class="mini-extra-btn">Wd</div>
+            <div class="mini-extra-btn">NB</div>
+            <div class="mini-extra-btn">B</div>
+            <div class="mini-extra-btn">LB</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Wide (Wd)</h3>
+    <p>Tap <strong style="color:var(--white)">Wd</strong>. A run picker appears — select how many runs were scored off the wide (1 is the default penalty, add any additional runs). Does not count as a legal ball. Strike swaps if an odd number of wide runs are scored.</p>
+
+    <h3>No Ball (NB)</h3>
+    <p>Tap <strong style="color:var(--white)">NB</strong>, then select how many runs the batter hit off the delivery (0–6). A second step asks if anything additional happened off the no-ball:</p>
+    <ul>
+      <li><strong style="color:var(--white)">None</strong> — just the no-ball penalty + bat runs</li>
+      <li><strong style="color:var(--white)">Bye / Leg-bye</strong> — extra runs added to byes/leg-byes total</li>
+      <li><strong style="color:var(--white)">Overthrow</strong> — additional overthrow runs</li>
+      <li><strong style="color:var(--white)">Penalty</strong> — 5-run penalty added to penalty extras</li>
+    </ul>
+    <p>The ball chip will show the full detail, e.g. <span class="badge">Nb+3+2B</span>. Does not count as a legal ball. If Free Hits are enabled, a Free Hit banner will appear for the next delivery.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p><strong style="color:var(--white)">Where the runs go.</strong> The no-ball penalty goes to extras and never to the batter. Only runs hit off the bat are credited to the striker. Byes or leg-byes taken off a no-ball go to the byes column and are not charged to the bowler — the bowler is charged the penalty plus anything off the bat. If the batters ran an odd number, strike rotates as normal.</p>
+    </div>
+
+    <h3>Bye (B) / Leg-bye (LB)</h3>
+    <p>Tap <strong style="color:var(--white)">B</strong> or <strong style="color:var(--white)">LB</strong>, then select the number of runs. These count as legal deliveries and are added to the byes/leg-byes extras column, not the batter's score. The batters still ran them, so an odd number rotates the strike.</p>
+
+    <h3>Other · 5</h3>
+    <p>The <strong style="color:var(--white)">Other · 5</strong> button, next to Undo, holds the less common entries:</p>
+    <ul>
+      <li><strong style="color:var(--white)">5 runs</strong> — five runs off the bat, all run. One tap, recorded straight away.</li>
+      <li><strong style="color:var(--white)">Overthrow</strong> — extra runs from a fielding error, credited to the striker.</li>
+      <li><strong style="color:var(--white)">Penalty runs</strong> — awarded by the umpire; they go to extras only.</li>
+      <li><strong style="color:var(--white)">Match tools</strong> — <em>Reduce overs (rain)</em> and <em>Catch up the score</em>. See <a href="#s12">Ending an innings</a>.</li>
+    </ul>
+    <p>Every one of these, and every wide, no-ball, bye and leg-bye, counts towards the current <strong style="color:var(--white)">partnership</strong> — so the partnerships always add up to the total.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>The chip label on the over row shows exactly what happened — <span class="badge">Wd</span> <span class="badge">NB</span> <span class="badge">B</span> <span class="badge">LB</span> — so you can glance back at any ball in the over.</p>
+    </div>
+  </section>
+
+  <!-- 7. WICKETS -->
+  <section class="section" id="s7">
+    <div class="section-number">07</div>
+    <h2>Wickets</h2>
+    <p>Tap <strong style="color:#e07070">W</strong>. The wicket screen asks how the batter was out and who is coming in.</p>
+
+    <div class="mockup-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="padding:10px">
+          <div class="mini-modal">
+            <div class="mini-modal-title">🔴 Wicket — J. Smith</div>
+            <div style="font-size:0.62rem;color:var(--muted);margin-bottom:6px">How was the batter out?</div>
+            <div class="mini-dismissal-grid">
+              <div class="mini-dismissal-btn">Bowled</div>
+              <div class="mini-dismissal-btn selected">Caught</div>
+              <div class="mini-dismissal-btn">C &amp; B</div>
+              <div class="mini-dismissal-btn">LBW</div>
+              <div class="mini-dismissal-btn">Run Out</div>
+              <div class="mini-dismissal-btn">Stumped</div>
+              <div class="mini-dismissal-btn">Hit Wkt</div>
+              <div class="mini-dismissal-btn">Ret. Hurt</div>
+              <div class="mini-dismissal-btn">Ret. Out</div>
+              <div class="mini-dismissal-btn">Obstructing</div>
+              <div class="mini-dismissal-btn">Hit twice</div>
+            </div>
+            <div style="font-size:0.62rem;color:var(--muted);margin-bottom:3px">Fielder (caught by)</div>
+            <div class="mini-input" style="color:rgba(242,237,227,0.4)">Fielder name…</div>
+            <div style="font-size:0.62rem;color:var(--muted);margin-bottom:3px">New batter</div>
+            <div class="mini-input" style="color:rgba(242,237,227,0.4)">Enter batter name…</div>
+            <div class="mini-btn-row"><div class="mini-btn confirm" style="flex:1">Confirm</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <h3 style="margin-top:0">Dismissal types</h3>
+        <ul>
+          <li><strong style="color:var(--white)">Bowled, Caught, Caught &amp; Bowled, LBW, Stumped, Hit Wicket</strong> — the bowler's wicket</li>
+          <li><strong style="color:var(--white)">Run Out</strong> — not the bowler's. Asks which batter was out</li>
+          <li><strong style="color:var(--white)">Obstructing</strong> (obstructing the field — this now includes the old "handled the ball") — not the bowler's. Either batter can be out, so it asks which</li>
+          <li><strong style="color:var(--white)">Hit twice</strong> (hit the ball twice) — the striker, not the bowler's</li>
+          <li><strong style="color:var(--white)">Retired Hurt</strong> — not out; he can come back later</li>
+          <li><strong style="color:var(--white)">Retired Out</strong> — a wicket, not the bowler's</li>
+        </ul>
+        <p>When TCC is fielding, <strong style="color:var(--white)">Caught</strong>, <strong style="color:var(--white)">Run Out</strong> and <strong style="color:var(--white)">Stumped</strong> also ask for the fielder, so the scorecard reads <em>c Fortuin b Miller</em> or <em>run out (Guly)</em>.</p>
+      </div>
+    </div>
+
+    <h3>Run out or obstruction at the non-striker's end</h3>
+    <p>Choosing <strong style="color:var(--white)">Run Out</strong> or <strong style="color:var(--white)">Obstructing</strong> shows a <em>Which batter was out?</em> choice. Pick the non-striker and he is the one dismissed — the new batter comes in at that end, and the batter who faced keeps the strike.</p>
+
+    <h3>Runs completed, and wickets off extras</h3>
+    <p>A run out doesn't always happen on a dot ball. When you choose <strong style="color:var(--white)">Run Out</strong> or <strong style="color:var(--white)">Obstructing</strong>, three extra questions appear:</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Runs completed before the wicket</strong><p>0 to 4. If they ran one and were run out going for the second, choose <em>1</em>. The completed runs count, and go to the batter if they were off the bat.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>The ball was</strong><p><em>Off the bat</em>, <em>Bye</em>, <em>Leg-bye</em>, <em>Wide</em> or <em>No-ball</em>. The runs go to the right place — a wide or no-ball also adds its penalty and doesn't count as a ball in the over.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Who faces the next ball?</strong><p>The app suggests the usual answer, but it depends on which end the wicket was broken at, so check it and tap the other name if needed. If this was the last ball of the over, answer for the <em>first ball of the next over</em> — the app allows for the change of ends.</p></div></div>
+    </div>
+    <p>For a <strong style="color:var(--white)">Stumping</strong>, you can mark the ball as a <em>Wide</em> — a stumping off a wide is still the bowler's wicket. Everything else defaults to 0 runs off a legal ball, so an ordinary wicket is exactly as quick as before.</p>
+    <p>The ball shows in the over strip as, for example, <span class="badge">1W</span> (one run, then out), <span class="badge">Wd W</span> or <span class="badge">Nb 1W</span>.</p>
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <p><strong style="color:var(--white)">Winning run first.</strong> If the batters complete the winning run and one is then run out going for another, the match was already over — so the run out doesn't count. The wicket screen tells you, and Confirm records the runs only.</p>
+    </div>
+
+    <h3>The last wicket</h3>
+    <p>When a wicket ends the innings — all out, or on the last ball — the <em>New batter</em> box disappears. Just choose how he was out and tap <strong style="color:var(--white)">Confirm</strong>: the dismissal is written to the scorecard first, then the innings or match ends by itself.</p>
+
+    <h3>Out without a ball being bowled</h3>
+    <p>Tap the batter's card to open <strong style="color:var(--white)">Batter off — no ball bowled</strong>. Use this when nothing happened off a delivery:</p>
+    <ul>
+      <li><strong style="color:var(--white)">Retired hurt</strong> — can come back later</li>
+      <li><strong style="color:var(--white)">Retired out</strong> — a wicket</li>
+      <li><strong style="color:var(--white)">Timed out</strong> — the incoming batter wasn't ready in time; a wicket</li>
+    </ul>
+    <p>No ball is added to the over. Wickets recorded this way still go into the fall of wickets, and if it's the last wicket, no new batter is asked for.</p>
+
+    <h3>Retired hurt returning</h3>
+    <p>At the next wicket, any retired-hurt batters are listed at the top of the new batter field. Pick one and he resumes his innings with his runs and his place in the batting order.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>The fall of wickets is recorded automatically. On the scorecard, batters appear in the order they came in, not the order they were out.</p>
+    </div>
+  </section>
+
+  <!-- 8. END OF OVER -->
+  <section class="section" id="s8">
+    <div class="section-number">08</div>
+    <h2>End of Over</h2>
+    <p>After the last legal ball of the over (the 6th, or the 5th of a set in The Hundred) a prompt appears above the pad. The run buttons are locked until you answer it — but <strong style="color:var(--white)">Undo still works</strong>, so you can take back that last ball first if it was wrong.</p>
+
+    <div class="mockup-wrap">
+      <div class="mockup wide">
+        <div class="mockup-label">End of Over Prompt</div>
+        <div class="mockup-body">
+          <div class="mini-over-confirm">
+            <div>
+              <div class="mini-over-confirm-text">End of over — 8 runs · 2 wkts</div>
+            </div>
+            <div class="mini-over-confirm-btns">
+              <div class="mini-over-confirm-btn cancel">Continue over</div>
+              <div class="mini-over-confirm-btn">Next over →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Check the summary</strong><p>Runs and wickets in the over.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Tap "Next over →"</strong><p>The bowler list opens.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Pick the bowler</strong><p>Previous bowlers are listed with their figures and how much they have left (<span class="badge">3 ov left</span>). The bowler who just bowled can't bowl the next over, and anyone at their limit is greyed out under <em>Bowled their limit</em>. Or type a new name.</p></div></div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>If two bowlers share a name, the app asks which one you mean — it keeps their figures separate.</p>
+    </div>
+
+    <h3>Continue over</h3>
+    <p>If a ball has to be re-bowled after the last one (the umpire miscounted, say), tap <strong style="color:var(--white)">Continue over</strong>. The next legal ball then completes the over automatically.</p>
+  </section>
+
+  <!-- 9. EDITING BALLS & OVERS -->
+  <section class="section" id="s9">
+    <div class="section-number">09</div>
+    <h2>Editing Balls, Overs &amp; Names</h2>
+
+    <h3>Undo</h3>
+    <p>Tap <strong style="color:#e07070">↩ Undo</strong> to take back the last ball. The score, both batters' runs and balls, the bowler's figures and the partnership all go back exactly. It works:</p>
+    <ul>
+      <li><strong style="color:var(--white)">Mid-over</strong> — as many times as you need, one ball at a time.</li>
+      <li><strong style="color:var(--white)">At the end-of-over prompt</strong> — the prompt disappears and the over is open again.</li>
+      <li><strong style="color:var(--white)">After moving to the next over</strong> — if the new over is still empty, Undo asks to reopen the previous over; say yes, then tap Undo again to remove the ball.</li>
+    </ul>
+    <p><strong style="color:var(--white)">Undoing a wicket</strong> puts the batter back at the crease with his exact runs and balls, removes the replacement, and clears the fall of wicket.</p>
+
+    <h3>Editing a ball in the current over</h3>
+    <p>Tap any ball in the over strip. You can change what happened on it; everything recalculates.</p>
+
+    <h3>Editing a completed over</h3>
+    <p>Tap <strong style="color:var(--white)">History</strong> in the bottom bar. The over history slides up over the pad; tap an over to open it, then a ball to edit it. Tap <strong style="color:var(--white)">History</strong> again to close it.</p>
+
+    <h3>Correcting a player's name</h3>
+    <p>Open the scorecard (<strong style="color:var(--white)">📋 Card</strong>, or a match from Recent Results) and tap <strong style="color:var(--white)">✎ Names</strong>. Pick the player — the list is grouped by team — type the correct name and tap <strong style="color:var(--white)">Save</strong>.</p>
+    <ul>
+      <li>The name changes everywhere in the match: batting and bowling cards, dismissals, fall of wickets, the ball-by-ball, both innings.</li>
+      <li>It works on a finished match too, and the website scorecard updates straight away.</li>
+      <li>If both teams have a player with the same name, only the one you picked changes.</li>
+      <li>You can't rename someone to the name of another player in the same team — that would merge their figures.</li>
+    </ul>
+  
+    <h3 id="s9-settings">Changing the rules mid-match</h3>
+    <p>Agreed something different at the toss, or picked the wrong option at setup? Open <strong style="color:var(--white)">Other · 5</strong> → <strong style="color:var(--white)">⚙ Match settings</strong>. You can change:</p>
+    <ul>
+      <li>the <strong style="color:var(--white)">wide / no-ball penalty</strong> (1 or 2 runs);</li>
+      <li>whether <strong style="color:var(--white)">wides and no-balls use up a ball</strong>;</li>
+      <li><strong style="color:var(--white)">free hits</strong> on or off;</li>
+      <li><strong style="color:var(--white)">max overs per bowler</strong> (not in a 100-ball match — the format caps it at 20 balls).</li>
+    </ul>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>A change applies <strong>from the next ball</strong>. Everything already scored keeps the rule it was scored under, so correcting a setting halfway through never rewrites the balls behind it — and the same holds if figures are rebuilt after an edit. The new rules travel with the match, so a phone taking over carries on the same way.</p>
+    </div>
+    <p>Reducing the overs for rain is separate, under <strong style="color:var(--white)">Other · 5 → 🌧 Reduce overs</strong>.</p>
+</section>
+
+  <!-- 10. MID-OVER BOWLER CHANGE -->
+  <section class="section" id="s10">
+    <div class="section-number">10</div>
+    <h2>Mid-Over Bowler Change</h2>
+    <h3>Wrong Bowler Selected</h3>
+    <p>If you selected the wrong bowler at the start of an over before any balls have been bowled, tap the bowler line and select the correct bowler. All balls in the over will be attributed to the correct bowler — no split occurs.</p>
+
+    <h3>Injury or Suspension Mid-Over</h3>
+    <p>If a bowler is genuinely unable to continue mid-over, tap the bowler line and select the replacement. This creates a <strong style="color:var(--white)">split over</strong> — both bowlers share the same over number, each attributed only the balls they actually bowled. For example, if Bowler A bowled 2 balls then Bowler B took over, Bowler A is credited 2 balls and their runs, Bowler B gets the remaining 4 balls and their runs. Together they complete the over.</p>
+    <p>The over summary header in the Balls tab and over history will show both names (e.g. <strong style="color:var(--white)">A. Patel / R. Singh</strong>), and each ball row shows its own bowler's name.</p>
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <p>The replacement bowler cannot be the same bowler who bowled the previous completed over.</p>
+    </div>
+  </section>
+
+  <!-- 11. FREE HIT -->
+  <section class="section" id="s11">
+    <div class="section-number">11</div>
+    <h2>Free Hit</h2>
+    <p>When Free Hits are enabled in setup, a no-ball automatically triggers a free hit for the next delivery.</p>
+
+    <div class="mockup-wrap">
+      <div class="mockup wide">
+        <div class="mockup-label">Free Hit Banner</div>
+        <div class="mockup-body">
+          <div class="mini-freeHit-banner">⚡ FREE HIT — batter cannot be bowled or caught</div>
+        </div>
+      </div>
+    </div>
+
+    <p>The green <strong style="color:var(--green2)">FREE HIT</strong> banner persists until the next legal ball is recorded. On a free hit delivery, only run outs are valid dismissals — the wicket button is still available for scoring purposes but should only be used for a run out.</p>
+    <p>To disable free hits for your league format, toggle them off on the Setup screen before starting the match.</p>
+  </section>
+
+  <!-- 12. ENDING AN INNINGS & MATCH -->
+  <section class="section" id="s12">
+    <div class="section-number">12</div>
+    <h2>Ending an Innings &amp; Match</h2>
+    <p>You rarely need to end anything yourself. An innings ends automatically when:</p>
+    <ul>
+      <li>the side is all out (10 wickets, or 2 in a Super Over)</li>
+      <li>the overs run out (after you confirm the last over)</li>
+      <li>the target is reached — straight away, even on the last ball of an over</li>
+    </ul>
+
+    <h3>The End button</h3>
+    <p>For everything else, tap <strong style="color:var(--white)">End</strong> in the bottom bar:</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>In the 1st innings</strong><p><em>End innings — start 2nd innings</em> (a declaration, say), or end the match as <em>No Result</em>, <em>Abandoned</em> or <em>Forfeit</em>.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>In the 2nd innings</strong><p><em>Won</em>, <em>Lost</em> or <em>Draw</em>, plus <em>No Result</em>, <em>Abandoned</em> and <em>Forfeit</em>. In The Hundred, Won/Lost only appear once 25 balls have been bowled to the side batting second.</p></div></div>
+    </div>
+
+    <h3>Rain: reducing the overs</h3>
+    <p>Open <strong style="color:var(--white)">Other · 5</strong> → <strong style="color:var(--white)">🌧 Reduce overs (rain)</strong>. Enter the new overs per innings and, in a chase, the revised target your league's method gives you. The chase bar, the par score, and the bowler limits all follow the new figures.</p>
+    <div class="callout warn">
+      <div class="callout-icon">🌧</div>
+      <p>The app's par score is a simple pro-rata guide, not DLS. Use the revised target your league's rules set — the app will score to whatever target you enter.</p>
+    </div>
+
+    <h3>Catching up</h3>
+    <p>If you fell behind and need to enter several overs at once, use <strong style="color:var(--white)">Other · 5</strong> → <strong style="color:var(--white)">⏱ Catch up the score</strong>.</p>
+
+    <h3>The result</h3>
+    <p>The app writes the result in the standard form, and the same words appear on the end screen, the PDF, the website and the notifications:</p>
+    <ul>
+      <li><em>Tygerberg CC won by 6 wickets (15 balls to spare)</em></li>
+      <li><em>Tygerberg CC won by 1 wicket (off the last ball)</em></li>
+      <li><em>Greenfields CC won by 23 runs</em></li>
+      <li><em>… (29 balls to spare, revised target)</em> after a rain reduction</li>
+    </ul>
+    <p>Once a match ends it is marked completed and appears in Recent Results and on the website's fixture page.</p>
+
+    <h3 id="s12-potm">Player of the match</h3>
+    <p>When the match ends, tap <strong style="color:var(--white)">🏅 Pick player of the match</strong> on the end screen.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Choose the player</strong><p>The top three <em>Suggested</em> are ranked on runs, wickets, catches, stumpings and run outs, with credit for quick scoring, tight bowling and being on the winning side. Every player from both teams is listed underneath. The suggestion is only a guide — pick whoever the captains or umpires chose.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Check the figures</strong><p>The figures line fills itself in, e.g. <em>62 (41) · 2/18 · 1 ct</em>. You can change it.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Save</strong><p>It appears on the end screen, the app scorecard, the PDF summary page, the website scorecard and the WhatsApp text.</p></div></div>
+    </div>
+    <p><strong style="color:var(--white)">Later, or to change it:</strong> open the match from <strong style="color:var(--white)">Recent Results</strong> and tap <strong style="color:var(--white)">🏅 POTM</strong> at the bottom of the scorecard. <strong style="color:var(--white)">Clear</strong> removes it. You need signal for this, because it saves straight to the finished match. Correcting a player's name with <strong style="color:var(--white)">✎ Names</strong> updates the award too.</p>
+    <div class="callout info">
+      <div class="callout-icon">🏅</div>
+      <p>The button only appears once there's a result, and not for No Result or Abandoned matches.</p>
+    </div>
+  </section>
+
+  <!-- 13. SUPER OVER -->
+  <section class="section" id="s13">
+    <div class="section-number">13</div>
+    <h2>Super Over</h2>
+    <p>If the scores are level at the end of the 2nd innings, the app asks whether to play a Super Over.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">⚡</div>
+      <p>One over a side. The side that batted second in the match bats first in the Super Over. A <span class="badge">⚡ SUPER OVER</span> strip shows throughout.</p>
+    </div>
+
+    <p>Score it exactly like the match. Each side's over ends after 6 balls <strong style="color:var(--white)">or 2 wickets</strong>, and the result reads, e.g., <em>Tygerberg CC won the Super Over by 4 runs</em>. If it ties again, another Super Over is offered.</p>
+  </section>
+
+  <!-- 14. SCORECARD & PDF -->
+  <section class="section" id="s14">
+    <div class="section-number">14</div>
+    <h2>Scorecard &amp; PDF Export</h2>
+
+    <h3>Scorecard</h3>
+    <p>Tap <strong style="color:var(--white)">📋 Card</strong> at any time. It shows both innings: batting in the order the batters came in, with proper dismissals (<em>c Fortuin b Miller</em>, <em>run out (Guly)</em>), extras, fall of wickets and bowling, plus the Manhattan and worm charts.</p>
+
+    <h3>PDF</h3>
+    <p><strong style="color:var(--white)">⬇ PDF</strong> downloads the official scorecard:</p>
+    <ul>
+      <li><strong style="color:var(--white)">Page 1 — summary:</strong> teams, date and venue, the toss, the result, and a panel per innings with the total, extras, run rate, and the top three batters and bowlers.</li>
+      <li><strong style="color:var(--white)">Then one page per innings</strong> with the full batting, fall of wickets and bowling. A long innings carries onto another page, marked <em>(continued)</em>.</li>
+    </ul>
+    <p>A finished match opened from Recent Results prints its own date, toss and result — not the match you happen to be scoring.</p>
+    <div class="callout warn">
+      <div class="callout-icon">🔒</div>
+      <p>The PDF is only available here, in the scorer app, behind the scorer PIN. The public scorecard on the website does not offer a download.</p>
+    </div>
+
+    <h3>📸 Card, 📲 Text and 🔗 Share</h3>
+    <ul>
+      <li><strong style="color:var(--white)">📸 Card</strong> makes a square result graphic for WhatsApp or Instagram — on a phone it opens the share sheet.</li>
+      <li><strong style="color:var(--white)">📲 Text</strong> copies a WhatsApp-ready text summary.</li>
+      <li><strong style="color:var(--white)">🔗 Share</strong> (during a live match) copies the link to the live score.</li>
+    </ul>
+
+    <div class="mockup-wrap">
+      <div class="mockup wide">
+        <div class="mockup-label">Scorecard — Buttons</div>
+        <div class="mockup-body">
+          <div class="mini-btn-row" style="flex-wrap:wrap">
+            <div class="mini-btn cancel" style="flex:1">⬇ PDF</div>
+            <div class="mini-btn cancel" style="flex:1">📸 Card</div>
+            <div class="mini-btn cancel" style="flex:1">📲 Text</div>
+            <div class="mini-btn cancel" style="flex:1">✎ Names</div>
+            <div class="mini-btn confirm" style="flex:1 1 100%">Close</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15. RECENT RESULTS -->
+  <section class="section" id="s15">
+    <div class="section-number">15</div>
+    <h2>Recent Results</h2>
+    <p>The <strong style="color:var(--white)">Recent Results</strong> list on the Fixtures screen holds every completed match, newest first by the date it was played.</p>
+
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Set the date range</strong><p>It shows the last 30 days. For older matches, change <strong style="color:var(--white)">From</strong> and tap <strong style="color:var(--white)">Go</strong>.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Tap a match</strong><p>Its full scorecard opens.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Export, share or correct</strong><p><strong style="color:var(--white)">⬇ PDF</strong>, <strong style="color:var(--white)">📸 Card</strong> and <strong style="color:var(--white)">📲 Text</strong> work as in a live match, and <strong style="color:var(--white)">✎ Names</strong> fixes a misspelt player — the website updates too.</p></div></div>
+    </div>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>Matches typed up afterwards on the manual scorecard page appear here as well, and can be corrected the same way.</p>
+    </div>
+  </section>
+
+  <!-- 16. OFFLINE MODE -->
+  <section class="section" id="s16">
+    <div class="section-number">16</div>
+    <h2>Offline Mode</h2>
+    <p>The TCC Scorer is designed to work even without an internet connection during a match.</p>
+
+    <div class="mockup-wrap">
+      <div class="mockup wide">
+        <div class="mockup-label">Connection Status Indicators</div>
+        <div class="mockup-body" style="display:flex;gap:20px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)"></div>
+            <span style="font-size:0.8rem">Live — saving as you score</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);animation:none"></div>
+            <span style="font-size:0.8rem">Syncing…</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--muted)"></div>
+            <span style="font-size:0.8rem">Offline — updates queued</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div>
+            <span style="font-size:0.8rem">Error — check connection</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p>Watch the status indicator in the top-right corner of the app. When offline:</p>
+    <ul>
+      <li>All ball-by-ball scoring is saved locally on the device</li>
+      <li>Updates are queued and sent automatically when connectivity returns</li>
+      <li>A toast notification confirms when queued updates have been flushed</li>
+    </ul>
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <p>The live display on the TCC website will not update while offline. Scoring state is preserved on the device — do not close the browser tab or clear the app cache mid-match.</p>
+    </div>
+
+    <h3>Resuming After a Crash or Refresh</h3>
+    <p>If the app is accidentally closed or the browser refreshes, reopen it and enter your PIN. A <strong style="color:var(--white)">Resume Match?</strong> modal will appear with a summary of the last saved state. Tap <strong style="color:var(--white)">Resume →</strong> to continue scoring exactly where you left off.</p>
+
+    <h3>Handing Over to Another Scorer</h3>
+    <p>If another scorer needs to take over a live match from a different device, they tap the fixture (which will show a <span class="badge green">● Live</span> badge) and enter the match PIN. The new phone picks up the whole match — the score, both batters, the bowler and his figures, the first innings, the toss and the bowler limits — and they carry on scoring.</p>
+    <p>From that moment the match belongs to the new device. The previous phone is locked out: it shows a full-screen <strong style="color:var(--white)">Another device is scoring</strong> notice and stops sending anything. Its own copy of the scoring stays on that phone, it simply can't reach the match any more.</p>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>This is why the handover is safe even if the first scorer walks off with no signal. Their phone cannot overwrite the new scorer's overs when it reconnects.</p>
+    </div>
+    <p>If the match changed innings just before the handover, the new device may have nobody at the crease. It will ask for the batters and bowler before you can score — that is expected, not a fault.</p>
+
+    <h3>Leaving a Match Without Losing It</h3>
+    <p>The back arrow at the top left of the scoring screen asks what you want to do once any ball has been scored:</p>
+    <ul>
+      <li><strong style="color:var(--white)">Leave this screen — keep the match</strong> — goes back to the fixture list. The match stays live and you resume it from there.</li>
+      <li><strong style="color:var(--white)">Cancel — keep scoring</strong> — stays where you are.</li>
+      <li><strong style="color:var(--white)">Wrong fixture — delete this match</strong> — for when the wrong fixture was chosen. You have to type DELETE to confirm.</li>
+    </ul>
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <p>Deleting removes the match for everyone, on every device, including both innings. Only use it when the wrong fixture was picked. If you simply want off the screen, use <em>Leave this screen</em>.</p>
+    </div>
+    <p>If nothing has been scored yet the match closes without asking — there is nothing to lose, and the empty entry has to clear or the fixture stays marked live.</p>
+
+    <h3>Overs Per Side</h3>
+    <p>The overs agreed at the toss are saved with the match, so a match resumed on another device still ends at the right point. If you ever resume a match and the app says the overs per side were not stored, set them under <strong style="color:var(--white)">Other → Reduce overs</strong> before carrying on — otherwise the innings will not end on its own.</p>
+
+    <h3>App Updates</h3>
+    <p>The TCC Scorer updates itself automatically — no manual reinstall or cache clearing required. When a new version is available:</p>
+    <ul>
+      <li>If you are not mid-match, the app reloads silently the next time you bring it to the foreground</li>
+      <li>If you are mid-over, a toast notification appears — tap it to apply the update at a safe moment</li>
+    </ul>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>You will always be running the latest version automatically. If you are ever unsure, close and reopen the app — the update check runs every time the app comes to the foreground.</p>
+    </div>
+  </section>
+
+  <!-- 17. WHEN A MATCH GOES MISSING -->
+  <section class="section" id="s17">
+    <div class="section-number">17</div>
+    <h2>When a Match Goes Missing</h2>
+    <p>Two extra pages sit alongside the scorer for the days when something has gone wrong. Neither is part of normal scoring and neither needs a separate login beyond the scorer PIN.</p>
+
+    <h3>Recovering scoring from a device</h3>
+    <p>Open <strong style="color:var(--white)">/scorer/recover.html</strong> on the device that was scoring. It reads that phone's saved match and shows you the score, the batting and bowling cards and the fall of wickets, with a button to download the whole thing as a file. It only reads — it never uploads, changes or deletes anything.</p>
+    <ul>
+      <li>Use the same browser that did the scoring. A match saved in Safari is invisible to Chrome on the same phone.</li>
+      <li>Check every device that touched the match. If someone took over, their phone kept its own copy.</li>
+      <li>Do it before starting or resuming anything on that device. Starting a new match clears the saved copy.</li>
+    </ul>
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <p>If a match was deleted by mistake, go to the recovery page first and before anything else. Recent deletions are kept on the device that deleted them, and they are listed at the top of that page.</p>
+    </div>
+
+    <h3>Typing up a match by hand</h3>
+    <p>Open <strong style="color:var(--white)">/scorer/manual-scorecard.html</strong> for a match that was never scored live, or one that could not be recovered. Enter the scorer PIN, pick the fixture, then fill in each innings: the total, wickets, overs, extras, and every batter and bowler.</p>
+    <p>A running check at the bottom of the screen adds up the batters' runs plus extras and compares that to the total you entered, telling you how many runs are unaccounted for. Use it — it catches the usual slips before anything is saved.</p>
+    <p>Saving writes a completed match and sets the fixture result, so the scorecard appears on the website and the player statistics pick it up. The over-by-over view will be empty, which is expected for a match entered this way.</p>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <p>If you are rebuilding a match from memory, the notifications sent during the play are a good source. Each wicket alert carries the score at that moment, and the innings-change alert states the target — between them you can reconstruct the fall of wickets and the first-innings total.</p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Confidentiality Undertaking · Tygerberg Cricket Club</title>
+
+  <!-- Site chrome + page styles (same layering as your other pages).
+       main.css already loads the site fonts; the <link> below is a
+       harmless fallback in case this page is opened outside the site. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/agreement.css?v=1" />
+  <link rel="stylesheet" href="css/transitions.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       PASTE YOUR REAL SITE NAV HERE (copy the <header>/<nav> block
+       from index.html verbatim so this page isn't an orphan — this
+       is the mistake that got the youth page parked twice).
+       ============================================================ -->
+  <!-- <header> … your nav … </header> -->
+
+  <main class="agreement-page">
+    <section class="agreement-hero">
+      <p class="agreement-eyebrow">Facta Non Verba</p>
+      <h1 class="agreement-title">Confidentiality Undertaking</h1>
+      <p class="agreement-lead">
+        For members of the Executive and team captains. Please read this in full,
+        then sign at the bottom to confirm you agree to be bound by it.
+      </p>
+    </section>
+
+    <!-- The document, fetched from the Worker so screen text and signed
+         text are always the same version. -->
+    <section class="agreement-doc" aria-labelledby="doc-heading">
+      <div class="agreement-doc__meta">
+        <span id="agreement-version-label">Loading current version…</span>
+      </div>
+      <article id="agreement-text" class="agreement-doc__body" tabindex="0">
+        <p class="agreement-doc__loading">Loading the undertaking…</p>
+      </article>
+    </section>
+
+    <!-- Signing panel -->
+    <section class="agreement-sign" aria-labelledby="sign-heading">
+      <h2 id="sign-heading" class="agreement-sign__heading">Sign the undertaking</h2>
+
+      <div class="field">
+        <label for="signer-name">Full name</label>
+        <input id="signer-name" type="text" autocomplete="name" required />
+      </div>
+
+      <div class="field">
+        <label for="signer-email">Email</label>
+        <input id="signer-email" type="email" autocomplete="email" required />
+      </div>
+
+      <div class="field">
+        <label for="signer-role">Position at the Club</label>
+        <input id="signer-role" type="text" list="role-suggestions"
+               placeholder="e.g. Chairperson, Treasurer, 1st XI Captain" />
+        <datalist id="role-suggestions">
+          <option value="Chairperson"></option>
+          <option value="Vice-Chairperson"></option>
+          <option value="Secretary"></option>
+          <option value="Treasurer"></option>
+          <option value="Executive Committee Member"></option>
+          <option value="1st XI Captain"></option>
+          <option value="2nd XI Captain"></option>
+          <option value="Youth Captain"></option>
+        </datalist>
+      </div>
+
+      <!-- Signature -->
+      <div class="field">
+        <div class="sig-head">
+          <span class="sig-label">Signature</span>
+          <div class="sig-toggle" role="tablist" aria-label="Signature method">
+            <button type="button" id="tab-draw" class="sig-toggle__btn is-active"
+                    role="tab" aria-selected="true">Draw</button>
+            <button type="button" id="tab-type" class="sig-toggle__btn"
+                    role="tab" aria-selected="false">Type</button>
+          </div>
+        </div>
+
+        <div id="sig-draw" class="sig-draw">
+          <canvas id="sig-canvas" class="sig-canvas" aria-label="Draw your signature"></canvas>
+          <button type="button" id="sig-clear" class="sig-clear">Clear</button>
+        </div>
+
+        <div id="sig-type" class="sig-type" hidden>
+          <input id="sig-typed" type="text" class="sig-typed"
+                 placeholder="Type your full name" autocomplete="off" />
+          <p class="sig-type__hint">Typing your name here counts as your signature.</p>
+        </div>
+      </div>
+
+      <!-- Consent: intentionally unticked -->
+      <label class="consent">
+        <input id="consent" type="checkbox" />
+        <span id="consent-text">
+          I have read and understood this undertaking and agree to be bound by it.
+        </span>
+      </label>
+
+      <p class="record-note">
+        Your name, email, the date and time, and your network address will be
+        recorded as proof of signing.
+      </p>
+
+      <button type="button" id="submit-btn" class="submit-btn">Sign undertaking</button>
+      <p id="form-error" class="form-error" role="alert" hidden></p>
+    </section>
+
+    <!-- Success state -->
+    <section id="success" class="agreement-success" hidden aria-live="polite">
+      <div class="seal" aria-hidden="true">
+        <span class="seal__mark">TCC</span>
+      </div>
+      <h2 class="agreement-success__title">Signed</h2>
+      <p class="agreement-success__body" id="success-body"></p>
+      <div class="agreement-success__actions">
+        <button type="button" id="download-btn" class="ghost-btn">Download a copy</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       PASTE YOUR REAL SITE FOOTER HERE (copy the <footer> block
+       from index.html verbatim).
+       ============================================================ -->
+  <!-- <footer> … your footer … </footer> -->
+
+  <!-- Vendor: signature pad -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+  <script src="js/agreement.js?v=1"></script>
+</body>
+</html>

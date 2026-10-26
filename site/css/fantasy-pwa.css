@@ -1,0 +1,74 @@
+/* TCC Fantasy — PWA install banner (shared across fantasy, leaderboard, pick) */
+.pwa-banner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 9999;
+  padding: 0 16px 12px;
+  background: linear-gradient(to top, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.95) 100%);
+  border-top: 1px solid rgba(184,146,42,0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  justify-content: center;
+  animation: bannerSlide 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+@keyframes bannerSlide {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.pwa-banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 480px;
+  padding: 14px 0 2px;
+}
+.pwa-banner-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(184,146,42,0.3));
+}
+.pwa-banner-text { flex: 1; min-width: 0; }
+.pwa-banner-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.2px;
+}
+.pwa-banner-sub {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.45);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pwa-banner-btn {
+  flex-shrink: 0;
+  background: #b8922a;
+  border: none;
+  color: #000;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 9px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.pwa-banner-btn:hover { background: #d4aa3f; }
+.pwa-banner-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.35);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.pwa-banner-close:hover { color: rgba(255,255,255,0.7); }

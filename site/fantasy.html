@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Cricket | Tygerberg Cricket Club</title>
+<meta name="description" content="TCC Fantasy Cricket — pick your XI, score points from real matches, and top the leaderboard.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="manifest" href="fantasy-manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TCC Fantasy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/fantasy.css?v=2">
+  <link rel="canonical" href="https://tygerbergcc.co.za/fantasy.html">
+  <meta property="og:type"        content="website">
+  <meta property="og:site_name"   content="Tygerberg Cricket Club">
+  <meta property="og:url"         content="https://tygerbergcc.co.za/fantasy.html">
+  <meta property="og:title"       content="Fantasy Cricket | Tygerberg Cricket Club">
+  <meta property="og:description" content="TCC Fantasy Cricket — pick your XI, score points from real matches, and top the leaderboard.">
+  <meta property="og:image"       content="https://tygerbergcc.co.za/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height"content="630">
+  <meta name="twitter:card"       content="summary_large_image">
+  <meta name="twitter:title"      content="Fantasy Cricket | Tygerberg Cricket Club">
+  <meta name="twitter:description"content="TCC Fantasy Cricket — pick your XI, score points from real matches, and top the leaderboard.">
+  <meta name="twitter:image"      content="https://tygerbergcc.co.za/images/og-image.jpg">
+<style>.skip-link{position:absolute;left:-9999px;top:4px;z-index:9999;padding:8px 16px;background:#b8922a;color:#000;font-weight:700;font-size:0.8rem;border-radius:2px;text-decoration:none}.skip-link:focus{left:4px}</style>
+<link rel="stylesheet" href="css/games.css?v=1">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+
+<!-- ══════════════════════════════════════════
+     LOADING SCREEN
+══════════════════════════════════════════ -->
+<div class="loader" id="loader">
+  <div class="loader-tl">TCC Fantasy League</div>
+  <div class="loader-center">
+    <div class="loader-word" id="loader-word">Build</div>
+  </div>
+  <div class="loader-br">
+    <div class="loader-count" id="loader-count">000</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar" id="loader-bar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     NAV (pill)
+══════════════════════════════════════════ -->
+<div class="nav-wrap">
+  <nav class="nav-pill" id="nav-pill">
+    <!-- Logo ring -->
+    <div class="nav-logo-wrap">
+      <div class="nav-logo-ring">
+        <img loading="eager" src="images/tcc-logo.png" alt="TCC" class="nav-logo-img">
+      </div>
+    </div>
+    <div class="nav-sep"></div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="fantasy.html" class="nav-link active">Fantasy</a></li>
+      <li><a href="leaderboard.html" class="nav-link">Leaderboard</a></li>
+      <li><a href="fantasy-stats.html" class="nav-link">Insights</a></li>
+      <li><a href="player-stats.html" class="nav-link">Stats</a></li>
+      <li><a href="badges.html" class="nav-link">Badges</a></li>
+      <li><a href="fantasy-guide.html" class="nav-link">Guide</a></li>
+      <li><a href="profile.html" class="nav-link" id="nav-profile-link" style="display:none">My Team</a></li>
+    </ul>
+    <div class="nav-sep"></div>
+    <button class="nav-sayhello" id="nav-cta-btn">
+      <span class="nav-sh-border"></span>
+      <span class="nav-sh-inner">Pick XI ↗</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</div>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="fantasy.html" class="active">Fantasy</a></li>
+    <li><a href="games.html"      class="nav-link nav-link-games">Games <span class="nav-games-badge">NEW</span></a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="fantasy-stats.html">Insights</a></li>
+    <li><a href="player-stats.html">Stats</a></li>
+    <li><a href="badges.html">Badges</a></li>
+    <li><a href="fantasy-guide.html">Guide</a></li>
+    <li><a href="profile.html" id="drawer-profile-link" style="display:none">My Team</a></li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section id="main-content" class="hero">
+  <!-- Background image with parallax -->
+  <div class="hero-bg">
+    <img loading="eager" src="images/fantasy-hero.webp"
+         alt="" id="hero-vid" class="hero-bg-img" style="object-position:20% center;">
+    <div class="hero-overlay-base"></div>
+    <div class="hero-overlay-bottom"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow blur-in">TCC FANTASY CRICKET</div>
+
+    <h1 class="hero-h1 name-reveal">
+      Fantasy<br><em>Cricket.</em>
+    </h1>
+
+    <!-- Mobile-only inline deadline -->
+    <div class="hero-deadline-strip blur-in" id="hero-deadline-strip">
+      <span>Picks close in</span>
+      <span class="hds-val" id="hero-timer-mobile">--:--:--</span>
+    </div>
+
+    <p class="hero-role-line blur-in">
+      Be the <span class="hero-role" id="hero-role">Selector</span> — pick your XI.
+    </p>
+
+    <p class="hero-sub blur-in">
+      Build your squad from TCC's active players within a R100 budget. Appoint your captain. Earn points from real match performances every round.
+    </p>
+
+    <div class="hero-btns blur-in">
+      <button class="btn-primary" id="hero-enter-btn">Enter the League</button>
+      <a href="leaderboard.html" class="btn-ghost">Leaderboard ↗</a>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="hero-scroll">
+    <span>SCROLL</span>
+    <div class="scroll-line">
+      <div class="scroll-thumb"></div>
+    </div>
+  </div>
+
+  <!-- Countdown -->
+  <div class="hero-countdown" id="hero-countdown" style="display:none">
+    <div class="hc-label">Picks close in</div>
+    <div class="hc-val" id="hero-timer">--:--:--</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ROUND STRIP
+══════════════════════════════════════════ -->
+<div class="fn-round-strip" id="fn-round-strip" style="display:none">
+  <div class="fn-rs-badge" id="fn-rs-badge">Round</div>
+  <div class="fn-rs-info">
+    <div class="fn-rs-name" id="fn-rs-name">—</div>
+    <div class="fn-rs-deadline" id="fn-rs-deadline"></div>
+  </div>
+  <a href="pick.html" class="fn-rs-pick">Pick now →</a>
+</div>
+
+<!-- ══════════════════════════════════════════
+     QUICK-LINK TILES
+══════════════════════════════════════════ -->
+<div class="fn-tiles">
+  <a href="pick.html" class="fn-tile fn-tile-pick">
+    <span class="fn-tile-icon">🏏</span>
+    <span class="fn-tile-label">Pick XI</span>
+    <span class="fn-tile-sub">Set your squad</span>
+  </a>
+  <a href="leaderboard.html" class="fn-tile">
+    <span class="fn-tile-icon">🏆</span>
+    <span class="fn-tile-label">Leaderboard</span>
+    <span class="fn-tile-sub">Season standings</span>
+  </a>
+  <a href="player-stats.html" class="fn-tile">
+    <span class="fn-tile-icon">📊</span>
+    <span class="fn-tile-label">Player stats</span>
+    <span class="fn-tile-sub">Scores &amp; form</span>
+  </a>
+  <a href="badges.html" class="fn-tile">
+    <span class="fn-tile-icon">🎖️</span>
+    <span class="fn-tile-label">Badges</span>
+    <span class="fn-tile-sub">Achievements</span>
+  </a>
+  <a href="fantasy-stats.html" class="fn-tile">
+    <span class="fn-tile-icon">🔥</span>
+    <span class="fn-tile-label">Insights</span>
+    <span class="fn-tile-sub">Ownership &amp; chips</span>
+  </a>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LIVE DATA PANELS
+══════════════════════════════════════════ -->
+<div class="fn-live-section">
+
+  <!-- Mini leaderboard -->
+  <div class="fn-lb-panel">
+    <div class="fn-panel-head">
+      <span class="fn-panel-eyebrow">Season leaderboard</span>
+      <a href="leaderboard.html" class="fn-panel-link">Full table →</a>
+    </div>
+    <div id="fn-lb-rows">
+      <div class="fn-lb-skel"><div class="fn-skel fn-sk-rank"></div><div class="fn-skel fn-sk-name"></div><div class="fn-skel fn-sk-pts"></div></div>
+      <div class="fn-lb-skel"><div class="fn-skel fn-sk-rank"></div><div class="fn-skel fn-sk-name"></div><div class="fn-skel fn-sk-pts"></div></div>
+      <div class="fn-lb-skel"><div class="fn-skel fn-sk-rank"></div><div class="fn-skel fn-sk-name"></div><div class="fn-skel fn-sk-pts"></div></div>
+      <div class="fn-lb-skel"><div class="fn-skel fn-sk-rank"></div><div class="fn-skel fn-sk-name"></div><div class="fn-skel fn-sk-pts"></div></div>
+      <div class="fn-lb-skel"><div class="fn-skel fn-sk-rank"></div><div class="fn-skel fn-sk-name"></div><div class="fn-skel fn-sk-pts"></div></div>
+    </div>
+  </div>
+
+  <!-- Season at a glance -->
+  <div class="fn-stats-panel">
+    <div class="fn-panel-head">
+      <span class="fn-panel-eyebrow">Season at a glance</span>
+    </div>
+    <div class="fn-stat-grid">
+      <div class="fn-stat-card">
+        <div class="fn-stat-num" id="fn-stat-players">—</div>
+        <div class="fn-stat-lbl">Players in</div>
+      </div>
+      <div class="fn-stat-card">
+        <div class="fn-stat-num" id="fn-stat-rounds">—</div>
+        <div class="fn-stat-lbl">Rounds scored</div>
+      </div>
+      <div class="fn-stat-card">
+        <div class="fn-stat-num fn-stat-accent" id="fn-stat-top">—</div>
+        <div class="fn-stat-lbl">Top score (pts)</div>
+      </div>
+      <div class="fn-stat-card">
+        <div class="fn-stat-num fn-stat-accent">R100</div>
+        <div class="fn-stat-lbl">Budget cap</div>
+      </div>
+    </div>
+    <div class="fn-cta-strip">
+      <a href="fantasy-guide.html" class="fn-guide-link">How to play →</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     RULES SECTION
+══════════════════════════════════════════ -->
+<section class="fn-rules-section">
+  <header class="fn-rules-hdr fade-up">
+    <div class="section-eyebrow">
+      <div class="eyebrow-rule"></div>
+      <span>How it works</span>
+    </div>
+    <h2 class="section-h2">The <em>rules</em> of the game.</h2>
+  </header>
+
+  <div class="fn-rules-grid">
+
+    <div class="fn-rule-card fade-up" style="--delay:0s">
+      <div class="bc-tag">Budget cap</div>
+      <div class="bc-bignum">R100</div>
+      <p class="bc-body">Same budget for every manager. Spend it wisely — you can't have all the stars.</p>
+      <div class="bc-bar-section">
+        <div class="bc-bar-labels"><span>R0</span><span>R100</span></div>
+        <div class="bc-bar-track"><div class="bc-bar-fill" style="width:68%"></div></div>
+      </div>
+    </div>
+
+    <div class="fn-rule-card fade-up" style="--delay:0.07s">
+      <div class="bc-tag">Captain</div>
+      <div class="bc-bignum">×2</div>
+      <p class="bc-body">Your captain scores double. On wildcard rounds — triple. VC scores ×1.5.</p>
+      <div class="bc-captain-star">⭐</div>
+    </div>
+
+    <div class="fn-rule-card fade-up" style="--delay:0.14s">
+      <div class="bc-tag">Team size</div>
+      <div class="bc-bignum">11</div>
+      <p class="bc-body">Pick 11 players across Bat, Bowl, AR and WK roles within your budget.</p>
+    </div>
+
+    <div class="fn-rule-card fn-rule-card--wide fade-up" style="--delay:0.21s">
+      <div class="bc-tag">Points system</div>
+      <div class="fn-pts-grid">
+        <div class="fn-pts-row"><span>Run scored</span><em>1pt</em></div>
+        <div class="fn-pts-row hi"><span>Fifty+</span><em>+10pt</em></div>
+        <div class="fn-pts-row hi"><span>Century</span><em>+25pt</em></div>
+        <div class="fn-pts-row"><span>Wicket</span><em>15pt</em></div>
+        <div class="fn-pts-row hi"><span>Five-fer</span><em>+20pt</em></div>
+        <div class="fn-pts-row"><span>Catch / Stump</span><em>10pt</em></div>
+        <div class="fn-pts-row hi"><span>Player of Match</span><em>+25pt</em></div>
+        <div class="fn-pts-row"><span>VC bonus</span><em>×1.5</em></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     MARQUEE
+
+══════════════════════════════════════════ -->
+<div class="marquee-band">
+  <div class="marquee-inner">
+    <span>PICK YOUR XI</span><span class="m-dot">·</span>
+    <span>CAPTAIN SCORES DOUBLE</span><span class="m-dot">·</span>
+    <span>R100 BUDGET</span><span class="m-dot">·</span>
+    <span>WEEKLY ROUNDS</span><span class="m-dot">·</span>
+    <span>REAL MATCH POINTS</span><span class="m-dot">·</span>
+    <span>SEASON LEADERBOARD</span><span class="m-dot">·</span>
+    <span>PICK YOUR XI</span><span class="m-dot">·</span>
+    <span>CAPTAIN SCORES DOUBLE</span><span class="m-dot">·</span>
+    <span>R100 BUDGET</span><span class="m-dot">·</span>
+    <span>WEEKLY ROUNDS</span><span class="m-dot">·</span>
+    <span>REAL MATCH POINTS</span><span class="m-dot">·</span>
+    <span>SEASON LEADERBOARD</span><span class="m-dot">·</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FOOTER IMAGE
+══════════════════════════════════════════ -->
+<div class="footer-img-section">
+  <img loading="lazy" src="images/fantasy-hero.webp"
+       alt="" class="footer-img" id="footer-img" style="object-position:70% center;">
+  <div class="footer-img-overlay">
+    <p class="fi-quote"><em>Facta Non Verba</em></p>
+    <p class="fi-sub">Tygerberg Cricket Club · Est. 1957</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FOOTER BAR
+══════════════════════════════════════════ -->
+<footer class="footer-bar">
+  <span>© <span class="copy-year"></span> Tygerberg Cricket Club</span>
+  <div class="footer-avail">
+    <span class="avail-dot"></span>
+    <span>League open</span>
+  </div>
+  <a href="index.html" class="footer-link">← Main site</a>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     AUTH OVERLAY
+══════════════════════════════════════════ -->
+<div class="auth-overlay" id="auth-overlay" style="display:none">
+  <div class="auth-card">
+
+    <!-- No round -->
+    <div id="screen-no-round" class="auth-screen" style="display:none">
+      <button class="auth-close" onclick="closeAuth()" aria-label="Close">✕</button>
+      <div class="ac-icon">🏏</div>
+      <h2 class="ac-title">No Active Round</h2>
+      <p class="ac-sub">No round is open right now. Check back before match day.</p>
+      <a href="leaderboard.html" class="ac-btn-outline">View Leaderboard →</a>
+    </div>
+
+    <!-- Step 1: Email — returning or new -->
+    <div id="screen-register" class="auth-screen" style="display:none">
+      <button class="auth-close" onclick="closeAuth()" aria-label="Close">✕</button>
+      <div class="ac-step">Sign in / Register</div>
+      <h2 class="ac-title">Your email</h2>
+      <p class="ac-sub">Already approved? We'll send you a code. New here? We'll get your request to the admin.</p>
+      <div class="ac-field">
+        <input type="email" class="ac-input" id="reg-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="form-error" id="reg-error"></div>
+      <button class="ac-btn" id="reg-btn"><span id="reg-btn-label">Continue</span><span>→</span></button>
+    </div>
+
+    <!-- Step 2: Name + team (new users only) -->
+    <div id="screen-name" class="auth-screen" style="display:none">
+      <button class="auth-close" onclick="closeAuth()" aria-label="Close">✕</button>
+      <div class="ac-step">New Registration</div>
+      <h2 class="ac-title">Your identity</h2>
+      <p class="ac-sub">Your request will be reviewed by the admin. You'll get an email once you're approved.</p>
+      <div class="ac-field">
+        <label class="ac-label">Your name</label>
+        <input type="text" class="ac-input" id="reg-name" placeholder="John Smith" autocomplete="name">
+      </div>
+      <div class="ac-field">
+        <label class="ac-label">Team name</label>
+        <input type="text" class="ac-input" id="reg-team-name" placeholder="The Boundary Riders" maxlength="40">
+      </div>
+      <div class="form-error" id="name-error"></div>
+      <button class="ac-btn" id="name-btn"><span id="name-btn-label">Request Access</span><span>→</span></button>
+    </div>
+
+    <!-- Pending approval -->
+    <div id="screen-pending" class="auth-screen" style="display:none">
+      <button class="auth-close" onclick="closeAuth()" aria-label="Close">✕</button>
+      <div class="ac-icon">⏳</div>
+      <h2 class="ac-title">Under review</h2>
+      <p class="ac-sub">Your registration request is waiting for admin approval. You'll receive an email at <strong id="pending-email-display"></strong> once you're approved.</p>
+      <p class="ac-sub" style="margin-top:8px;font-size:0.78rem;opacity:0.6">Already approved? Check your inbox for the confirmation email, then come back and sign in.</p>
+      <a href="leaderboard.html" class="ac-btn-outline" style="margin-top:4px">View Leaderboard →</a>
+    </div>
+
+    <!-- OTP -->
+    <div id="screen-otp" class="auth-screen" style="display:none">
+      <button class="auth-close" onclick="closeAuth()" aria-label="Close">✕</button>
+      <div class="ac-step" id="otp-step-label">03 / 03</div>
+      <h2 class="ac-title">Check inbox</h2>
+      <p class="ac-sub">Sent to <strong id="otp-email-display"></strong></p>
+      <div class="ac-otp-ring">
+        <svg viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="3"/>
+          <circle cx="32" cy="32" r="27" fill="none" stroke="url(#g1)" stroke-width="3"
+            stroke-dasharray="169.6" stroke-dashoffset="0" id="otp-ring"
+            stroke-linecap="round" transform="rotate(-90 32 32)"/>
+          <defs>
+            <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#89AACC"/>
+              <stop offset="100%" stop-color="#4E85BF"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span id="otp-timer">2:00</span>
+      </div>
+      <div class="ac-field">
+        <input type="text" class="ac-input ac-otp" id="otp-input"
+          placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+      </div>
+      <div class="form-error" id="otp-error"></div>
+      <button class="ac-btn" id="otp-btn"><span id="otp-btn-label">Verify</span><span>→</span></button>
+      <div class="ac-actions">
+        <button class="ac-txt-btn" id="otp-resend-btn">Resend code</button>
+        <span class="ac-sep">·</span>
+        <button class="ac-txt-btn" id="otp-back-btn">Different email</button>
+      </div>
+    </div>
+
+    <!-- Profile -->
+    <div id="screen-profile" class="auth-screen" style="display:none">
+      <button class="auth-close" onclick="closeAuth()" aria-label="Close">✕</button>
+      <div class="ac-step">Profile</div>
+      <h2 class="ac-title">Edit details</h2>
+      <div class="ac-field">
+        <label class="ac-label">Your name</label>
+        <input type="text" class="ac-input" id="profile-name" placeholder="John Smith">
+      </div>
+      <div class="ac-field">
+        <label class="ac-label">Team name</label>
+        <input type="text" class="ac-input" id="profile-team-name" placeholder="The Boundary Riders" maxlength="40">
+      </div>
+      <div class="form-error" id="profile-error"></div>
+      <button class="ac-btn" id="profile-save-btn"><span id="profile-save-label">Save</span><span>→</span></button>
+      <button class="ac-txt-btn" id="profile-back-btn" style="margin-top:10px">← Back to pick</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- PWA install banner -->
+<div class="pwa-banner" id="pwa-banner" style="display:none">
+  <div class="pwa-banner-inner">
+    <img src="images/tcc-logo.png" alt="TCC" class="pwa-banner-logo">
+    <div class="pwa-banner-text">
+      <div class="pwa-banner-title">Add to Home Screen</div>
+      <div class="pwa-banner-sub">Play TCC Fantasy from your home screen</div>
+    </div>
+    <button class="pwa-banner-btn" id="pwa-install-btn">Install</button>
+    <button class="pwa-banner-close" id="pwa-banner-close" aria-label="Dismiss">✕</button>
+  </div>
+</div>
+
+<script src="js/fantasy.js?v=2"></script>
+<script src="js/fantasy-pwa.js?v=2"></script>
+</body>
+</html>

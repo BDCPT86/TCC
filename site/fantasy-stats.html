@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Insights | Tygerberg Cricket Club</title>
+<meta name="description" content="TCC Fantasy Cricket league insights — ownership, captaincy, transfers, chips and Manager of the Week.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="canonical" href="https://tygerbergcc.co.za/fantasy-stats.html">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="manifest" href="fantasy-manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TCC Fantasy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/leaderboard.css">
+<link rel="stylesheet" href="css/fantasy-stats.css">
+<link rel="stylesheet" href="css/fantasy-pwa.css">
+<style>.skip-link{position:absolute;left:-9999px;top:4px;z-index:9999;padding:8px 16px;background:#b8922a;color:#000;font-weight:700;font-size:0.8rem;border-radius:2px;text-decoration:none}.skip-link:focus{left:4px}</style>
+<link rel="stylesheet" href="css/games.css?v=1">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- ══ NAV PILL ══ -->
+<div class="nav-wrap">
+  <nav class="nav-pill" id="nav-pill">
+    <div class="nav-logo-wrap">
+      <div class="nav-logo-ring">
+        <img loading="eager" src="images/tcc-logo.png" alt="TCC" class="nav-logo-img">
+      </div>
+    </div>
+    <div class="nav-sep"></div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="fantasy.html" class="nav-link">Fantasy</a></li>
+      <li><a href="leaderboard.html" class="nav-link">Leaderboard</a></li>
+      <li><a href="fantasy-stats.html" class="nav-link active">Insights</a></li>
+      <li><a href="player-stats.html" class="nav-link">Stats</a></li>
+      <li><a href="badges.html" class="nav-link">Badges</a></li>
+      <li><a href="fantasy-guide.html" class="nav-link">Guide</a></li>
+      <li><a href="profile.html" class="nav-link" id="nav-profile-link" style="display:none">My Team</a></li>
+    </ul>
+    <div class="nav-sep"></div>
+    <button class="nav-sayhello" id="nav-enter-btn">
+      <span class="nav-sh-border"></span>
+      <span class="nav-sh-inner">Pick XI ↗</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</div>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="fantasy.html">Fantasy</a></li>
+    <li><a href="games.html"      class="nav-link nav-link-games">Games <span class="nav-games-badge">NEW</span></a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="fantasy-stats.html" class="active">Insights</a></li>
+    <li><a href="player-stats.html">Stats</a></li>
+    <li><a href="badges.html">Badges</a></li>
+    <li><a href="fantasy-guide.html">Guide</a></li>
+    <li><a href="profile.html" id="drawer-profile-link" style="display:none">My Team</a></li>
+  </ul>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="main-content" class="fs-hero">
+  <div class="fs-hero-content">
+    <div class="fs-hero-eyebrow"><span class="fs-hero-rule"></span>TCC Fantasy Cricket · League Insights</div>
+    <h1 class="fs-hero-h1">The numbers<br><em>everyone's watching.</em></h1>
+    <p class="fs-hero-sub">Ownership, captaincy, transfers and chips across the whole league. Updated every round.</p>
+  </div>
+  <div class="fs-round-filter" id="fs-round-filter"></div>
+</section>
+
+<main class="fs-main">
+
+  <!-- Manager of the Week -->
+  <section class="fs-motw" id="fs-motw" style="display:none">
+    <div class="fs-motw-badge">★</div>
+    <div class="fs-motw-body">
+      <div class="fs-motw-label">Manager of the Week</div>
+      <div class="fs-motw-name" id="fs-motw-name">—</div>
+      <div class="fs-motw-sub" id="fs-motw-sub">—</div>
+    </div>
+    <div class="fs-motw-score">
+      <div class="fs-motw-pts" id="fs-motw-pts">—</div>
+      <div class="fs-motw-pts-lbl">points</div>
+    </div>
+  </section>
+
+  <!-- Top-line stat strip -->
+  <section class="fs-strip" id="fs-strip">
+    <div class="fs-strip-item"><div class="fs-strip-val" id="fs-stat-managers">—</div><div class="fs-strip-key">Managers</div></div>
+    <div class="fs-strip-item"><div class="fs-strip-val" id="fs-stat-avg">—</div><div class="fs-strip-key">Avg / round</div></div>
+    <div class="fs-strip-item"><div class="fs-strip-val" id="fs-stat-high">—</div><div class="fs-strip-key">Highest round</div></div>
+    <div class="fs-strip-item"><div class="fs-strip-val" id="fs-stat-chips">—</div><div class="fs-strip-key">Chips played</div></div>
+  </section>
+
+  <div class="fs-grid">
+    <!-- Most owned -->
+    <section class="fs-card">
+      <div class="fs-card-head">
+        <h2 class="fs-card-title">Most Selected</h2>
+        <span class="fs-card-tag">% of teams</span>
+      </div>
+      <div class="fs-bars" id="fs-owned"><div class="fs-loading">Loading…</div></div>
+    </section>
+
+    <!-- Most captained -->
+    <section class="fs-card">
+      <div class="fs-card-head">
+        <h2 class="fs-card-title">Most Captained</h2>
+        <span class="fs-card-tag">⭐ armband %</span>
+      </div>
+      <div class="fs-bars" id="fs-captained"><div class="fs-loading">Loading…</div></div>
+    </section>
+
+    <!-- Transfers in -->
+    <section class="fs-card">
+      <div class="fs-card-head">
+        <h2 class="fs-card-title">Trending In</h2>
+        <span class="fs-card-tag">▲ added this round</span>
+      </div>
+      <div class="fs-bars" id="fs-in"><div class="fs-loading">Loading…</div></div>
+    </section>
+
+    <!-- Transfers out -->
+    <section class="fs-card">
+      <div class="fs-card-head">
+        <h2 class="fs-card-title">Trending Out</h2>
+        <span class="fs-card-tag">▼ dropped this round</span>
+      </div>
+      <div class="fs-bars" id="fs-out"><div class="fs-loading">Loading…</div></div>
+    </section>
+
+    <!-- Differentials -->
+    <section class="fs-card">
+      <div class="fs-card-head">
+        <h2 class="fs-card-title">Differentials</h2>
+        <span class="fs-card-tag">&lt; 15% owned · high points</span>
+      </div>
+      <div class="fs-bars" id="fs-diff"><div class="fs-loading">Loading…</div></div>
+    </section>
+
+    <!-- Chip usage -->
+    <section class="fs-card">
+      <div class="fs-card-head">
+        <h2 class="fs-card-title">Chips Played</h2>
+        <span class="fs-card-tag">power-ups used</span>
+      </div>
+      <div class="fs-chips" id="fs-chips"><div class="fs-loading">Loading…</div></div>
+    </section>
+  </div>
+
+  <div class="fs-footer-links">
+    <a href="leaderboard.html" class="fs-text-btn">← Leaderboard</a>
+    <span>·</span>
+    <a href="pick.html" class="fs-text-btn">Pick your XI</a>
+  </div>
+</main>
+
+<script src="js/fantasy-pwa.js"></script>
+<script src="js/fantasy-stats.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0a" />
+<title>Tygerberg Six &amp; Out Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="stage">
+    <!-- The pitch / scene -->
+    <canvas id="game"></canvas>
+
+    <!-- In-play HUD -------------------------------------------------------->
+    <div id="hud" class="hidden" aria-hidden="true">
+      <div class="hud-row">
+        <div class="stat stat--score">
+          <span class="stat-val" id="hudRuns">0</span>
+          <span class="stat-sub"><span id="hudBalls">0</span> balls&nbsp;·&nbsp;SR <span id="hudSR">0</span></span>
+        </div>
+        <div class="stat stat--right">
+          <span class="stat-label">High</span>
+          <span class="stat-val sm" id="hudHigh">0</span>
+        </div>
+        <button id="muteBtn" class="icon-btn" title="Mute" aria-label="Mute">
+          <span class="ico-sound"></span>
+        </button>
+      </div>
+
+      <div class="combo-wrap">
+        <div class="combo-track"><div class="combo-fill" id="comboFill"></div></div>
+        <div class="combo-tag" id="comboTag">x1</div>
+        <div class="fire-tag" id="fireTag">FIRE&nbsp;MODE</div>
+        <div class="golden-tag" id="goldenTag">GOLDEN&nbsp;BALL</div>
+      </div>
+
+      <div class="prompt" id="prompt">Tap / Click / Space to play</div>
+    </div>
+
+    <!-- Toast for achievements --------------------------------------------->
+    <div id="toast" class="toast"></div>
+
+    <!-- START SCREEN -------------------------------------------------------->
+    <section id="startScreen" class="screen">
+      <div class="screen-inner">
+        <div class="crest" id="crest"></div>
+        <h1 class="title">Six &amp; Out<span class="title-sub">Challenge</span></h1>
+        <p class="club">Tygerberg Cricket Club</p>
+
+        <div class="howto">
+          <span class="howto-line">Stop the bar in the <b class="g">GOLD</b> for a <b class="g">SIX</b>.</span>
+          <span class="howto-line dim">Green&nbsp;= four&nbsp;·&nbsp;edges&nbsp;= wicket. One wicket, no second chances.</span>
+        </div>
+
+        <!-- The name is asked for BEFORE the innings, so every game
+             records itself. It used to be asked for afterwards, and
+             only if the score would make the top ten — so most people
+             played, got out, and nothing happened. -->
+        <div class="name-wrap start-name">
+          <label for="startName">Who's batting?</label>
+          <input id="startName" maxlength="14" placeholder="Your name" autocomplete="off" />
+        </div>
+
+        <button id="playBtn" class="btn btn--primary">PLAY</button>
+
+        <!-- Two numbers now that the board is shared, and they are
+             different things: the best anyone has scored, and the best
+             you have. One label used to carry both. -->
+        <div class="hi-row">
+          <span>Clubhouse best</span>
+          <strong id="clubBest">—</strong>
+          <span class="hi-sep">·</span>
+          <span>Yours</span>
+          <strong id="startHigh">0</strong>
+        </div>
+        <button id="boardBtn" class="btn btn--ghost">Leaderboard</button>
+      </div>
+      <footer class="motto">Facta Non Verba</footer>
+    </section>
+
+    <!-- GAME OVER SCREEN ---------------------------------------------------->
+    <section id="overScreen" class="screen hidden">
+      <div class="screen-inner">
+        <div class="crest sm" id="crest2"></div>
+        <p class="out-how" id="outHow">BOWLED</p>
+        <h2 class="out-title">OUT</h2>
+
+        <div class="final">
+          <div class="final-runs"><span id="finalRuns">0</span></div>
+          <div class="final-meta">
+            <span><b id="finalBalls">0</b> balls</span>
+            <span>SR <b id="finalSR">0</b></span>
+            <span><b id="finalBest">0</b> best shot</span>
+          </div>
+        </div>
+
+        <div id="newHigh" class="newhigh hidden">YOUR BEST YET!</div>
+
+        <!-- The innings is already on its way to the board by the time
+             this is read. This says what happened to it, including
+             when it could not be sent. -->
+        <div id="saveState" class="save-state">
+          <span id="saveMsg">Signing the board…</span>
+          <button id="retryBtn" class="btn btn--ghost sm hidden">Try again</button>
+        </div>
+
+        <button id="againBtn" class="btn btn--primary">PLAY AGAIN</button>
+        <button id="overBoardBtn" class="btn btn--ghost">Leaderboard</button>
+      </div>
+      <footer class="motto">Facta Non Verba</footer>
+    </section>
+
+    <!-- LEADERBOARD --------------------------------------------------------->
+    <section id="boardScreen" class="screen hidden">
+      <div class="screen-inner board-inner">
+        <div class="crest sm" id="crest3"></div>
+        <h2 class="board-title">Clubhouse Leaderboard</h2>
+        <ol id="boardList" class="board-list"></ol>
+        <p id="boardEmpty" class="board-empty hidden">No scores yet. Be the first to sign the board.</p>
+        <!-- Says so when the board on screen is the last one we managed
+             to fetch rather than the live one. A stale board presented
+             as current is worse than no board. -->
+        <p id="boardStale" class="board-stale hidden">Offline — showing the last board this device saw.</p>
+        <button id="boardBack" class="btn btn--primary">Back</button>
+      </div>
+      <footer class="motto">Facta Non Verba</footer>
+    </section>
+  </div>
+
+  <!-- order matters: helpers first, game last -->
+  <script src="js/ui.js"></script>
+  <script src="js/ball.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCC Fantasy Cricket — How to Play</title>
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="manifest" href="fantasy-manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold2:#e8c86a;--gold3:#f0c832;
+  --pitch:#1a3a1a;--bg:#080e08;--bg2:#0f180f;--bg3:#172017;
+  --white:#f5f5f0;--muted:#8a9a8a;--muted2:#9aaa9a;
+  --blue:#4a8af4;--blue2:#a0c0ff;--green:#3a8f5a;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--white);line-height:1.6;overflow-x:hidden}
+/* NAV */
+.nav-wrap{position:sticky;top:0;z-index:100;padding:0 24px}
+.nav-pill{display:flex;align-items:center;background:rgba(8,14,8,0.92);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:999px;padding:8px 14px;margin:12px auto;max-width:760px;gap:2px}
+.nav-logo-img{width:28px;height:28px;border-radius:50%}
+.nav-sep{width:1px;height:20px;background:rgba(255,255,255,0.08);margin:0 12px;flex-shrink:0}
+.nav-links{list-style:none;display:flex;gap:2px;flex:1;min-width:0;justify-content:center}
+.nav-link{font-size:0.78rem;font-weight:600;color:var(--muted2);text-decoration:none;padding:5px 9px;border-radius:999px;transition:all 0.2s;white-space:nowrap}
+.nav-link:hover,.nav-link.active{color:var(--white);background:rgba(255,255,255,0.07)}
+.nav-cta{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;text-transform:uppercase;background:var(--gold);color:#0a0a0a;border:none;padding:7px 14px;border-radius:999px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0}
+.nav-cta:hover{background:var(--gold2)}
+/* COVER */
+/* ── HERO ── */
+.cover{
+  min-height:88vh;position:relative;overflow:hidden;
+  background:#04090a;
+  display:flex;align-items:center;
+}
+.cover-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,#12200f,#080e08);
+  background-image:url('images/guide-hero.webp');background-size:cover;
+  background-position:center;background-repeat:no-repeat;
+  opacity:0.55;
+}
+.cover-bg-grad{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(4,9,10,0.98) 0%,rgba(4,9,10,0.82) 45%,rgba(4,9,10,0.1) 100%);
+}
+.cover-inner{
+  position:relative;z-index:2;
+  padding:100px 56px 72px;
+  max-width:600px;
+}
+.cover-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:5px;
+  text-transform:uppercase;color:rgba(255,255,255,0.45);
+  margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.cover-eyebrow::before{content:'';display:block;width:28px;height:1px;background:rgba(255,255,255,0.3)}
+.cover-pretitle{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(18px,3vw,24px);font-weight:600;
+  letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.55);line-height:1;
+  margin-bottom:6px;
+}
+.cover-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(64px,11vw,104px);font-weight:900;
+  line-height:0.88;letter-spacing:-2px;text-transform:uppercase;
+  color:#f5f5f0;margin-bottom:20px;
+}
+.cover-title span{
+  display:block;
+  color:#8CDB40;
+  -webkit-text-stroke:0px;
+  text-shadow:0 0 40px rgba(140,219,64,0.35);
+}
+.cover-tagline{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(13px,2vw,16px);font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;
+  color:rgba(255,255,255,0.6);
+  margin-bottom:48px;
+  display:flex;align-items:center;gap:10px;
+}
+.cover-tagline::before{content:'';display:block;width:24px;height:2px;background:#8CDB40;flex-shrink:0}
+.cover-pillars{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:40px}
+.cover-pillar{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.cover-pillar-icon{
+  width:40px;height:40px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.05);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:6px;
+}
+.cover-pillar-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:800;letter-spacing:1.5px;
+  text-transform:uppercase;color:#fff;
+}
+.cover-pillar-sub{
+  font-size:11px;color:rgba(255,255,255,0.4);
+  letter-spacing:0.5px;
+}
+.guide-cover-toc{display:flex;flex-wrap:wrap;gap:8px;position:relative}
+.guide-toc-chip{font-family:'Barlow Condensed',sans-serif!important;font-size:9px!important;font-weight:700!important;letter-spacing:2px;text-transform:uppercase!important;padding:7px 14px;border:1px solid rgba(201,168,76,0.3)!important;color:rgba(255,255,255,0.4)!important;text-decoration:none;border-radius:2px;background:none!important}
+.guide-toc-chip:hover{border-color:rgba(201,168,76,0.7)!important;color:#C9A84C!important}
+/* LAYOUT */
+.page{max-width:860px;margin:0 auto;padding:0 32px}
+.section{padding:80px 0 60px;border-top:1px solid rgba(255,255,255,0.05)}
+.section-num{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:0.5px;color:rgba(201,168,76,0.5);display:block;margin-bottom:2px;font-variant-numeric:tabular-nums}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.02;text-transform:uppercase;letter-spacing:-0.5px;color:var(--white);margin:0 0 22px;text-wrap:balance}
+.section-title em{color:var(--gold);font-style:normal}
+.lead{font-family:'DM Serif Display',Georgia,serif;font-size:1.18rem;color:var(--muted2);max-width:64ch;margin:0 0 34px;line-height:1.65}
+h2.sub{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin:28px 0 12px}
+/* STEPS */
+.steps{display:flex;flex-direction:column}
+.step{display:grid;grid-template-columns:52px 1fr;gap:0 20px;padding:24px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.step:last-child{border-bottom:none}
+.step-num{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:900;color:transparent;line-height:1;text-align:right;padding-top:2px;-webkit-text-stroke:1px rgba(201,168,76,0.35)}
+.step-content h3{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin-bottom:6px}
+.step-content p{font-size:0.88rem;color:var(--muted2);line-height:1.6}
+.step-content p strong{color:var(--white)}
+.step-content a{color:var(--gold)}
+/* CLICK CYCLE */
+.click-cycle{display:flex;align-items:flex-start;gap:0;margin:32px 0;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}.click-cycle::-webkit-scrollbar{display:none}
+.cycle-step{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:100px;padding:0 6px;scroll-snap-align:start}
+.cycle-avatar{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:0.9rem;letter-spacing:1px;position:relative;border:2px solid transparent}
+.ca-none{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.35)}
+.ca-sel{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.4);color:var(--gold2)}
+.ca-cap{background:var(--gold);border-color:var(--gold3);color:#1a1a1a;box-shadow:0 0 18px rgba(240,200,74,0.4)}
+.ca-vc{background:rgba(74,138,244,0.25);border-color:var(--blue);color:var(--blue2);box-shadow:0 0 14px rgba(74,138,244,0.3)}
+.cycle-badge{position:absolute;top:-4px;right:-4px;font-size:0.6rem;font-weight:900;background:rgba(0,0,0,0.7);border-radius:999px;padding:1px 4px}
+.cycle-label{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-align:center}
+.cl-none{color:var(--muted)}.cl-sel{color:var(--gold)}.cl-cap{color:var(--gold3)}.cl-vc{color:var(--blue2)}
+.cycle-mult{font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;font-weight:700;color:var(--muted);text-align:center}
+.cm-cap{color:var(--gold3)}.cm-vc{color:var(--blue2)}
+.cycle-arrow{font-size:1rem;color:var(--muted);flex-shrink:0;padding:0 2px;margin-top:14px}
+/* MULTIPLIER CARDS */
+.mult-row{display:flex;gap:12px;margin:28px 0;flex-wrap:wrap}
+.mult-card{flex:1;min-width:150px;padding:22px 18px;border:1px solid rgba(255,255,255,0.06)}
+.mult-card.gold{background:rgba(201,168,76,0.07);border-color:rgba(201,168,76,0.28)}
+.mult-card.blue{background:rgba(74,138,244,0.07);border-color:rgba(74,138,244,0.28)}
+.mult-card.wild{background:rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.14)}
+.mult-icon{font-size:1.6rem;margin-bottom:10px}
+.mult-label{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.mult-val{font-family:'Barlow Condensed',sans-serif;font-size:2.4rem;font-weight:900;line-height:1;margin-bottom:6px}
+.mult-card.gold .mult-val{color:var(--gold3)}.mult-card.blue .mult-val{color:var(--blue2)}.mult-card.wild .mult-val{color:var(--gold)}
+.mult-desc{font-size:0.82rem;color:var(--muted2);line-height:1.5}
+/* SCORE GRID */
+.score-section-title{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold);margin:38px 0 10px;padding:0}
+.score-grid{display:block;margin:0 0 18px;border-top:1px solid rgba(255,255,255,0.09)}
+.score-card{display:grid;grid-template-columns:58px 1fr;gap:18px;align-items:baseline;padding:13px 4px;border-bottom:1px solid rgba(255,255,255,0.07);background:none;transition:background 0.18s ease}
+.score-card:hover{background:rgba(201,168,76,0.035)}
+.score-card-val{font-family:'Barlow Condensed',sans-serif;font-size:1.45rem;font-weight:800;color:var(--gold);line-height:1.1;text-align:right;font-variant-numeric:tabular-nums}
+.score-card-label{font-size:0.88rem;color:var(--muted2);line-height:1.55;max-width:62ch}
+.score-card-label strong{display:block;color:var(--white);font-weight:600;font-size:0.94rem;margin-bottom:2px}
+.score-card-label strong{color:var(--white);display:block;font-size:0.85rem;margin-bottom:2px}
+/* EXAMPLE */
+.example-box{background:var(--bg3);border:1px solid rgba(255,255,255,0.06);padding:22px;margin:24px 0}
+.example-label{font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.example-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.88rem}
+.example-row:last-child{border-bottom:none}
+.example-row .name{color:var(--white)}
+.example-row .name small{color:var(--muted);font-size:0.75rem;margin-left:6px}
+.example-row .pts{font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.example-row .pts.gold{color:var(--gold3);font-size:1.05rem}
+.example-row .pts.blue{color:var(--blue2);font-size:1rem}
+.example-row .pts.norm{color:var(--muted2)}
+.example-total{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.example-total .label{color:var(--muted2);letter-spacing:2px;text-transform:uppercase;font-size:0.7rem}
+.example-total .val{color:var(--gold);font-size:1.25rem}
+/* CALLOUT */
+.callout{border:1px solid rgba(201,168,76,0.26);border-radius:6px;padding:16px 20px;margin:24px 0;background:rgba(201,168,76,0.05);color:rgba(255,255,255,0.72);font-size:0.88rem;line-height:1.65}
+.callout.blue{border-color:var(--blue);background:rgba(74,138,244,0.04)}
+.callout.green{border-color:var(--green);background:rgba(58,143,90,0.04)}
+.callout p{font-size:0.88rem;color:var(--muted2);line-height:1.6}
+.callout p strong{color:var(--white)}
+/* FEATURE LIST */
+.feature-list{display:flex;flex-direction:column;gap:16px;margin:24px 0}
+.feature-item{display:flex;gap:16px;align-items:flex-start}
+.feature-icon{font-size:1.3rem;flex-shrink:0;width:36px;text-align:center;padding-top:2px}
+.feature-text h4{font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin-bottom:3px}
+.feature-text p{font-size:0.85rem;color:var(--muted2);line-height:1.5}
+.feature-text p strong{color:var(--white)}
+/* FOOTER */
+.guide-footer{padding:56px 0 40px;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.guide-footer-brand{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+.guide-footer-brand strong{color:var(--gold)}
+.guide-footer-links{display:flex;gap:16px}
+.guide-footer-links a{font-size:0.8rem;color:var(--muted2);text-decoration:none}
+.guide-footer-links a:hover{color:var(--gold)}
+/* ── MOBILE ── */
+/* ── MOBILE (<600px) ── */
+@media(max-width:600px){
+  .cover{min-height:auto}.cover-inner{padding:88px 24px 52px}
+  .cover-left-rule{display:none}
+  .cover-diag{opacity:0.4}
+  .cover-stats{position:static!important;order:5;flex-direction:row!important;flex-wrap:nowrap;gap:8px;width:100%;margin-top:28px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .cover-stat{min-width:0!important;flex:1 1 auto;flex-shrink:0;padding:9px 12px}
+  .cover-stat-val{font-size:18px!important}
+  .cover-stat-key{font-size:8px!important;white-space:nowrap}
+  .guide-cover-tag{font-size:8px!important;margin-bottom:12px;order:1}
+  .guide-cover-title{font-size:clamp(48px,18vw,72px)!important;margin-bottom:10px!important;order:2}
+  .guide-cover-sub{font-size:14px!important;margin-bottom:16px!important;max-width:100%;order:3}
+  .guide-cover-toc{order:4;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;gap:6px;-ms-overflow-style:none;scrollbar-width:none}
+  .guide-cover-toc::-webkit-scrollbar{display:none}
+  .guide-toc-chip{font-size:8px!important;padding:6px 10px;flex-shrink:0}
+  .page{padding:0 20px}
+  .section{padding:52px 0 32px}
+  .section-title{font-size:clamp(1.8rem,10vw,2.5rem)}
+  h2.sub{font-size:0.9rem}
+  .step{grid-template-columns:40px 1fr;gap:0 14px;padding:20px 0}
+  .step-num{font-size:1.8rem}
+  .step-content h3{font-size:0.9rem}
+  .step-content p{font-size:0.82rem}
+  .click-cycle{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:12px}
+  .cycle-step{min-width:82px;flex-shrink:0}
+  .cycle-arrow{padding:0 2px;flex-shrink:0}
+  .mult-row{flex-direction:column}
+  .score-card{grid-template-columns:44px 1fr;gap:12px;padding:12px 2px}
+  .score-card-val{font-size:1.6rem}
+  .example-row .name small{display:none}
+  .example-row{font-size:0.8rem}
+  .feature-icon{width:28px;font-size:1.1rem;padding-top:1px}
+  .feature-text h4{font-size:0.85rem}
+  .feature-text p{font-size:0.8rem}
+  .callout p{font-size:0.82rem}
+  .cycle-label{font-size:0.58rem;letter-spacing:1px}
+  .nav-pill{padding:6px 10px}
+  .nav-links{display:none}
+  .guide-footer{flex-direction:column;gap:16px;padding:40px 0 32px;text-align:center}
+  .guide-footer-links{justify-content:center}
+}
+
+/* ── TABLET (601–900px) ── */
+@media(max-width:900px) and (min-width:601px){
+  .cover-inner{padding:80px 40px 56px}
+  .cover-stats{top:60px;right:28px}
+  .guide-cover-title{font-size:clamp(56px,8vw,80px)!important}
+  .mult-row{flex-wrap:wrap}
+  .mult-card{min-width:calc(50% - 6px)}
+  .page{padding:0 28px}
+}
+/* ── Mobile nav drawer (self-contained, no site CSS needed) ── */
+.nav-links { display: flex; }
+.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+.hamburger span { display: block; width: 22px; height: 2px; background: var(--white,#f5f5f0); border-radius: 2px; transition: all 0.25s; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-drawer {
+  display: none; position: fixed; top: 56px; left: 0; right: 0;
+  background: rgba(8,14,8,0.98); backdrop-filter: blur(12px);
+  padding: 16px 20px; z-index: 99;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-direction: column; gap: 2px;
+}
+.mobile-drawer.open { display: flex; }
+.mobile-drawer ul { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.mobile-drawer a {
+  display: block; padding: 10px 12px; color: rgba(255,255,255,0.6);
+  text-decoration: none; font-size: 0.88rem; font-weight: 500;
+  border-radius: 8px; transition: all 0.15s;
+}
+.mobile-drawer a:hover, .mobile-drawer a.active { background: rgba(255,255,255,0.06); color: #f5f5f0; }
+/* Switch to the drawer while the inline row still fits, not just on phones —
+   8 links plus the CTA need ~645px and were overflowing up to ~1100px. */
+@media(max-width:820px) {
+  .nav-links { display: none !important; }
+  .hamburger { display: flex; }
+  .nav-sep:last-of-type { display: none; }
+}
+
+</style>
+<link rel="stylesheet" href="css/games.css?v=1">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+
+<div class="nav-wrap">
+  <nav class="nav-pill" id="nav-pill">
+    <div class="nav-logo-wrap">
+      <div class="nav-logo-ring">
+        <img src="images/tcc-logo.png" alt="TCC" class="nav-logo-img">
+      </div>
+      </div>
+    <div class="nav-sep"></div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="fantasy.html" class="nav-link">Fantasy</a></li>
+      <li><a href="leaderboard.html" class="nav-link">Leaderboard</a></li>
+      <li><a href="fantasy-stats.html" class="nav-link">Insights</a></li>
+      <li><a href="player-stats.html" class="nav-link">Stats</a></li>
+      <li><a href="badges.html" class="nav-link">Badges</a></li>
+      <li><a href="fantasy-guide.html" class="nav-link  active">Guide</a></li>
+      <li><a href="profile.html" class="nav-link" id="nav-profile-link" style="display:none">My Team</a></li>
+    </ul>
+    <div class="nav-sep"></div>
+    <a href="pick.html" class="nav-cta">Pick XI ↗</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</div>
+
+<!-- Mobile drawer -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="fantasy.html">Fantasy</a></li>
+    <li><a href="games.html"      class="nav-link nav-link-games">Games <span class="nav-games-badge">NEW</span></a></li>
+    <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="fantasy-stats.html">Insights</a></li>
+    <li><a href="player-stats.html">Stats</a></li>
+    <li><a href="badges.html">Badges</a></li>
+    <li><a href="fantasy-guide.html"  class="active">Guide</a></li>
+    <li><a href="profile.html" id="drawer-profile-link" style="display:none">My Team</a></li>
+  </ul>
+</div>
+
+<div class="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-bg-grad"></div>
+  <div class="cover-inner">
+    <div class="cover-eyebrow">Tygerberg Cricket Club &middot; Fantasy Cricket</div>
+    <div class="cover-pretitle">Your Guide to</div>
+    <h1 class="cover-title">Fantasy<span>Cricket.</span></h1>
+    <div class="cover-tagline">Learn. Strategize. Win.</div>
+    <div class="cover-pillars">
+      <div class="cover-pillar">
+        <div class="cover-pillar-icon">📖</div>
+        <div class="cover-pillar-title">Learn</div>
+        <div class="cover-pillar-sub">The Basics</div>
+      </div>
+      <div class="cover-pillar">
+        <div class="cover-pillar-icon">👥</div>
+        <div class="cover-pillar-title">Build</div>
+        <div class="cover-pillar-sub">Your Team</div>
+      </div>
+      <div class="cover-pillar">
+        <div class="cover-pillar-icon">📈</div>
+        <div class="cover-pillar-title">Strategize</div>
+        <div class="cover-pillar-sub">Smart Moves</div>
+      </div>
+      <div class="cover-pillar">
+        <div class="cover-pillar-icon">🏆</div>
+        <div class="cover-pillar-title">Win</div>
+        <div class="cover-pillar-sub">Big Rewards</div>
+      </div>
+    </div>
+    <nav class="guide-cover-toc">
+      <a class="guide-toc-chip" href="#getting-started">Getting Started</a>
+      <a class="guide-toc-chip" href="#picking">Picking Your XI</a>
+      <a class="guide-toc-chip" href="#captain">Captain &amp; VC</a>
+      <a class="guide-toc-chip" href="#chips">Power-ups</a>
+      <a class="guide-toc-chip" href="#boosts">Round Boosts</a>
+      <a class="guide-toc-chip" href="#scoring">Scoring</a>
+      <a class="guide-toc-chip" href="#notifications">Notifications</a>
+      <a class="guide-toc-chip" href="#leaderboard">Leaderboard</a>
+      <a class="guide-toc-chip" href="#h2h">Head-to-Head</a>
+      <a class="guide-toc-chip" href="#totw">Team of the Week</a>
+      <a class="guide-toc-chip" href="#badges">Badges</a>
+    </nav>
+  </div>
+</div>
+
+<div class="page">
+
+  <section class="section" id="getting-started">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Getting <em>Started</em></h2>
+    <p class="lead">Access is for TCC members. Every new player goes through a quick one-time verification before picking their first team.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Hit Enter the League</h3>
+          <p>From the <a href="fantasy.html">Fantasy home page</a>, tap <strong>Enter the League</strong> or <strong>Pick XI ↗</strong>. You'll land on the sign-in screen.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Enter your email</h3>
+          <p>A <strong>6-digit one-time code</strong> is sent to your inbox. No password — ever. The code expires in 10 minutes, so check your email promptly. Check your spam folder if it doesn't arrive.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Set your name and team name</h3>
+          <p>First time only. Your <strong>team name</strong> is what everyone sees on the leaderboard — pick something good. You can update it later from the pick page.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Wait for approval</h3>
+          <p>New registrations are reviewed to keep the league club-member only. You'll receive a <strong>confirmation email</strong> once you're approved. After that, signing in is instant — just email and code, every time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="picking">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Picking <em>Your XI</em></h2>
+    <p class="lead">You have <strong style="color:var(--gold)">R100</strong> to pick 11 players. Every manager gets the same budget — the edge is entirely in how you spend it.</p>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">👈</div>
+        <div class="feature-text">
+          <h4>Player Pool</h4>
+          <p>Browse all available players sorted by value. Filter by role — <strong>Bat / Bowl / AR / WK</strong> — or search by name. Each card shows the player's <strong>fantasy value</strong>, their <strong>form dots</strong> over the last 3 rounds, and what <strong>percentage of managers have picked them</strong>. Low-ownership picks are your differentials.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🏟️</div>
+        <div class="feature-text">
+          <h4>Pitch View</h4>
+          <p>Selected players snap onto a visual pitch divided into four zones — <strong>Keeper · Batters · All-Rounders · Bowlers</strong>. You can see your team shape at a glance. Tap any chip on the pitch to cycle their state or remove them.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📋</div>
+        <div class="feature-text">
+          <h4>My XI List</h4>
+          <p>A running list of your selected players with values, roles, and captain/VC labels. Shows budget spent and remaining. The <strong>Submit button only activates when you have exactly 11 players, a captain, and a vice-captain</strong>.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💰</div>
+        <div class="feature-text">
+          <h4>Budget Bar</h4>
+          <p>The gold bar along the top fills as you spend. Players greyed out in the pool would take you over your R100 — drop someone cheaper to free up space.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <p><strong>Your team carries over automatically.</strong> You don't need to re-pick every round. When a new round opens, your XI from the previous round is already saved as your team. Just open the pick screen if you want to make changes — otherwise you're already entered. Any changes must be submitted before the deadline to take effect.</p>
+    </div>
+    <div class="callout blue">
+      <p><strong>Deadline:</strong> Each round has a pick deadline shown in the top bar. Once it closes, no changes are allowed. You can swap players, change your captain or vice-captain as many times as you like before then — every submit overwrites your previous selection.</p>
+    </div>
+    <div class="callout green">
+      <p><strong>No active round?</strong> If there's nothing open, the pick page will say so. Check back closer to the next match day — a new round opens a few days before each fixture.</p>
+    </div>
+  </section>
+
+  <section class="section" id="captain">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Captain <em>&amp; VC</em></h2>
+    <p class="lead">Your two most important picks every round. The captain doubles their points. The vice-captain scores 1.5×. Both are required before you can submit.</p>
+    <h2 class="sub">The click cycle</h2>
+    <p style="font-size:0.88rem;color:var(--muted2);margin-bottom:20px">Tap the same player repeatedly to move through all four states.</p>
+    <div class="click-cycle">
+      <div class="cycle-step">
+        <div class="cycle-avatar ca-none">AB</div>
+        <div class="cycle-label cl-none">Not picked</div>
+        <div class="cycle-mult">—</div>
+      </div>
+      <div class="cycle-arrow">→</div>
+      <div class="cycle-step">
+        <div class="cycle-avatar ca-sel">AB</div>
+        <div class="cycle-label cl-sel">Selected</div>
+        <div class="cycle-mult">×1</div>
+      </div>
+      <div class="cycle-arrow">→</div>
+      <div class="cycle-step">
+        <div class="cycle-avatar ca-cap">AB<span class="cycle-badge" style="color:var(--gold3)">C</span></div>
+        <div class="cycle-label cl-cap">Captain</div>
+        <div class="cycle-mult cm-cap">×2 pts</div>
+      </div>
+      <div class="cycle-arrow">→</div>
+      <div class="cycle-step">
+        <div class="cycle-avatar ca-vc">AB<span class="cycle-badge" style="color:var(--blue2);font-size:0.5rem">VC</span></div>
+        <div class="cycle-label cl-vc">Vice-Captain</div>
+        <div class="cycle-mult cm-vc">×1.5 pts</div>
+      </div>
+      <div class="cycle-arrow">→</div>
+      <div class="cycle-step">
+        <div class="cycle-avatar ca-none">AB</div>
+        <div class="cycle-label cl-none">Removed</div>
+        <div class="cycle-mult">—</div>
+      </div>
+    </div>
+    <div class="mult-row">
+      <div class="mult-card gold">
+        <div class="mult-icon">⭐</div>
+        <div class="mult-label">Captain</div>
+        <div class="mult-val">×2</div>
+        <div class="mult-desc">Your captain's points are doubled. Go for your most reliable scorer — someone guaranteed to play and in strong recent form.</div>
+      </div>
+      <div class="mult-card blue">
+        <div class="mult-icon">🌟</div>
+        <div class="mult-label">Vice-Captain</div>
+        <div class="mult-val">×1.5</div>
+        <div class="mult-desc">Your VC scores 1.5×. Use this for a differential — someone with upside who might outscore your captain.</div>
+      </div>
+      <div class="mult-card wild">
+        <div class="mult-icon">⚡</div>
+        <div class="mult-label">Wildcard Round</div>
+        <div class="mult-val">×3</div>
+        <div class="mult-desc">On wildcard rounds your captain scores triple. Announced in advance. High risk, high reward — back your best batter.</div>
+      </div>
+    </div>
+    <div class="callout">
+      <p><strong>Strategy tip:</strong> The captain pick is the biggest decision you make each round. A 60-run innings as captain earns 120 points. Back someone with a near-certain start and a good recent record against the opposition.</p>
+    </div>
+    <h2 class="sub">Worked example</h2>
+    <div class="example-box">
+      <div class="example-label">Normal Round — Top 3 from one team</div>
+      <div class="example-row"><span class="name">J. Smith <small>Captain ⭐</small></span><span class="pts gold">72 pt <small style="color:var(--muted);font-size:0.72rem">(36 base × 2)</small></span></div>
+      <div class="example-row"><span class="name">T. Hendricks <small>VC 🌟</small></span><span class="pts blue">45 pt <small style="color:var(--muted);font-size:0.72rem">(30 base × 1.5)</small></span></div>
+      <div class="example-row"><span class="name">R. Davids</span><span class="pts norm">22 pt</span></div>
+      <div class="example-total"><span class="label">Combined</span><span class="val">139 pt</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="chips">
+    <span class="section-num">04 · Power-ups</span>
+    <h2 class="section-title">Chips &amp; <em>Power-ups</em></h2>
+    <p style="color:rgba(255,255,255,0.6);max-width:640px;margin-bottom:24px;line-height:1.6">
+      Each manager gets four one-time power-ups for the whole season. Play them from the pick screen before a round locks. Choose your moment — once a chip is spent, it's gone until next season.
+    </p>
+    <div class="score-grid">
+      <div class="score-card"><div class="score-card-val">🚀</div><div class="score-card-label"><strong>Triple Captain</strong>Your captain scores ×3 instead of ×2 for that round. Save it for a round where your captain is a near-certain big scorer.</div></div>
+      <div class="score-card"><div class="score-card-val">💪</div><div class="score-card-label"><strong>Bench Boost</strong>A flat +25-point safety net added to your round total. Useful in a round where you expect modest returns.</div></div>
+      <div class="score-card"><div class="score-card-val">💰</div><div class="score-card-label"><strong>Budget Boost</strong>+R25 to your budget for one round, so you can fit in an extra premium player. The boost applies to that round only.</div></div>
+      <div class="score-card"><div class="score-card-val">🛡️</div><div class="score-card-label"><strong>Captain Safety Net</strong>Insurance against a captain blank — if your captain scores under 10, your vice-captain is promoted to captain (×2) for that round instead.</div></div>
+    </div>
+    <div class="callout" style="margin-top:20px;padding:16px 20px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;color:rgba(255,255,255,0.7);font-size:0.86rem;line-height:1.6">
+      <strong style="color:var(--gold)">Triple Captain stacks with wildcard rounds.</strong> If you play Triple Captain on a round the admin has already marked ⭐ wildcard, your captain still scores ×3 (the multipliers don't compound beyond that). Track which chips you've used on the <a href="fantasy-stats.html" style="color:var(--gold)">Insights page</a>.
+    </div>
+  </section>
+
+  <section class="section" id="boosts">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Round <em>Boosts</em></h2>
+    <p class="lead">Separate from your chips. Boosts are set by the admin for a whole round and apply to <strong>everyone</strong> — you don't choose them and they don't use up anything. A banner on the pick screen tells you which one is live before you confirm your XI.</p>
+    <div class="score-grid">
+      <div class="score-card"><div class="score-card-val">🏏</div><div class="score-card-label"><strong>Batters Double</strong>Batting points ×2 for batters and keepers. Load up on top-order players.</div></div>
+      <div class="score-card"><div class="score-card-val">🎯</div><div class="score-card-label"><strong>Bowlers Double</strong>Bowling points <em>and</em> economy bonuses ×2 for bowlers. Wicket-takers become very valuable.</div></div>
+      <div class="score-card"><div class="score-card-val">⚡</div><div class="score-card-label"><strong>All-Rounders Boost</strong>Batting and bowling points ×1.5 for all-rounders. The round to pack your side with them.</div></div>
+      <div class="score-card"><div class="score-card-val">📉</div><div class="score-card-label"><strong>Economy Bonus Weekend</strong>Economy bonuses ×2. Tight, disciplined bowlers outscore expensive strike bowlers.</div></div>
+      <div class="score-card"><div class="score-card-val">🏆</div><div class="score-card-label"><strong>POTM Double</strong>The Player of the Match bonus ×2. Backing the likely match-winner pays off twice over.</div></div>
+    </div>
+    <div class="callout" style="margin-top:20px;padding:16px 20px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;color:rgba(255,255,255,0.7);font-size:0.86rem;line-height:1.6">
+      <strong style="color:var(--gold)">Boosts and chips stack.</strong> Playing Triple Captain on a Batters Double round with a top-order captain is about as good as it gets — the boost doubles their batting, then the captaincy triples the total. Check the banner before you lock in.
+    </div>
+  </section>
+
+  <section class="section" id="scoring">
+    <span class="section-num">06</span>
+    <h2 class="section-title">How <em>Scoring</em> Works</h2>
+    <p class="lead">Points are based on each player's real performance in the match. Once scores are published after the game, the leaderboard updates automatically — you'll get an email when it's ready.</p>
+    <div class="score-section-title">Batting</div>
+    <div class="score-grid">
+      <div class="score-card"><div class="score-card-val">1</div><div class="score-card-label"><strong>Per run scored</strong>45 runs = 45 pts before bonuses.</div></div>
+      <div class="score-card"><div class="score-card-val">+10</div><div class="score-card-label"><strong>50+ bonus</strong>On top of the run total for reaching fifty.</div></div>
+      <div class="score-card"><div class="score-card-val">+35</div><div class="score-card-label"><strong>Century bonus</strong>+10 for fifty, +25 more at 100. Total century bonus: 35 pt.</div></div>
+    </div>
+    <div class="score-section-title">Bowling</div>
+    <div class="score-grid">
+      <div class="score-card"><div class="score-card-val">15</div><div class="score-card-label"><strong>Per wicket</strong>The biggest bowling reward. 3 wickets = 45 pt.</div></div>
+      <div class="score-card"><div class="score-card-val">+20</div><div class="score-card-label"><strong>5-wicket haul</strong>Bonus on top of 75 pt from the wickets. Total: 95 pt.</div></div>
+      <div class="score-card"><div class="score-card-val">+10</div><div class="score-card-label"><strong>Maiden over</strong>Each maiden over earns a flat +10 pt bonus.</div></div>
+      <div class="score-card"><div class="score-card-val">+10</div><div class="score-card-label"><strong>Run-out</strong>+10 pt per run-out — direct or assisted.</div></div>
+    </div>
+
+    <div class="score-section-title">Economy Rate</div>
+    <div class="score-grid">
+      <div class="score-card"><div class="score-card-val" style="color:var(--green)">+10</div><div class="score-card-label"><strong>Economy ≤5.00</strong>Exceptional control — highest bowling bonus.</div></div>
+      <div class="score-card"><div class="score-card-val" style="color:var(--green)">+6</div><div class="score-card-label"><strong>Economy 5.01–6.00</strong>Good economy. Still a meaningful bonus.</div></div>
+      <div class="score-card"><div class="score-card-val" style="color:var(--gold)">+2</div><div class="score-card-label"><strong>Economy 6.01–7.00</strong>Decent. Small bonus.</div></div>
+      <div class="score-card"><div class="score-card-val" style="color:var(--muted2)">0</div><div class="score-card-label"><strong>Economy 7.01–8.00</strong>Neutral — no bonus or penalty.</div></div>
+      <div class="score-card"><div class="score-card-val" style="color:var(--red)">−2</div><div class="score-card-label"><strong>Economy 8.01–9.00</strong>Expensive. Small penalty.</div></div>
+      <div class="score-card"><div class="score-card-val" style="color:var(--red)">−4</div><div class="score-card-label"><strong>Economy &gt;9.00</strong>Very expensive. Penalty applies.</div></div>
+    </div>
+    <div class="callout">
+      <p><strong>Economy only applies if entered.</strong> If no economy figure is recorded for a player that round, no bonus or penalty is applied. Batters who don't bowl are never penalised.</p>
+    </div>
+    <div class="score-section-title">Fielding &amp; Other</div>
+    <div class="score-grid">
+      <div class="score-card"><div class="score-card-val">10</div><div class="score-card-label"><strong>Per catch</strong>Every fielding dismissal caught.</div></div>
+      <div class="score-card"><div class="score-card-val">10</div><div class="score-card-label"><strong>Per stumping</strong>Keeper-specific bonus.</div></div>
+      <div class="score-card"><div class="score-card-val">+25</div><div class="score-card-label"><strong>Player of the Match</strong>Awarded to the standout performer of the game.</div></div>
+    </div>
+    <div class="callout blue">
+      <p><strong>All-rounders are the best value picks.</strong> A player who scores 40 runs (40 pt) and takes 2 wickets (30 pt) earns 70 pt before captain multiplier — more than most pure batters or bowlers. When budget allows, load up on all-rounders.</p>
+    </div>
+
+    <div class="score-section-title">Round Boosts</div>
+    <p style="font-size:0.88rem;color:var(--muted2);margin-bottom:16px">Some rounds carry a <strong>boost modifier</strong> that amplifies points in a specific category. The active boost is shown on the pick screen and the leaderboard. There are five types:</p>
+    <div class="score-grid">
+      <div class="score-card"><div class="score-card-val">🏏</div><div class="score-card-label"><strong>Batters Double</strong>All batting points (runs + milestone bonuses) are doubled for this round.</div></div>
+      <div class="score-card"><div class="score-card-val">🎳</div><div class="score-card-label"><strong>Bowlers Double</strong>All bowling points (wickets, maidens, 5-fer bonus) are doubled for this round.</div></div>
+      <div class="score-card"><div class="score-card-val">⚡</div><div class="score-card-label"><strong>All-Rounders Boost</strong>Players who contribute with both bat and ball receive a bonus on their combined tally.</div></div>
+      <div class="score-card"><div class="score-card-val">💨</div><div class="score-card-label"><strong>Economy Bonus</strong>Economy rate points (positive and negative) are doubled — tight bowling is worth even more.</div></div>
+      <div class="score-card"><div class="score-card-val">⭐</div><div class="score-card-label"><strong>POTM Double</strong>The Player of the Match bonus doubles from 25 pt to 50 pt. Picking the standout performer is huge.</div></div>
+    </div>
+    <div class="callout">
+      <p><strong>Boosts stack with captaincy.</strong> If it's a Bowlers Double round and your captain takes 3 wickets, the doubled bowling points are then multiplied again by ×2 (or ×3 on a wildcard). Always pick your captain with the active boost in mind.</p>
+    </div>
+
+    <h2 class="sub">Full example — captain all-rounder</h2>
+    <div class="example-box">
+      <div class="example-label">All-rounder · Player of the Match · As Captain</div>
+      <div class="example-row"><span class="name">65 runs</span><span class="pts norm">65 pt</span></div>
+      <div class="example-row"><span class="name">50+ bonus</span><span class="pts norm">+10 pt</span></div>
+      <div class="example-row"><span class="name">3 wickets</span><span class="pts norm">+45 pt</span></div>
+      <div class="example-row"><span class="name">1 catch</span><span class="pts norm">+10 pt</span></div>
+      <div class="example-row"><span class="name">Player of the Match</span><span class="pts norm">+25 pt</span></div>
+      <div class="example-total"><span class="label">Base</span><span style="color:var(--muted2)">155 pt</span></div>
+      <div class="example-total"><span class="label">As Captain ×2</span><span class="val">310 pt</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="notifications">
+    <span class="section-num">07</span>
+    <h2 class="section-title">Stay <em>In the Loop</em></h2>
+    <p class="lead">Two ways the league keeps you across what's happening — no need to keep refreshing the app.</p>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">🔔</div>
+        <div class="feature-text">
+          <h4>Deadline Reminders</h4>
+          <p>On the pick page, tap the <strong>bell icon</strong> (🔕) in the top-right corner. You'll get a push notification <strong>24 hours before</strong> the deadline and again <strong>1 hour before</strong> it closes. The bell turns to 🔔 when active — tap again to turn it off at any time.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📧</div>
+        <div class="feature-text">
+          <h4>Scores Published</h4>
+          <p>After each match, when scores go live, <strong>every player who submitted a team that round gets an email</strong> with a link straight to the leaderboard. No opt-in needed — it's automatic.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-text">
+          <h4>Picks Locked</h4>
+          <p>When the deadline passes and the round locks, <strong>everyone who submitted a team gets a confirmation email</strong> — your XI is set, sit back and watch the points come in. You'll also receive an email when the H2H draw is generated (showing your opponent) and again when results are resolved (showing the final score, margin, and your W/D/L).</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout blue">
+      <p><strong>On iPhone?</strong> Push notifications require the app on your Home Screen first. In Safari, tap the <strong>Share</strong> button then <strong>Add to Home Screen</strong>. Open the app from there, then tap the bell to subscribe. On Android Chrome it works directly in the browser.</p>
+    </div>
+  </section>
+
+  <section class="section" id="leaderboard">
+    <span class="section-num">08</span>
+    <h2 class="section-title">The <em>Leaderboard</em></h2>
+    <p class="lead">Track the standings, dig into how everyone scored, and see which players were most picked.</p>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-text">
+          <h4>Season Total</h4>
+          <p>The leaderboard loads with cumulative points across all rounds. The number of rounds each manager has participated in is shown alongside their total.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-text">
+          <h4>Round Filter</h4>
+          <p>Click any round button at the top to see that round's scores in isolation — useful for seeing who moved up or down and where you gained or lost ground.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">▸</div>
+        <div class="feature-text">
+          <h4>Score Breakdown</h4>
+          <p>Click any row to expand it. You'll see a <strong>round-by-round history chart</strong> and a <strong>full per-player breakdown</strong> with the exact calculation shown — e.g. "45 runs = 45 pt · 50+ bonus = +10 pt · Captain ×2 = 110 pt total".</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🏅</div>
+        <div class="feature-text">
+          <h4>Player of the Round</h4>
+          <p>When viewing a specific round, the highest-scoring player across all teams is highlighted. A useful indicator for future captain picks.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <div class="feature-text">
+          <h4>Most Picked Players</h4>
+          <p>Shows the most popular picks that round with a percentage bar. Low-ownership players who score big are the differentials that move you up the table.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔴</div>
+        <div class="feature-text">
+          <h4>Live Tab</h4>
+          <p>On match days, a <strong>🔴 Live</strong> tab appears on the leaderboard. It shows real-time points calculated from the live scoring feed — so you can watch your score update ball by ball as the game is played. Only active during rounds linked to a live fixture.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">⚔️</div>
+        <div class="feature-text">
+          <h4>H2H Tab</h4>
+          <p>When Head-to-Head rounds have been played, a second <strong>⚔ H2H</strong> tab appears alongside the points view. It shows the season W/D/L standings table and the full fixture grid for each H2H round — who faced who and what the final scores were.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <p><strong>Share your XI:</strong> After submitting, hit <strong>📲 Share XI</strong> on the success screen to get a trading-card graphic of your pitch layout with captain and VC highlighted. Share directly to WhatsApp or Instagram Stories, or download as a PNG.</p>
+    </div>
+  </section>
+
+  <section class="section" id="h2h">
+    <span class="section-num">09</span>
+    <h2 class="section-title">Head-to-<em>Head</em> Rounds</h2>
+    <p class="lead">Some rounds are designated as Head-to-Head. Instead of just accumulating points, you go head-to-head against one other manager — your XI vs theirs, same players, same scores. Whoever scores more wins the matchup.</p>
+
+    <h2 class="sub">How it works</h2>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">⚔️</div>
+        <div class="feature-text">
+          <h4>Round flag</h4>
+          <p>H2H is a round type, not a permanent mode. Look for the <strong>⚔ marker</strong> on the round name when you're on the pick page — this tells you it's a H2H round before the deadline.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🎲</div>
+        <div class="feature-text">
+          <h4>Fixture draw</h4>
+          <p>Pairings are generated automatically. In the early rounds the draw is <strong>random</strong>. Once at least 3 rounds have been scored, the draw switches to <strong>standings-based</strong> — 1st plays 2nd, 3rd plays 4th, and so on — so tougher matchups come as the season develops.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">👻</div>
+        <div class="feature-text">
+          <h4>Mr. Average (odd numbers)</h4>
+          <p>If there's an odd number of participants, one manager gets matched against <strong>Mr. Average</strong> — a ghost opponent whose score equals the mean of all real managers that round. You still have to beat the group to win the matchup, so there are no free wins.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🏷️</div>
+        <div class="feature-text">
+          <h4>Opponent banner</h4>
+          <p>When you open the pick screen on a H2H round, a banner below the deadline tells you who you're facing: <strong>⚔ H2H Round · You vs [Team Name]</strong>. This is visible as soon as fixtures have been generated — use it to inform your captain choice.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📨</div>
+        <div class="feature-text">
+          <h4>Draw email</h4>
+          <p>When the fixture draw is generated, you'll receive an email showing your opponent and the picks deadline. No need to check the app — your matchup comes straight to your inbox.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <div class="feature-text">
+          <h4>Result email</h4>
+          <p>After the round is resolved, you'll get a result email showing your score vs your opponent's, the margin, whether you won, drew, or lost, and your updated season H2H record (e.g. W2 D0 L1).</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="sub">Points &amp; standings</h2>
+    <div class="mult-row">
+      <div class="mult-card gold">
+        <div class="mult-icon">🏆</div>
+        <div class="mult-label">Win</div>
+        <div class="mult-val">3 pts</div>
+        <div class="mult-desc">Your XI outscores your opponent's this round. Three H2H league points.</div>
+      </div>
+      <div class="mult-card" style="border-color:rgba(150,150,150,0.25)">
+        <div class="mult-icon">🤝</div>
+        <div class="mult-label">Draw</div>
+        <div class="mult-val">1 pt</div>
+        <div class="mult-desc">Identical scores. One H2H point each — rare, but it happens.</div>
+      </div>
+      <div class="mult-card blue">
+        <div class="mult-icon">📉</div>
+        <div class="mult-label">Loss</div>
+        <div class="mult-val">0 pts</div>
+        <div class="mult-desc">Your opponent scored more this round. No H2H points, but your season total still grows.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>H2H points are separate from season points.</strong> Your fantasy total keeps accumulating as normal across all rounds. The H2H standings use a separate W/D/L table (like a football league) where ties are broken by total fantasy points scored across H2H rounds.</p>
+    </div>
+
+    <h2 class="sub">H2H standings on the leaderboard</h2>
+    <p style="font-size:0.88rem;color:var(--muted2);margin-bottom:20px">Switch to the <strong>⚔ H2H tab</strong> on the leaderboard to see the H2H league table. Columns show W, D, L, H2H points, and fantasy points — sorted by H2H points with fantasy points as the tiebreaker. Scroll down for a round-by-round fixture grid with the exact scores for every matchup.</p>
+
+    <h2 class="sub">Strategy</h2>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-text">
+          <h4>Know your opponent before picking</h4>
+          <p>Check who you're facing before the deadline. If your opponent is likely to captain a big hitter, back someone with similar or higher ceiling. A safe 30-point captain pick might lose you the matchup even if it was the right call in a normal round.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-text">
+          <h4>Differentials hit harder in H2H</h4>
+          <p>Picking a low-ownership player who goes big doesn't just move you up the season table — it wins you the matchup outright. A differential 80-pt knock beats a chalk 60-pt one every time.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🧮</div>
+        <div class="feature-text">
+          <h4>One win beats two draws</h4>
+          <p>In the H2H table a win (3 pts) beats two draws (1 pt each). Back yourself to outscore your opponent — don't play it safe just to avoid losing.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="sub">Worked example</h2>
+    <div class="example-box">
+      <div class="example-label">H2H Fixture · Round 5</div>
+      <div class="example-row"><span class="name">Your XI</span><span class="pts gold">284 pt</span></div>
+      <div class="example-row"><span class="name">Opponent's XI</span><span class="pts norm">251 pt</span></div>
+      <div class="example-total"><span class="label">Result</span><span class="val" style="color:#5ec98a">WIN — +3 H2H pts</span></div>
+    </div>
+    <div class="example-box" style="margin-top:12px">
+      <div class="example-label">H2H Fixture vs Mr. Average · Round 7 (odd draw)</div>
+      <div class="example-row"><span class="name">Your XI</span><span class="pts gold">210 pt</span></div>
+      <div class="example-row"><span class="name">Mr. Average</span><span class="pts norm">224 pt (league mean)</span></div>
+      <div class="example-total"><span class="label">Result</span><span class="val" style="color:#cc5555">LOSS — 0 H2H pts</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="totw">
+    <span class="section-num">10</span>
+    <h2 class="section-title">Team of the <em>Week</em></h2>
+    <p class="lead">After every round, a balanced XI is picked from the best real performances — not from anyone's fantasy squad. It goes up on the <a href="leaderboard.html" style="color:var(--gold)">leaderboard</a> as a team sheet, with the round's standout circled.</p>
+    <div class="score-grid">
+      <div class="score-card"><div class="score-card-val">5</div><div class="score-card-label"><strong>Batters</strong>The five highest-scoring batters of the round, keeper-batters included.</div></div>
+      <div class="score-card"><div class="score-card-val">1</div><div class="score-card-label"><strong>Wicketkeeper</strong>Marked † on the sheet, as on a real scorecard.</div></div>
+      <div class="score-card"><div class="score-card-val">2</div><div class="score-card-label"><strong>All-rounders</strong>Players who contributed with both bat and ball.</div></div>
+      <div class="score-card"><div class="score-card-val">3</div><div class="score-card-label"><strong>Bowlers</strong>Ranked on the same points the league uses, so wickets and economy both count.</div></div>
+    </div>
+    <div class="callout" style="margin-top:20px;padding:16px 20px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;color:rgba(255,255,255,0.7);font-size:0.86rem;line-height:1.6">
+      <strong style="color:var(--gold)">Why the top scorer isn't always first.</strong> Because the side has to be balanced, a keeper on 62 can take his slot ahead of a bowler on 85 — the bowler still appears, just in a bowling place. If a round hasn't enough specialists in a role, the next best performer fills in and is marked <em>filler</em> so it's clear why they're there. A 12th man is named below the XI.
+    </div>
+  </section>
+
+  <section class="section" id="badges">
+    <span class="section-num">11</span>
+    <h2 class="section-title">Achievement <em>Badges</em></h2>
+    <p class="lead">Earn badges for standout performances, hot streaks, and podium finishes. Your badges are shown on the leaderboard and on your dedicated badges page.</p>
+
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">🔥</div>
+        <div class="feature-text">
+          <h4>Hot Streak</h4>
+          <p>Score above the season average in <strong>5 consecutive rounds</strong>. Consistency is rewarded.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-text">
+          <h4>Podium Hat-Trick</h4>
+          <p>Finish in the <strong>top 3 in 3 consecutive rounds</strong>. Staying at the top is harder than getting there.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">⭐</div>
+        <div class="feature-text">
+          <h4>Century Captain</h4>
+          <p>Your captain scores <strong>100+ pts in a single round</strong>. Back the right player on the right day.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-text">
+          <h4>Sharp Eye</h4>
+          <p>Pick the <strong>Player of the Round 3 times</strong> across the season. The best differential pick at the right moment.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💎</div>
+        <div class="feature-text">
+          <h4>Diamond Pick</h4>
+          <p>Pick a player who scores <strong>100+ pts in a single round</strong>. Find the diamond in the rough.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-text">
+          <h4>All-Rounder</h4>
+          <p>Have a player from <strong>all 4 roles score 20+ pts in the same round</strong>. A perfectly balanced team.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🏏</div>
+        <div class="feature-text">
+          <h4>Wicket Machine</h4>
+          <p>Have <strong>3+ bowlers take wickets in the same round</strong>. Load up on bowlers and let them rip.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🦁</div>
+        <div class="feature-text">
+          <h4>Season Survivor</h4>
+          <p>Submit a team in <strong>every single round</strong> of the season without missing one. Show up every week.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>Viewing your badges:</strong> Head to the <a href="badges.html" style="color:var(--gold)">Badges page</a> to see your earned badges, track progress towards in-progress ones, and browse everything that's locked. Earned badges also appear as small icons next to your name on the leaderboard.</p>
+    </div>
+  </section>
+
+  <div class="guide-footer">
+    <div class="guide-footer-brand">
+      <strong>Tygerberg Cricket Club</strong><br>TCC Fantasy Cricket · Season 2025/26
+    </div>
+    <div class="guide-footer-links">
+      <a href="fantasy.html">Fantasy Home</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="badges.html">Badges</a>
+      <a href="pick.html">Pick My XI</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/fantasy-pwa.js"></script>
+<script>
+// Show "My Team" nav link if participant is logged in
+(function() {
+  try {
+    var p = JSON.parse(localStorage.getItem('tcc_fantasy_participant') || 'null');
+    if (p && p.id) {
+      var el = document.getElementById('nav-profile-link');
+      if (el) el.style.display = '';
+      var dr = document.getElementById('drawer-profile-link');
+      if (dr) dr.style.display = '';
+    }
+  } catch(e) {}
+})();
+document.getElementById('hamburger').addEventListener('click', function() {
+  this.classList.toggle('open');
+  document.getElementById('mobile-drawer').classList.toggle('open');
+});
+window.addEventListener('scroll', function() {
+  var pill = document.getElementById('nav-pill');
+  if (pill) pill.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// Active nav link on scroll
+(function() {
+  var sections = document.querySelectorAll('.section[id]');
+  var chips    = document.querySelectorAll('.guide-toc-chip');
+  if (!sections.length || !chips.length) return;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        chips.forEach(function(c) { c.classList.remove('active'); });
+        var active = document.querySelector('.guide-toc-chip[href="#'+entry.target.id+'"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(function(s) { observer.observe(s); });
+})();
+</script>
+</body>
+</html>

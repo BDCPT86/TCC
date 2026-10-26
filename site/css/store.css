@@ -1,0 +1,127 @@
+/* TCC Club Shop — standalone page CSS (per per-page convention) */
+:root{
+  --gold:#C9A227; --gold-soft:#E3C766;
+  --ink:#0A0A0B; --ink-2:#131315; --ink-3:#1C1C1F;
+  --text:#F2F0EA; --dim:#9B978B; --line:#2A2A2E;
+  --ok:#6EE7A0; --err:#F87171; --r:10px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);
+  font-family:'Barlow',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;margin:0;line-height:1}
+
+.shop-top{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;
+  padding:14px 24px;background:rgba(10,10,11,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.shop-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);
+  font-family:'Barlow Condensed';font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.shop-crest{width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--ink);
+  display:grid;place-items:center;font-size:.78rem}
+.cart-btn{position:relative;background:transparent;border:1px solid var(--line);color:var(--text);
+  font-family:'Barlow Condensed';text-transform:uppercase;letter-spacing:.1em;font-size:.9rem;
+  padding:9px 20px;border-radius:6px;cursor:pointer;transition:border-color .2s var(--ease)}
+.cart-btn:hover{border-color:var(--gold)}
+.cart-count{position:absolute;top:-8px;right:-8px;min-width:20px;height:20px;border-radius:10px;
+  background:var(--gold);color:var(--ink);font-family:'Barlow';font-weight:600;font-size:.72rem;
+  display:grid;place-items:center;padding:0 5px}
+
+.shop-hero{padding:64px 24px 40px;max-width:1100px;margin:0 auto}
+.shop-eyebrow{color:var(--gold);letter-spacing:.2em;text-transform:uppercase;font-size:.78rem;font-weight:600;margin:0 0 12px}
+.shop-hero h1{font-size:clamp(2.6rem,7vw,5rem);font-weight:700}
+.shop-hero h1 .gold{color:var(--gold)}
+.shop-sub{color:var(--dim);margin-top:14px;max-width:44ch}
+
+.shop-state{max-width:1100px;margin:0 auto;padding:60px 24px;color:var(--dim);text-align:center}
+
+.grid{max-width:1100px;margin:0 auto;padding:20px 24px 80px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.card{background:var(--ink-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  display:flex;flex-direction:column;transition:border-color .2s var(--ease),transform .2s var(--ease)}
+.card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.card-img{aspect-ratio:1;background:linear-gradient(150deg,var(--ink-3),var(--ink-2)) center/cover;
+  position:relative;display:grid;place-items:center}
+.card-img-ph{font-family:'Barlow Condensed';font-weight:700;font-size:2.4rem;color:rgba(201,162,39,.35)}
+.card-cat{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:var(--gold);
+  font-family:'Barlow Condensed';font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:3px 9px;border-radius:4px}
+.card-body{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card-body h3{font-size:1.3rem;font-weight:600}
+.card-desc{color:var(--dim);font-size:.86rem;margin:0;flex:1}
+.card-opts{display:flex;flex-direction:column;gap:4px}
+.card-opts label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+select,input{background:var(--ink);border:1px solid var(--line);color:var(--text);
+  border-radius:8px;padding:10px 12px;font:inherit;width:100%}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.price{font-family:'Barlow Condensed';font-weight:700;font-size:1.4rem}
+.btn-add{background:var(--gold);color:var(--ink);border:0;border-radius:6px;cursor:pointer;
+  font-family:'Barlow Condensed';text-transform:uppercase;letter-spacing:.08em;font-weight:600;
+  padding:9px 20px;transition:background .2s var(--ease)}
+.btn-add:hover:not(:disabled){background:var(--gold-soft)}
+.btn-add:disabled{background:var(--ink-3);color:var(--dim);cursor:not-allowed}
+
+/* cart drawer */
+.drawer-scrim{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.5);display:flex;justify-content:flex-end}
+.drawer{width:min(420px,100%);height:100%;background:var(--ink-2);border-left:1px solid var(--line);
+  padding:22px;overflow-y:auto;display:flex;flex-direction:column}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.drawer-head h2{font-size:1.6rem;font-weight:700}
+.drawer-x{background:none;border:0;color:var(--dim);font-size:1.8rem;line-height:1;cursor:pointer}
+.cart-empty,.cart-list{margin:0}
+.cart-empty{color:var(--dim);padding:30px 0}
+.cart-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:14px}
+.cart-list li{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;
+  border-bottom:1px solid var(--line);padding-bottom:14px}
+.ci-name{font-weight:600;margin:0}
+.ci-unit{color:var(--dim);font-size:.78rem;margin:2px 0 0}
+.ci-qty{display:flex;align-items:center;gap:10px}
+.ci-qty button{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:var(--ink);
+  color:var(--text);cursor:pointer;font-size:1rem;line-height:1}
+.ci-qty button:hover{border-color:var(--gold)}
+.ci-line{font-family:'Barlow Condensed';font-weight:600}
+.cart-total{display:flex;justify-content:space-between;font-family:'Barlow Condensed';
+  font-size:1.5rem;font-weight:700;margin:18px 0}
+.checkout{display:flex;flex-direction:column;gap:10px}
+.collect-note{color:var(--dim);font-size:.8rem;margin:2px 0 6px}
+.checkout-err{color:var(--err);font-size:.85rem;margin:0}
+.btn-pay{background:var(--gold);color:var(--ink);border:0;border-radius:8px;cursor:pointer;
+  font-family:'Barlow Condensed';text-transform:uppercase;letter-spacing:.1em;font-weight:700;
+  font-size:1.05rem;padding:14px;transition:background .2s var(--ease)}
+.btn-pay:hover:not(:disabled){background:var(--gold-soft)}
+.btn-pay:disabled{opacity:.6;cursor:default}
+.placed{text-align:center;padding:24px 0}
+.placed-mark{width:56px;height:56px;border-radius:50%;background:rgba(110,231,160,.12);color:var(--ok);
+  border:1px solid rgba(110,231,160,.4);display:grid;place-items:center;font-size:1.6rem;margin:0 auto 14px}
+.placed h3{font-size:1.5rem;font-weight:700;margin-bottom:6px}
+.placed p{color:var(--dim)}
+
+.fade-enter-active,.fade-leave-active{transition:opacity .2s var(--ease)}
+.fade-enter-from,.fade-leave-to{opacity:0}
+
+@media (max-width:520px){
+  .grid{grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+  .card-body{padding:12px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ── Payment method radios (fix: align input + label text) ── */
+.pay-method{display:flex;flex-direction:column;gap:10px;margin:6px 0 4px}
+.pay-method label{display:flex;align-items:center;gap:10px;cursor:pointer;
+  padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);
+  transition:border-color .15s,background .15s;line-height:1.2}
+.pay-method label.on{border-color:var(--gold);background:rgba(201,162,39,.08)}
+.pay-method input[type=radio]{appearance:none;-webkit-appearance:none;margin:0;flex:0 0 auto;
+  width:18px;height:18px;border:2px solid var(--line);border-radius:50%;position:relative;
+  transition:border-color .15s}
+.pay-method label.on input[type=radio]{border-color:var(--gold)}
+.pay-method input[type=radio]:checked::after{content:'';position:absolute;inset:3px;
+  border-radius:50%;background:var(--gold)}
+
+/* ── Category tabs ── */
+.cat-tabs{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;gap:8px}
+.cat-tab{background:transparent;border:1px solid var(--line);color:var(--dim);
+  font-family:'Barlow Condensed','Barlow',sans-serif;font-size:.95rem;letter-spacing:.03em;
+  text-transform:uppercase;padding:8px 18px;border-radius:999px;cursor:pointer;
+  transition:all .15s}
+.cat-tab:hover{border-color:var(--gold);color:var(--text)}
+.cat-tab.on{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600}

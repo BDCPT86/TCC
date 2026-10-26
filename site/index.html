@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tygerberg Cricket Club | Est. 1957, Florida Park, Cape Town</title>
+<meta name="description" content="Tygerberg Cricket Club — Est. 1957 in Florida Park, Ravensmead, Cape Town. Fixtures, news, player profiles and fantasy cricket league.">
+<meta name="theme-color" content="#1a1a1a">
+<!-- Open Graph --><!-- Favicon -->
+<link rel="canonical" href="https://tygerbergcc.co.za/">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preload" href="images/hero.jpg" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="css/main.css?v=3">
+  <link rel="stylesheet" href="css/home.css?v=7">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+  (function() {
+    function loadBehold() {
+      var d=document,s=d.createElement("script");s.type="module";
+      s.src="https://w.behold.so/widget.js";d.head.append(s);
+    }
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadBehold, { timeout: 3000 });
+    } else {
+      window.addEventListener('load', loadBehold);
+    }
+  })();
+</script>
+  <meta property="og:type"        content="website">
+  <meta property="og:site_name"   content="Tygerberg Cricket Club">
+  <meta property="og:url"         content="https://tygerbergcc.co.za/">
+  <meta property="og:title"       content="Tygerberg Cricket Club | Est. 1957, Florida Park, Cape Town">
+  <meta property="og:description" content="Tygerberg Cricket Club — Est. 1957 in Florida Park, Ravensmead, Cape Town. Fixtures, news, player profiles and fantasy cricket league.">
+  <meta property="og:image"       content="https://tygerbergcc.co.za/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height"content="630">
+  <meta name="twitter:card"       content="summary_large_image">
+  <meta name="twitter:title"      content="Tygerberg Cricket Club | Est. 1957, Florida Park, Cape Town">
+  <meta name="twitter:description"content="Tygerberg Cricket Club — Est. 1957 in Florida Park, Ravensmead, Cape Town. Fixtures, news, player profiles and fantasy cricket league.">
+  <meta name="twitter:image"      content="https://tygerbergcc.co.za/images/og-image.jpg">
+
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "SportsOrganization",
+  "name": "Tygerberg Cricket Club",
+  "url": "https://tygerbergcc.co.za",
+  "logo": "https://tygerbergcc.co.za/images/tcc-logo.png",
+  "foundingDate": "1957",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Florida Park",
+    "addressLocality": "Ravensmead",
+    "addressRegion": "Western Cape",
+    "addressCountry": "ZA"
+  },
+  "sport": "Cricket",
+  "sameAs": [
+    "https://www.facebook.com/tygerbergcc"
+  ]
+}
+  </script>
+<style>.skip-link{position:absolute;left:-9999px;top:4px;z-index:9999;padding:8px 16px;background:#c9a84c;color:#000;font-weight:700;font-size:0.8rem;border-radius:2px;text-decoration:none}.skip-link:focus{left:4px}</style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+<link rel="stylesheet" href="css/games.css?v=1">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body class="home">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- Redesign layer: seam scroll-progress rail + film grain -->
+<div class="seam-rail" aria-hidden="true"><div class="seam-fill"></div></div>
+<div class="home-grain" aria-hidden="true"></div>
+
+<canvas id="motion-bg" aria-hidden="true"></canvas>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- ════════════════════════════════════ NAVBAR -->
+<nav id="navbar">
+  <div class="nav-brand">
+    <img loading="eager" src="images/tcc-logo.png" alt="Tygerberg Cricket Club" class="nav-logo-img">
+    <div class="nav-brand-text">
+      <div class="nav-brand-name">Tygerberg Cricket Club</div>
+      <div class="nav-brand-sub">Est. 1957 · Florida Park, Cape Town</div>
+    </div>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html"          class="nav-link active">Home</a></li>
+    <li><a href="index.html#youth"    class="nav-link">Youth</a></li>
+    <li><a href="fixtures.html"       class="nav-link">Fixtures</a></li>
+    <li><a href="players.html"        class="nav-link">Players</a></li>
+    <li><a href="history.html"        class="nav-link">History</a></li>
+    <li><a href="gallery.html"        class="nav-link">Gallery</a></li>
+    <li><a href="news.html"           class="nav-link">News</a></li>
+    <li><a href="sponsors.html"       class="nav-link">Sponsors</a></li>
+    <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+    <li><a href="membership.html"     class="nav-link">Membership</a></li>
+    <li><a href="fantasy.html"         class="nav-link nav-link-fantasy">Fantasy <span class="nav-fantasy-badge">LIVE</span></a></li>
+    <li><a href="games.html"      class="nav-link nav-link-games">Games <span class="nav-games-badge">NEW</span></a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════════════ HERO — FULL BLEED PHOTO -->
+<section id="main-content" class="-photo">
+
+  <!-- Background photo — img tag for LCP detection; frame adds Ken Burns zoom -->
+  <div class="hero-photo-frame" aria-hidden="true">
+    <img src="images/hero.jpg" alt="" class="hero-photo-bg" fetchpriority="high" loading="eager" aria-hidden="true">
+  </div>
+
+  <!-- Dark gradient overlay -->
+  <div class="hero-photo-overlay"></div>
+
+  <!-- Content -->
+  <div class="hero-photo-content">
+
+    <!-- Left: text -->
+    <div class="hero-photo-left">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        Florida Park · Ravensmead · Cape Town
+      </div>
+
+      <h1 class="hero-headline">
+        <span class="line-gold">Tygerberg</span>
+        Cricket<br>
+        <span class="line-outline">Club</span>
+      </h1>
+
+      <div class="hero-rule">
+        <div class="hero-rule-line"></div>
+        <span class="hero-rule-text">Facta Non Verba</span>
+        <div class="hero-rule-line"></div>
+      </div>
+
+      <p class="hero-sub">
+        <span id="hero-years">69</span> years of cricket in the heart of Ravensmead.
+        Shaping players, building community, carrying the colours.
+      </p>
+
+      <div class="hero-actions">
+        <a href="fixtures.html" class="btn btn-primary">View Fixtures</a>
+        <a href="#youth" class="btn btn-outline">Youth Programme</a>
+      </div>
+    </div>
+
+    <!-- Right: stat cards -->
+    <div class="hero-photo-right">
+      <div class="hps-card">
+        <span class="hps-num" data-target="69">0</span>
+        <span class="hps-label">Years of Cricket</span>
+      </div>
+      <div class="hps-card">
+        <span class="hps-num" data-target="80">0</span>
+        <span class="hps-label">Senior Members</span>
+      </div>
+      <div class="hps-card">
+        <span class="hps-num" data-target="70">0</span>
+        <span class="hps-label">Junior Members</span>
+      </div>
+      <div class="hps-card">
+        <span class="hps-num" data-target="4">0</span>
+        <span class="hps-label">Senior Teams</span>
+      </div>
+    </div>
+
+  </div><!-- /hero-photo-content -->
+
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-chevron"></div>
+  </div>
+
+  <!-- Scoreboard ticker -->
+  <div class="hero-ticker" aria-hidden="true">
+    <div class="hero-ticker-track">
+      <span class="ht-item">Est. 1957</span><span class="ht-sep"></span>
+      <span class="ht-item">Florida Park · Ravensmead</span><span class="ht-sep"></span>
+      <span class="ht-item">4 Senior Teams</span><span class="ht-sep"></span>
+      <span class="ht-item">70 Juniors</span><span class="ht-sep"></span>
+      <span class="ht-item">WPCA Affiliated</span><span class="ht-sep"></span>
+      <span class="ht-item">Black &amp; Old Gold</span><span class="ht-sep"></span>
+      <span class="ht-item">Facta Non Verba</span><span class="ht-sep"></span>
+      <span class="ht-item">Est. 1957</span><span class="ht-sep"></span>
+      <span class="ht-item">Florida Park · Ravensmead</span><span class="ht-sep"></span>
+      <span class="ht-item">4 Senior Teams</span><span class="ht-sep"></span>
+      <span class="ht-item">70 Juniors</span><span class="ht-sep"></span>
+      <span class="ht-item">WPCA Affiliated</span><span class="ht-sep"></span>
+      <span class="ht-item">Black &amp; Old Gold</span><span class="ht-sep"></span>
+      <span class="ht-item">Facta Non Verba</span><span class="ht-sep"></span>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════ ABOUT US -->
+<section id="about" data-ghost="SINCE 1957">
+  <div class="section-inner">
+    <span class="section-tag reveal">Who We Are</span>
+    <h2 class="section-title reveal delay-1">About <span class="accent">Tygerberg CC</span></h2>
+    <div class="divider reveal delay-1"></div>
+
+    <div class="about-grid reveal delay-2">
+      <div class="about-text">
+        <p>Founded in 1957 in Tiervlei — now Ravensmead — Tygerberg Cricket Club has grown from humble beginnings into one of the Western Cape's most respected cricket institutions. Built on resilience, community spirit, and a commitment to development, we have produced top provincial and international talent while playing a proud role in South Africa's cricketing history.</p>
+        <p>In 1992 we were among the first clubs in the country to unite across racial lines, merging with Parow Cricket Club. Over the decades TCC has produced players who have represented Western Province, South African Women, and the national side — a testament to the club's dedication to developing talent at every level.</p>
+        <div class="about-practice-row">
+          <div class="about-practice-item">
+            <span class="about-practice-icon">🏏</span>
+            <div>
+              <div class="about-practice-label">Senior Training</div>
+              <div class="about-practice-detail">Tue &amp; Thu · 17:30–19:30 · Florida Park Nets</div>
+            </div>
+          </div>
+          <div class="about-practice-item">
+            <span class="about-practice-icon">📍</span>
+            <div>
+              <div class="about-practice-label">New players welcome</div>
+              <div class="about-practice-detail">Just arrive — no appointment needed</div>
+            </div>
+          </div>
+        </div>
+        <a href="history.html" class="btn btn-outline" style="margin-top:8px">Read Our Full History →</a>
+      </div>
+
+      <!-- Animated stat counters -->
+      <div class="about-stats-col">
+        <div class="stat-counter-card">
+          <canvas class="stat-ring" data-value="100" data-max="100" width="80" height="80"></canvas>
+          <div class="stat-counter-val" data-target="69">0</div>
+          <div class="stat-counter-label">Years of Cricket</div>
+        </div>
+        <div class="stat-counter-card">
+          <canvas class="stat-ring" data-value="70" data-max="100" width="80" height="80"></canvas>
+          <div class="stat-counter-val" data-target="12">0</div>
+          <div class="stat-counter-label">Provincial Players Produced</div>
+        </div>
+        <div class="stat-counter-card">
+          <canvas class="stat-ring" data-value="45" data-max="100" width="80" height="80"></canvas>
+          <div class="stat-counter-val" data-target="5">0</div>
+          <div class="stat-counter-label">Divisions Competed</div>
+        </div>
+        <div class="stat-counter-card">
+          <canvas class="stat-ring" data-value="85" data-max="100" width="80" height="80"></canvas>
+          <div class="stat-counter-val" data-target="4">0</div>
+          <div class="stat-counter-label">Senior Teams</div>
+        </div>
+      </div>
+
+      <div class="about-milestones">
+        <div class="milestone-item">
+          <div class="milestone-year">1957</div>
+          <div class="milestone-text">Founded as Tigers Cricket Club in Tiervlei (Ravensmead)</div>
+        </div>
+        <div class="milestone-item">
+          <div class="milestone-year">1992</div>
+          <div class="milestone-text">Merged with Parow CC — one of SA's first cross-racial club unions</div>
+        </div>
+        <div class="milestone-item">
+          <div class="milestone-year">2004</div>
+          <div class="milestone-text">New clubhouse established at Florida Park</div>
+        </div>
+        <div class="milestone-item">
+          <div class="milestone-year">2012</div>
+          <div class="milestone-text">Vernon Philander & Shandré Fritz win SA's top cricket awards in same year</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════ VALUES STRIP -->
+<div class="values-strip">
+  <div class="values-track">
+    <span class="values-item"><span class="values-dot"></span>Respect</span>
+    <span class="values-item"><span class="values-dot"></span>Teamwork</span>
+    <span class="values-item"><span class="values-dot"></span>Hospitality</span>
+    <span class="values-item"><span class="values-dot"></span>Commitment</span>
+    <span class="values-item"><span class="values-dot"></span>Equal Opportunity</span>
+    <span class="values-item"><span class="values-dot"></span>Excellence</span>
+    <span class="values-item"><span class="values-dot"></span>Life Skills</span>
+    <!-- Duplicate for seamless loop -->
+    <span class="values-item"><span class="values-dot"></span>Respect</span>
+    <span class="values-item"><span class="values-dot"></span>Teamwork</span>
+    <span class="values-item"><span class="values-dot"></span>Hospitality</span>
+    <span class="values-item"><span class="values-dot"></span>Commitment</span>
+    <span class="values-item"><span class="values-dot"></span>Equal Opportunity</span>
+    <span class="values-item"><span class="values-dot"></span>Excellence</span>
+    <span class="values-item"><span class="values-dot"></span>Life Skills</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ LIVE MATCH BANNER -->
+<div id="home-live-banner" style="display:none">
+  <div class="hlb-inner">
+    <div class="hlb-label">
+      <span class="hlb-dot"></span>
+      <span class="hlb-text">Live Now</span>
+    </div>
+    <div class="hlb-matches" id="hlb-matches"></div>
+    <a href="live.html" class="hlb-cta">All Scorecards →</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ FIXTURES -->
+<section id="fixtures" data-ghost="MATCH DAY">
+  <div class="section-inner">
+    <div class="fixtures-section-head reveal">
+      <div>
+        <span class="section-tag">Next Up</span>
+        <h2 class="section-title">Fixtures <span class="accent">&amp; Results</span></h2>
+        <div class="divider"></div>
+      </div>
+      <div class="fixtures-tab-group" role="tablist">
+        <button class="fixtures-tab active" id="tab-upcoming" role="tab" aria-selected="true" onclick="switchFixtureTab('upcoming')">Upcoming</button>
+        <button class="fixtures-tab" id="tab-results" role="tab" aria-selected="false" onclick="switchFixtureTab('results')">Results</button>
+      </div>
+    </div>
+
+    <!-- Next-match countdown — rendered by home-fx.js -->
+    <div class="fx-countdown" id="fx-countdown" style="display:none"></div>
+
+    <!-- Tournament strip — only while a tournament is upcoming or on -->
+    <div class="ht-strip" id="home-tourn" style="display:none"></div>
+
+    <p class="section-subtitle reveal delay-1" style="margin-bottom:32px">Next fixture for each senior team. <a href="fixtures.html" style="color:var(--gold);text-decoration:underline;text-underline-offset:3px">View full schedule →</a></p>
+
+    <!-- Loading state -->
+    <div class="fixtures-state" id="fixtures-loading" style="display:flex">
+      <div class="spinner"></div>
+      <span style="font-size:0.9rem;color:var(--muted)">Loading fixtures…</span>
+    </div>
+
+    <!-- Error state -->
+    <div class="fixtures-state" id="fixtures-error" style="display:none">
+      <span style="font-size:2rem">🏏</span>
+      <span style="font-size:0.95rem">Could not load fixtures.</span>
+      <button class="btn btn-outline" onclick="loadFixtures()" style="margin-top:4px">Retry</button>
+    </div>
+
+    <!-- Empty state -->
+    <div class="fixtures-state" id="fixtures-empty" style="display:none">
+      <span style="font-size:2rem">📅</span>
+      <span style="font-size:0.95rem;color:var(--muted)">No upcoming fixtures scheduled yet. Check back soon.</span>
+      <a href="fixtures.html" style="font-size:0.82rem;color:var(--gold);margin-top:4px;text-decoration:underline;text-underline-offset:3px">View full schedule →</a>
+    </div>
+
+    <!-- Next-game-per-team grid -->
+    <div class="frl-wrap" id="fixtures-list" style="display:none"></div>
+
+    <!-- Recent results panel -->
+    <div class="frl-wrap" id="results-list" style="display:none"></div>
+    <div class="fixtures-state" id="results-loading" style="display:none">
+      <div class="spinner"></div>
+      <span style="font-size:0.9rem;color:var(--muted)">Loading results…</span>
+    </div>
+    <div class="fixtures-state" id="results-empty" style="display:none">
+      <span style="font-size:2rem">📋</span>
+      <span style="font-size:0.95rem;color:var(--muted)">No recent results found.</span>
+    </div>
+
+    <div style="text-align:center;margin-top:40px" class="reveal">
+      <a href="fixtures.html" class="btn btn-primary">Full Fixture Schedule →</a>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════ WHAT'S ON -->
+<!-- Populated by main.js from the Worker's events.publicList action.
+     Stays hidden entirely unless there is at least one upcoming public event. -->
+<!-- Event detail — full poster, full description, add to calendar -->
+<div class="wo-modal" id="wo-modal" role="dialog" aria-modal="true" aria-labelledby="wo-m-title" hidden>
+  <div class="wo-modal-backdrop" data-wo-close></div>
+  <div class="wo-modal-card">
+    <button class="wo-modal-close" id="wo-m-close" aria-label="Close">&times;</button>
+    <div class="wo-modal-scroll">
+      <div class="wo-modal-poster" id="wo-m-poster"></div>
+      <div class="wo-modal-body">
+        <div class="wo-eyebrow">
+          <span class="wo-date" id="wo-m-date"></span>
+          <span class="wo-type" id="wo-m-type"></span>
+        </div>
+        <h3 class="wo-modal-title" id="wo-m-title"></h3>
+        <dl class="wo-modal-facts" id="wo-m-facts"></dl>
+        <p class="wo-modal-desc" id="wo-m-desc"></p>
+        <div class="wo-modal-actions">
+          <button class="btn btn-primary" id="wo-m-ics">Add to calendar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="whats-on" data-ghost="DIARY" style="display:none">
+  <div class="section-inner">
+    <div class="reveal">
+      <span class="section-tag">Club Diary</span>
+      <h2 class="section-title">What&rsquo;s <span class="accent">On</span></h2>
+      <div class="divider"></div>
+    </div>
+    <p class="section-subtitle reveal delay-1" style="margin-bottom:32px">
+      Socials, meetings and club events coming up.
+    </p>
+    <div class="wo-wrap" id="wo-list"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ FEATURED PLAYER -->
+<section id="featured-player" data-ghost="SPOTLIGHT">
+  <div class="section-inner">
+    <span class="section-tag reveal">Player Spotlight</span>
+    <h2 class="section-title reveal delay-1">Featured <span class="accent">Player</span></h2>
+    <div class="divider reveal delay-1"></div>
+
+    <!-- Loading skeleton -->
+    <div id="fp-loading" class="fp-skeleton reveal delay-2">
+      <div class="fp-skeleton-photo"></div>
+      <div class="fp-skeleton-info">
+        <div class="fp-skeleton-line w40"></div>
+        <div class="fp-skeleton-line w70"></div>
+        <div class="fp-skeleton-line w30"></div>
+        <div class="fp-skeleton-chips">
+          <div class="fp-skeleton-chip"></div>
+          <div class="fp-skeleton-chip"></div>
+          <div class="fp-skeleton-chip"></div>
+        </div>
+        <div class="fp-skeleton-line w90"></div>
+        <div class="fp-skeleton-line w80"></div>
+        <div class="fp-skeleton-line w60"></div>
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div id="fp-card" class="fp-card reveal delay-2" style="display:none">
+      <div class="fp-photo-col">
+        <div class="fp-photo-wrap">
+          <img loading="lazy" id="fp-photo" src="" alt="" class="fp-photo">
+          <div class="fp-photo-fallback" id="fp-fallback">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+        </div>
+        <div class="fp-rotation-label">Rotates every 2 weeks</div>
+      </div>
+      <div class="fp-info-col">
+        <div class="fp-badges" id="fp-badges"></div>
+        <div class="fp-name" id="fp-name"></div>
+        <div class="fp-role" id="fp-role"></div>
+        <div class="fp-detail" id="fp-detail"></div>
+        <div class="fp-divider"></div>
+        <div class="fp-chips" id="fp-chips"></div>
+        <div class="fp-bio" id="fp-bio" style="display:none"></div>
+        <a href="players.html" class="btn btn-outline fp-btn">View All Players →</a>
+      </div>
+    </div>
+
+    <!-- Empty fallback -->
+    <div id="fp-empty" style="display:none;text-align:center;padding:40px 0;color:var(--muted);font-size:0.9rem">
+      Player spotlight coming soon.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ FANTASY CRICKET -->
+<section id="home-fantasy" data-ghost="FANTASY">
+  <div class="hf-inner">
+
+    <!-- Left: copy -->
+    <div class="hf-left">
+      <span class="section-tag">TCC Fantasy Cricket</span>
+      <h2 class="hf-title">Pick Your <span class="accent">XI.</span><br>Beat the Club.</h2>
+      <p class="hf-sub">Select your best XI from the TCC squad before each match round. Score points based on real performances. Compete against every member in the club — free to join.</p>
+      <div class="hf-actions">
+        <a href="fantasy.html" class="btn btn-primary">Pick Your XI →</a>
+        <a href="fantasy-guide.html" class="btn btn-outline">How It Works</a>
+      </div>
+      <div class="hf-stats-row">
+        <div class="hf-stat">
+          <div class="hf-stat-num" id="hf-stat-players">—</div>
+          <div class="hf-stat-label">Players In</div>
+        </div>
+        <div class="hf-stat-divider"></div>
+        <div class="hf-stat">
+          <div class="hf-stat-num" id="hf-stat-rounds">—</div>
+          <div class="hf-stat-label">Rounds Played</div>
+        </div>
+        <div class="hf-stat-divider"></div>
+        <div class="hf-stat">
+          <div class="hf-stat-num" id="hf-stat-deadline">—</div>
+          <div class="hf-stat-label">Next Deadline</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: mini leaderboard -->
+    <div class="hf-right">
+      <div class="hf-lb">
+        <div class="hf-lb-head">
+          <span class="hf-lb-title">Season Leaderboard</span>
+          <a href="leaderboard.html" class="hf-lb-link">Full table →</a>
+        </div>
+        <div id="hf-lb-rows">
+          <!-- Filled by JS -->
+          <div class="hf-lb-skel"><div class="skel hf-skel-rank"></div><div class="skel hf-skel-name"></div><div class="skel hf-skel-pts"></div></div>
+          <div class="hf-lb-skel"><div class="skel hf-skel-rank"></div><div class="skel hf-skel-name"></div><div class="skel hf-skel-pts"></div></div>
+          <div class="hf-lb-skel"><div class="skel hf-skel-rank"></div><div class="skel hf-skel-name"></div><div class="skel hf-skel-pts"></div></div>
+          <div class="hf-lb-skel"><div class="skel hf-skel-rank"></div><div class="skel hf-skel-name"></div><div class="skel hf-skel-pts"></div></div>
+        </div>
+        <div class="hf-lb-foot">
+          <a href="fantasy.html" class="hf-lb-cta">Join the league →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════ MINI GAMES -->
+<section id="home-games" style="position:relative">
+  <div class="hg-inner">
+
+    <div class="hg-left">
+      <span class="section-tag">TCC Arcade</span>
+      <h2 class="hg-title">Play Cricket.<br><span class="accent">Win Glory.</span></h2>
+      <p class="hg-sub">Two free browser-based cricket arcade games, built for the club. No download, no login — just tap and play.</p>
+      <div class="hg-actions">
+        <a href="games.html" class="btn btn-primary">See All Games →</a>
+      </div>
+    </div>
+
+    <div class="hg-right">
+      <a href="games/six-and-out/index.html" class="hg-game-tile">
+        <div class="hg-tile-icon">🏏</div>
+        <div class="hg-tile-name">Six &amp; Out</div>
+        <div class="hg-tile-sub">Stop the meter in the gold. One wicket, no second chances.</div>
+        <div class="hg-tile-cta">Play now →</div>
+      </a>
+      <a href="games/last-over-hero/index.html" class="hg-game-tile">
+        <div class="hg-tile-icon">⚡</div>
+        <div class="hg-tile-name">Last Over Hero</div>
+        <div class="hg-tile-sub">Chase the target. Six balls. Boundary or bust.</div>
+        <div class="hg-tile-cta">Play now →</div>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ YOUTH -->
+
+<div class="seam-arc" aria-hidden="true">
+  <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path class="arc-line"   d="M0,84 C480,6 960,6 1440,84"  pathLength="1"/>
+    <path class="arc-line"   d="M0,72 C480,-6 960,-6 1440,72" pathLength="1"/>
+    <path class="arc-stitch" d="M0,78 C480,0 960,0 1440,78"  pathLength="1"/>
+  </svg>
+</div>
+<section id="youth" data-ghost="JUNIORS">
+  <div class="section-inner">
+    <span class="section-tag reveal">Next Generation</span>
+    <h2 class="section-title reveal delay-1">Youth &amp; <span class="accent">Junior Cricket</span></h2>
+    <div class="divider reveal delay-1"></div>
+
+    <div class="youth-hero reveal delay-2">
+      <div class="youth-hero-text">
+        <p>
+          Tygerberg CC's junior programme is central to the club's identity.
+          With <strong>70 junior members</strong> across five age groups, we are
+          one of the most active youth cricket clubs in the Northern Suburbs of Cape Town.
+        </p>
+        <p>
+          All sessions are held at <strong>Florida Park, Ravensmead</strong>
+          under qualified coaches. Equipment is available for new players —
+          just arrive ready to play and learn.
+        </p>
+        <a href="#contact" class="btn btn-primary" style="margin-top:6px">Register Your Child</a>
+      </div>
+      <div class="coordinator-box">
+        <h3 class="youth-chairman-heading">Youth Chairman</h3>
+        <div class="coordinator-detail">
+          <div class="icon">👤</div>
+          <div>
+            <strong>Tommy Wildschudt</strong>
+            <div style="font-size:0.8rem;color:var(--muted);margin-top:1px">Youth Chairman</div>
+          </div>
+        </div>
+        <div class="coordinator-detail">
+          <div class="icon">✉️</div><span><a href="/cdn-cgi/l/email-protection#e99d868484909e80858d9a8a819c8d9da98e84888085c78a8684"><span class="__cf_email__" data-cfemail="03776c6e6e7a746a6f6770606b76677743646e626a6f2d606c6e">[email&#160;protected]</span></a></span>
+        </div>
+        <div style="margin-top:10px;background:rgba(201,168,76,0.07);border-radius:6px;padding:10px;border:1px solid rgba(201,168,76,0.14)">
+          <span style="font-size:0.8rem;color:var(--muted)">Season registration opens</span>
+          <div style="color:var(--gold);font-weight:700;margin-top:2px">September each year</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Age group card scroller -->
+    <h3 class="section-title reveal" style="font-size:clamp(1.7rem,4vw,2.6rem);margin-bottom:30px">Age <span class="accent">Groups</span></h3>
+
+    <div class="age-scroller-wrap reveal">
+      <button class="age-scroller-btn prev" id="age-prev" aria-label="Previous">&#8592;</button>
+      <button class="age-scroller-btn next" id="age-next" aria-label="Next">&#8594;</button>
+
+      <div class="age-scroller" id="age-scroller">
+
+        <div class="age-card">
+          <div class="age-card-banner">
+            <div><div class="age-badge">Mini</div><div class="age-label">Mini Cricket</div></div>
+          </div>
+          <div class="age-card-body">
+            <p class="age-desc">Our entry-level soft-ball programme introducing the youngest players to cricket through fun, non-competitive games. No experience needed — just enthusiasm!</p>
+            <div class="session-row">
+              <div><div class="session-day">Friday</div><div class="session-venue">Florida Park</div></div>
+              <div class="session-time">16:30–18:00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="age-card">
+          <div class="age-card-banner">
+            <div><div class="age-badge">U10</div><div class="age-label">Under 10</div></div>
+          </div>
+          <div class="age-card-body">
+            <p class="age-desc">Building on Mini Cricket foundations with more structured coaching. Players develop batting and bowling basics while enjoying competitive formats.</p>
+            <div class="session-row">
+              <div><div class="session-day">Tuesday</div><div class="session-venue">Florida Park — Nets</div></div>
+              <div class="session-time">15:30–17:30</div>
+            </div>
+            <div class="session-row">
+              <div><div class="session-day">Thursday</div><div class="session-venue">Florida Park — Nets</div></div>
+              <div class="session-time">15:30–17:30</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="age-card">
+          <div class="age-card-banner">
+            <div><div class="age-badge">U11</div><div class="age-label">Under 11</div></div>
+          </div>
+          <div class="age-card-body">
+            <p class="age-desc">Technique-focused sessions covering all three disciplines. Players begin participating in organised league cricket with emphasis on sportsmanship and skill.</p>
+            <div class="session-row">
+              <div><div class="session-day">Tuesday</div><div class="session-venue">Florida Park — Nets</div></div>
+              <div class="session-time">15:30–17:30</div>
+            </div>
+            <div class="session-row">
+              <div><div class="session-day">Thursday</div><div class="session-venue">Florida Park — Nets</div></div>
+              <div class="session-time">15:30–17:30</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="age-card">
+          <div class="age-card-banner">
+            <div><div class="age-badge">U12</div><div class="age-label">Under 12</div></div>
+          </div>
+          <div class="age-card-body">
+            <p class="age-desc">Hard-ball cricket with structured coaching in batting, bowling and fielding. Competitive Saturday league cricket and regional tournament participation.</p>
+            <div class="session-row">
+              <div><div class="session-day">Tuesday</div><div class="session-venue">Florida Park — Nets</div></div>
+              <div class="session-time">15:30–17:30</div>
+            </div>
+            <div class="session-row">
+              <div><div class="session-day">Thursday</div><div class="session-venue">Florida Park — Nets</div></div>
+              <div class="session-time">15:30–17:30</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="age-card">
+          <div class="age-card-banner">
+            <div><div class="age-badge">U13</div><div class="age-label">Under 13</div></div>
+          </div>
+          <div class="age-card-body">
+            <p class="age-desc">The bridge between junior and youth cricket. Players develop match awareness, tactical thinking, and specialisation while competing at the highest junior level.</p>
+            <div class="session-row">
+              <div><div class="session-day">Tuesday</div><div class="session-venue">Florida Park — Nets</div></div>
+              <div class="session-time">15:30–17:30</div>
+            </div>
+            <div class="session-row">
+              <div><div class="session-day">Thursday</div><div class="session-venue">Florida Park — Nets</div></div>
+              <div class="session-time">15:30–17:30</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /age-scroller -->
+
+      <div class="age-scroller-dots" id="age-dots"></div>
+    </div><!-- /age-scroller-wrap -->
+
+  </div>
+</section>
+<!-- ════════════════════════════════════ SPONSORS -->
+<section id="home-sponsors" data-ghost="PARTNERS">
+  <div class="section-inner" style="padding-bottom:70px">
+    <span class="section-tag reveal">Our Partners</span>
+    <h2 class="section-title reveal delay-1">Club <span class="accent">Sponsors</span></h2>
+    <div class="divider reveal delay-1"></div>
+
+    <div class="sponsors-track-outer reveal delay-2">
+      <div class="sponsors-track" id="sponsors-track">
+        <!-- Set 1 -->
+        <div class="sponsor-card"><img src="images/tw-profile-logo.png" loading="lazy" alt="TW Profile"></div>
+        <div class="sponsor-card"><img src="images/fbtc.png" loading="lazy" alt="Future Building Training Consultants"></div>
+        <div class="sponsor-card"><img src="images/mlpanel.png" loading="lazy" alt="M&L Panelbeaters"></div>
+        <div class="sponsor-card"><img src="images/optifect.png" loading="lazy" alt="Optifect Group"></div>
+        <div class="sponsor-card"><img src="images/saleshire.png" loading="lazy" alt="Sales Hire"></div>
+        <!-- Set 2 — exact duplicate for seamless infinite loop -->
+        <div class="sponsor-card"><img src="images/tw-profile-logo.png" loading="lazy" alt="TW Profile"></div>
+        <div class="sponsor-card"><img src="images/fbtc.png" loading="lazy" alt="Future Building Training Consultants"></div>
+        <div class="sponsor-card"><img src="images/mlpanel.png" loading="lazy" alt="M&L Panelbeaters"></div>
+        <div class="sponsor-card"><img src="images/optifect.png" loading="lazy" alt="Optifect Group"></div>
+        <div class="sponsor-card"><img src="images/saleshire.png" loading="lazy" alt="Sales Hire"></div>
+      </div>
+    </div>
+
+    <p class="sponsors-cta reveal">
+      Interested in sponsoring TCC? <a href="#contact">Get in touch →</a>
+    </p>
+  </div>
+</section>
+<!-- ════════════════════════════════════ NEWS -->
+<section id="home-news" data-ghost="HEADLINES">
+  <div class="section-inner">
+    <span class="section-tag reveal">Latest News</span>
+    <h2 class="section-title reveal delay-1">Club <span class="accent">News</span></h2>
+    <div class="divider reveal delay-1"></div>
+
+    <div id="home-news-loading" style="display:block">
+      <div class="skel-news-grid">
+        <div class="skel-news-card">
+          <div class="skel skel-news-date"></div>
+          <div class="skel skel-news-title"></div>
+          <div class="skel skel-news-title2"></div>
+          <div class="skel skel-news-line"></div>
+          <div class="skel skel-news-line2"></div>
+          <div class="skel skel-news-line3"></div>
+        </div><div class="skel-news-card">
+          <div class="skel skel-news-date"></div>
+          <div class="skel skel-news-title"></div>
+          <div class="skel skel-news-title2"></div>
+          <div class="skel skel-news-line"></div>
+          <div class="skel skel-news-line2"></div>
+          <div class="skel skel-news-line3"></div>
+        </div><div class="skel-news-card">
+          <div class="skel skel-news-date"></div>
+          <div class="skel skel-news-title"></div>
+          <div class="skel skel-news-title2"></div>
+          <div class="skel skel-news-line"></div>
+          <div class="skel skel-news-line2"></div>
+          <div class="skel skel-news-line3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="home-news-grid" class="home-news-grid" style="display:none"></div>
+
+    <div id="home-news-empty" style="display:none;padding:40px 0;text-align:center;color:var(--muted);font-size:0.9rem">
+      No news yet. Check back soon.
+    </div>
+
+    <div class="home-news-footer reveal delay-3" id="home-news-footer" style="display:none">
+      <a href="news.html" class="btn btn-outline">All Articles →</a>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════ SOCIAL FEED -->
+
+<div class="seam-arc" aria-hidden="true">
+  <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path class="arc-line"   d="M0,84 C480,6 960,6 1440,84"  pathLength="1"/>
+    <path class="arc-line"   d="M0,72 C480,-6 960,-6 1440,72" pathLength="1"/>
+    <path class="arc-stitch" d="M0,78 C480,0 960,0 1440,78"  pathLength="1"/>
+  </svg>
+</div>
+<section id="home-social">
+  <div class="section-inner" style="padding-bottom:70px">
+    <span class="section-tag reveal">Stay Connected</span>
+    <h2 class="section-title reveal delay-1">Latest from <span class="accent">Instagram</span></h2>
+    <div class="divider reveal delay-1"></div>
+    <p class="section-subtitle reveal delay-2" style="margin-bottom:40px">
+      Flyers, match results, and club moments — follow us for live updates.
+    </p>
+
+    <div class="social-feed-wrap reveal delay-2">
+      <behold-widget feed-id="j2d6AQLFdK6GeyfnTWzt"></behold-widget>
+      <div class="social-feed-fallback" id="social-fallback" style="display:none">
+        <div class="social-fallback-inner">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold)">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+          <p>Follow <strong>@tygerscricket</strong> on Instagram for match results, flyers, and club moments.</p>
+          <a href="https://www.instagram.com/tygerscricket" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="margin-top:8px">Open Instagram →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════ MEMBERSHIP CTA -->
+<section id="membership">
+  <div class="section-inner">
+    <div class="membership-cta-strip reveal">
+      <div class="membership-cta-text">
+        <span class="section-tag" style="margin-bottom:6px;display:inline-block">Join The Club</span>
+        <h2 class="section-title" style="margin-bottom:8px">Become a <span class="accent">TCC Member</span></h2>
+        <p style="color:var(--muted);font-size:0.95rem;line-height:1.6">Playing from <strong style="color:var(--white)">R800/season</strong> · Youth from <strong style="color:var(--white)">R350/family</strong> · Social membership free</p>
+      </div>
+      <div class="membership-cta-actions">
+        <a href="membership.html" class="btn btn-primary">View Membership →</a>
+        <a href="#contact" class="btn btn-outline">Get in Touch</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ EXECUTIVE -->
+<section id="home-exec" data-ghost="COMMITTEE">
+  <div class="section-inner">
+    <span class="section-tag reveal">Club Leadership</span>
+    <h2 class="section-title reveal delay-1">Executive <span class="accent">Committee</span></h2>
+    <div class="divider reveal delay-1"></div>
+
+    <!-- Featured — Chair & Vice-Chair -->
+    <div class="exec-featured reveal delay-2">
+      <div class="exec-featured-card">
+        <div class="exec-featured-photo-wrap">
+          <img src="images/exec/alnico-adams.jpg" alt="Alnico Adams" class="exec-featured-photo" loading="lazy">
+        </div>
+        <div class="exec-featured-text">
+          <div class="exec-featured-index">01</div>
+          <div class="exec-featured-role">Chairperson</div>
+          <div class="exec-featured-name">Alnico Adams</div>
+        </div>
+      </div>
+      <div class="exec-featured-divider"></div>
+      <div class="exec-featured-card">
+        <div class="exec-featured-photo-wrap">
+          <img src="images/exec/randall-florence.jpg" alt="Randall Florence" class="exec-featured-photo" loading="lazy">
+        </div>
+        <div class="exec-featured-text">
+          <div class="exec-featured-index">02</div>
+          <div class="exec-featured-role">Vice-Chairperson</div>
+          <div class="exec-featured-name">Randall Florence</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rest of committee -->
+    <div class="exec-list reveal delay-3">
+
+      <div class="exec-row">
+        <span class="exec-index">03</span>
+        <div class="exec-avatar-wrap">
+          <img src="images/exec/lee-anne-muller.jpg" alt="Lee-Anne Muller" class="exec-avatar" loading="lazy">
+        </div>
+        <span class="exec-role">Secretary</span>
+        <span class="exec-name">Lee-Anne Muller</span>
+      </div>
+
+      <div class="exec-row">
+        <span class="exec-index">04</span>
+        <div class="exec-avatar-wrap">
+          <img src="images/exec/robin-cloete.jpg" alt="Robin Cloete" class="exec-avatar" loading="lazy">
+        </div>
+        <span class="exec-role">Assistant Secretary</span>
+        <span class="exec-name">Robin Cloete</span>
+      </div>
+
+      <div class="exec-row">
+        <span class="exec-index">05</span>
+        <div class="exec-avatar-wrap">
+          <img src="images/exec/lyle-rogers.jpg" alt="Lyle Rogers" class="exec-avatar" loading="lazy">
+        </div>
+        <span class="exec-role">Treasurer</span>
+        <span class="exec-name">Lyle Rogers</span>
+      </div>
+
+      <div class="exec-row">
+        <span class="exec-index">06</span>
+        <div class="exec-avatar-wrap">
+          <img src="images/exec/morne-rex.jpg" alt="Morne Rex" class="exec-avatar" loading="lazy">
+        </div>
+        <span class="exec-role">M&amp;R Secretary</span>
+        <span class="exec-name">Morne Rex</span>
+      </div>
+
+      <div class="exec-row">
+        <span class="exec-index">07</span>
+        <div class="exec-avatar-wrap">
+          <img src="images/exec/claude-september.jpg" alt="Claude September" class="exec-avatar" loading="lazy">
+        </div>
+        <span class="exec-role">Trustee</span>
+        <span class="exec-name">Claude September</span>
+      </div>
+
+      <div class="exec-row">
+        <span class="exec-index">08</span>
+        <div class="exec-avatar-wrap">
+          <img src="images/exec/jason-fortuin.jpg" alt="Jason Fortuin" class="exec-avatar" loading="lazy">
+        </div>
+        <span class="exec-role">Club Captain &amp; PAFCO Convenor</span>
+        <span class="exec-name">Jason Fortuin</span>
+      </div>
+
+      <div class="exec-row">
+        <span class="exec-index">09</span>
+        <div class="exec-avatar-wrap">
+          <img src="images/exec/tommy-wildschudt.jpg" alt="Tommy Wildschudt" class="exec-avatar" loading="lazy">
+        </div>
+        <span class="exec-role">Youth Chairperson &amp; Marketing</span>
+        <span class="exec-name">Tommy Wildschudt</span>
+      </div>
+
+      <div class="exec-row">
+        <span class="exec-index">10</span>
+        <div class="exec-avatar-wrap">
+          <img src="images/exec/byron-daries.jpg" alt="Byron Daries" class="exec-avatar" loading="lazy">
+        </div>
+        <span class="exec-role">Media</span>
+        <span class="exec-name">Byron Daries</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════ CONTACT -->
+
+<div class="seam-arc" aria-hidden="true">
+  <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path class="arc-line"   d="M0,84 C480,6 960,6 1440,84"  pathLength="1"/>
+    <path class="arc-line"   d="M0,72 C480,-6 960,-6 1440,72" pathLength="1"/>
+    <path class="arc-stitch" d="M0,78 C480,0 960,0 1440,78"  pathLength="1"/>
+  </svg>
+</div>
+<section id="contact" data-ghost="FIND US">
+  <div class="section-inner">
+    <span class="section-tag reveal">Get In Touch</span>
+    <h2 class="section-title reveal delay-1">Contact <span class="accent">&amp; Find Us</span></h2>
+    <div class="divider reveal delay-1"></div>
+    <div class="contact-grid">
+      <div class="reveal delay-2">
+        <form class="contact-form" id="contact-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="c-name">Full Name</label>
+            <input class="form-control" type="text" id="c-name" name="name" placeholder="e.g. John Smith" autocomplete="name">
+            <span class="form-error" id="err-name">Please enter your name.</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="c-email">Email Address</label>
+            <input class="form-control" type="email" id="c-email" name="email" placeholder="you@example.com" autocomplete="email">
+            <span class="form-error" id="err-email">Please enter a valid email address.</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="c-message">Message</label>
+            <textarea class="form-control" id="c-message" name="message" placeholder="How can we help?"></textarea>
+            <span class="form-error" id="err-msg">Please write a message.</span>
+          </div>
+
+          <!-- Cloudflare Turnstile -->
+          <div class="cf-turnstile"
+               data-sitekey="0x4AAAAAACrt-KOiraItvVww"
+               data-theme="dark"
+               data-size="compact"
+               data-appearance="interaction-only"
+               id="cf-turnstile-widget"></div>
+          <span class="form-error" id="err-turnstile">Security check failed. Please try again.</span>
+
+          <button type="submit" class="btn btn-primary" id="form-submit-btn">
+            <span id="btn-label">Send Message →</span>
+            <span id="btn-spinner" style="display:none">Sending…</span>
+          </button>
+          <div class="form-success" id="form-success">✅ &nbsp;Message sent! We'll be in touch within 24–48 hours.</div>
+          <div class="form-error" id="form-send-error" style="display:none;font-size:0.88rem;padding:12px;background:rgba(200,80,80,0.08);border:1px solid rgba(200,80,80,0.25);border-radius:5px;margin-top:8px">
+            ❌ &nbsp;Something went wrong. Please try again or email us directly.
+          </div>
+        </form>
+      </div>
+      <div class="contact-info reveal delay-3">
+        <div class="info-group">
+          <h3>Club Details</h3>
+          <div class="info-row"><div class="info-icon">📍</div><div>Florida Park<br>Ravensmead, Cape Town, 7493</div></div>
+          <div class="info-row"><div class="info-icon">✉️</div><div><a href="/cdn-cgi/l/email-protection#e58c8b838aa5919c828097878097828686cb868acb9f84"><span class="__cf_email__" data-cfemail="553c3b333a15212c3230273730273236367b363a7b2f34">[email&#160;protected]</span></a></div></div>
+          <div class="info-row"><div class="info-icon">💬</div><div><a href="https://wa.me/27000000000" target="_blank" rel="noopener noreferrer" style="color:var(--gold)">WhatsApp us</a><div style="font-size:0.78rem;color:var(--muted);margin-top:2px">Quickest way to reach us</div></div></div>
+        </div>
+        <div class="info-group">
+          <h3>Find Us — Florida Park, Ravensmead</h3>
+          <div class="map-container">
+            <div id="tcc-map"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-brand">
+        <img loading="eager" src="images/tcc-logo.png" alt="Tygerberg Cricket Club" class="nav-logo-img">
+        <div class="nav-brand-text">
+          <div class="nav-brand-name">Tygerberg CC</div>
+          <div class="nav-brand-sub">Est. 1957</div>
+        </div>
+      </div>
+      <p>Black and old gold. Proudly serving Florida Park and the Ravensmead community since 1957.</p>
+    </div>
+    <div class="footer-col">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#youth">Youth</a></li>
+        <li><a href="fixtures.html">Fixtures</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Club</h3>
+      <ul>
+        <li><a href="players.html">Players</a></li>
+    <li><a href="history.html">History</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="sponsors.html">Sponsors</a></li>
+        <li><a href="membership.html">Membership</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Play</h3>
+      <ul>
+        <li><a href="fantasy.html" style="color:var(--gold)">Fantasy Cricket</a></li>
+        <li><a href="games.html"   style="color:var(--gold)">Mini Games</a></li>
+        <li><a href="games/six-and-out/index.html">Six &amp; Out Challenge</a></li>
+        <li><a href="games/last-over-hero/index.html">Last Over Hero</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Connect</h3>
+      <ul>
+        <li><a href="https://www.facebook.com/TygerbergCricketClub" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+        <li><a href="https://www.instagram.com/tygerscricket/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        <li><a href="https://www.tiktok.com/@tygerbergcc" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+        <li><a href="https://www.newlandscricket.com" target="_blank" rel="noopener noreferrer">WPCA</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-motto">Facta Non Verba</div>
+    <div class="footer-bottom-row">
+      <p>© <span id="copyright-year"></span> Tygerberg Cricket Club. All rights reserved.</p>
+      <p>Florida Park · Ravensmead · Cape Town</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════════════════════════ BACK TO TOP -->
+<button class="back-to-top" id="back-to-top" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"/>
+  </svg>
+</button>
+
+<script src="js/main.js?v=10"></script>
+<script src="js/home-fx.js?v=5"></script>
+</body>
+</html>

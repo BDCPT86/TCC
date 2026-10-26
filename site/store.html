@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Club Shop — Tygerberg Cricket Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/store.css?v=3">
+</head>
+<body>
+<div id="shop">
+
+  <header class="shop-top">
+    <a class="shop-brand" href="index.html">
+      <span class="shop-crest">TCC</span>
+      <span>Club Shop</span>
+    </a>
+    <button class="cart-btn" @click="cartOpen = true" :aria-label="'Cart, ' + cartCount + ' items'">
+      Cart <span class="cart-count" v-if="cartCount">{{ cartCount }}</span>
+    </button>
+  </header>
+
+  <section class="shop-hero">
+    <p class="shop-eyebrow">Est. 1957 · Florida Park</p>
+    <h1>Wear the <span class="gold">Old Gold</span>.</h1>
+    <p class="shop-sub">Kit, caps and club merch. Order here, pay online, collect at the clubhouse.</p>
+  </section>
+
+  <!-- loading / empty / error states -->
+  <div class="shop-state" v-if="loading">Loading the shop…</div>
+  <div class="shop-state" v-else-if="loadError">
+    Couldn't load the shop right now. Please refresh, or try again shortly.
+  </div>
+  <div class="shop-state" v-else-if="!products.length">
+    The shop's empty for now — check back once new stock lands.
+  </div>
+
+  <!-- category tabs -->
+  <nav class="cat-tabs" v-if="products.length && categories.length > 1">
+    <button class="cat-tab" :class="{ on: activeCategory === 'all' }" @click="activeCategory = 'all'">All</button>
+    <button v-for="c in categories" :key="c" class="cat-tab" :class="{ on: activeCategory === c }" @click="activeCategory = c">{{ c }}</button>
+  </nav>
+
+  <!-- catalogue -->
+  <main class="grid" v-if="!loading && !loadError && products.length">
+    <article class="card" v-for="p in visibleProducts" :key="p.id">
+      <div class="card-img" :style="p.image_url ? { backgroundImage: 'url(' + p.image_url + ')' } : {}">
+        <span v-if="!p.image_url" class="card-img-ph">TCC</span>
+        <span class="card-cat" v-if="p.category">{{ p.category }}</span>
+      </div>
+      <div class="card-body">
+        <h3>{{ p.name }}</h3>
+        <p class="card-desc" v-if="p.description">{{ p.description }}</p>
+
+        <div class="card-opts" v-if="p.has_variants">
+          <label :for="'v-' + p.id">Size</label>
+          <select :id="'v-' + p.id" v-model="chosenVariant[p.id]">
+            <option :value="null" disabled>Choose…</option>
+            <option v-for="v in p.product_variants" :key="v.id" :value="v.id" :disabled="v.stock < 1">
+              {{ v.label }}{{ v.stock < 1 ? ' — sold out' : '' }}
+            </option>
+          </select>
+        </div>
+
+        <div class="card-foot">
+          <span class="price">R{{ rand(p.price_cents) }}</span>
+          <button class="btn-add" @click="addToCart(p)" :disabled="soldOut(p)">
+            {{ soldOut(p) ? 'Sold out' : 'Add' }}
+          </button>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- cart drawer -->
+  <transition name="fade">
+    <div class="drawer-scrim" v-if="cartOpen" @click.self="cartOpen = false">
+      <aside class="drawer" role="dialog" aria-label="Your cart">
+        <div class="drawer-head">
+          <h2>Your cart</h2>
+          <button class="drawer-x" @click="cartOpen = false" aria-label="Close cart">×</button>
+        </div>
+
+        <div class="cart-empty" v-if="!cart.length">
+          Nothing here yet. Add something from the shop.
+        </div>
+
+        <template v-else>
+          <ul class="cart-list">
+            <li v-for="(it, i) in cart" :key="i">
+              <div>
+                <p class="ci-name">{{ it.label }}</p>
+                <p class="ci-unit">R{{ rand(it.unitCents) }} each</p>
+              </div>
+              <div class="ci-qty">
+                <button @click="bump(i, -1)" aria-label="Remove one">–</button>
+                <span>{{ it.qty }}</span>
+                <button @click="bump(i, 1)" aria-label="Add one">+</button>
+              </div>
+              <span class="ci-line">R{{ rand(it.unitCents * it.qty) }}</span>
+            </li>
+          </ul>
+
+          <div class="cart-total">
+            <span>Total</span><span>R{{ rand(totalCents) }}</span>
+          </div>
+
+          <!-- checkout details -->
+          <div class="checkout" v-if="!placed">
+            <input v-model.trim="buyer.name" placeholder="Your name" autocomplete="name">
+            <input v-model.trim="buyer.email" placeholder="Email" type="email" autocomplete="email">
+            <input v-model.trim="buyer.phone" placeholder="Mobile (for collection)" type="tel" autocomplete="tel">
+
+            <div class="pay-method">
+              <label :class="{ on: paymentMethod === 'payfast' }">
+                <input type="radio" value="payfast" v-model="paymentMethod"> Pay online now
+              </label>
+              <label :class="{ on: paymentMethod === 'cash' }">
+                <input type="radio" value="cash" v-model="paymentMethod"> Pay cash at clubhouse
+              </label>
+            </div>
+
+            <p class="collect-note">
+              {{ paymentMethod === 'cash'
+                 ? 'Reserve now, pay cash when you collect at the clubhouse.'
+                 : 'Collect at the clubhouse — we\u2019ll email when your order\u2019s ready.' }}
+            </p>
+            <p class="checkout-err" v-if="checkoutErr">{{ checkoutErr }}</p>
+            <button class="btn-pay" @click="checkout" :disabled="paying">
+              {{ paying ? 'Placing order…'
+                 : (paymentMethod === 'cash' ? 'Reserve order (R' + rand(totalCents) + ')'
+                                             : 'Pay R' + rand(totalCents)) }}
+            </button>
+          </div>
+
+          <div class="placed" v-else>
+            <p class="placed-mark">✓</p>
+            <h3>{{ placed.cash ? 'Order reserved' : 'Order placed' }}</h3>
+            <p v-if="placed.cash">Order #{{ placed.orderNo }} — we'll email {{ buyer.email }} when it's ready. Bring cash to the clubhouse to collect.</p>
+            <p v-else>Order #{{ placed.orderNo }} — we'll email {{ buyer.email }} when it's ready to collect.</p>
+            <a class="track-back" :href="'/track.html?order=' + placed.orderNo + '&email=' + encodeURIComponent(buyer.email)">Track this order →</a>
+          </div>
+        </template>
+      </aside>
+    </div>
+  </transition>
+
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="js/store.js?v=3"></script>
+</body>
+</html>

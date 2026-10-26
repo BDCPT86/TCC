@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scorecard — Tygerberg CC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/scorecard.css">
+<link rel="stylesheet" href="css/transitions.css?v=1">
+</head>
+<body>
+<div class="page" id="page">
+  <div class="sc-page-header">
+    <div class="sc-brand">
+      <img src="images/tcc-logo.png" alt="TCC" class="sc-brand-logo">
+      <div>
+        <div class="sc-brand-name">Tygerberg CC</div>
+        <div class="sc-brand-sub">Florida Park · Est. 1957</div>
+      </div>
+    </div>
+    <div class="sc-actions">
+      <a href="fixtures.html" class="btn-back">← Fixtures</a>
+    </div>
+  </div>
+
+  <div id="content">
+    <div class="state-loading">
+      <div class="state-icon">🏏</div>
+      <div class="state-title">Loading Scorecard</div>
+      <div class="state-sub">Fetching match data…</div>
+    </div>
+  </div>
+  <div id="sc-chart-wrap" style="display:none;padding:12px 16px 0">
+    <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Worm — Cumulative Runs per Over</div>
+    <canvas id="sc-run-timeline" height="100" style="width:100%;display:block;border-radius:8px;background:rgba(255,255,255,0.04)"></canvas>
+    <div id="sc-chart-legend" style="display:flex;gap:20px;margin-top:6px;font-size:0.7rem"></div>
+  </div>
+  <div id="sc-manhattan-wrap" style="display:none;padding:12px 16px 0">
+    <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Manhattan — Runs per Over</div>
+    <div id="sc-manhattan-legend" style="display:flex;gap:20px;margin-bottom:4px;font-size:0.7rem"></div>
+    <canvas id="sc-manhattan-1" height="90" style="width:100%;display:block;border-radius:8px;background:rgba(255,255,255,0.04)"></canvas>
+    <div id="sc-manhattan-2-wrap" style="display:none;margin-top:6px">
+      <canvas id="sc-manhattan-2" height="90" style="width:100%;display:block;border-radius:8px;background:rgba(255,255,255,0.04)"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="js/scorecard.js?v=9"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+/* ══════════════════════════════════════════════════════
+   TCC SITE THEME  (v1) — stage-1 shared design language
+   Ports the homepage redesign's portable elements to the
+   main-site pages: fixtures, players, player-bio, news,
+   gallery, history, sponsors, membership.
+
+   Scoped to body.theme. Loads after each page's own CSS;
+   self-contained tokens (page CSS files are standalone
+   and don't share main.css). Re-skins shared classes
+   only — page layouts and page-specific components are
+   untouched (those are stage-2 deep passes).
+
+   NOT used on index.html (home.css supersedes it) or on
+   fantasy pages (freshly redesigned, own language).
+══════════════════════════════════════════════════════ */
+
+/* ── Tokens ─────────────────────────────────────────── */
+body.theme {
+  --t-gold:      #c9a84c;
+  --t-gold-hi:   #e8c96a;
+  --t-gold-deep: #8f7430;
+  --t-gold-15:   rgba(201,168,76,0.15);
+  --t-gold-30:   rgba(201,168,76,0.30);
+  --t-cream:     #f2ede3;
+  --t-serif:     'DM Serif Display', serif;
+  --t-display:   'Bebas Neue', sans-serif;
+  --t-stitch:    repeating-linear-gradient(115deg,
+                   var(--t-gold) 0 2px, transparent 2px 7px);
+}
+
+/* ── Page-hero eyebrow → stitched tag ───────────────── */
+body.theme .page-hero-tag {
+  gap: 12px;
+  letter-spacing: 5px;
+  color: var(--t-gold-hi);
+}
+body.theme .page-hero-tag::before {
+  content: "";
+  width: 30px;
+  height: 6px;
+  background: var(--t-stitch);
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+/* ── Serif-italic accent in titles ──────────────────── */
+body.theme .page-title .accent,
+body.theme .section-title .accent {
+  font-family: var(--t-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.82em;
+  letter-spacing: 0;
+  background: linear-gradient(110deg,
+    var(--t-gold-deep), var(--t-gold-hi) 45%, var(--t-gold) 80%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Dividers → seam stitches ───────────────────────── */
+body.theme .divider {
+  width: 86px;
+  height: 7px;
+  background: var(--t-stitch);
+  border-radius: 0;
+}
+
+/* ── Page-hero bar → vertical seam ──────────────────── */
+body.theme .page-hero-bar {
+  width: 9px;
+  opacity: 0.55;
+  background:
+    /* stitch ticks crossing the line */
+    repeating-linear-gradient(180deg,
+      transparent 0 24px, var(--t-gold-30) 24px 26px)
+      center / 9px 100% no-repeat,
+    /* the seam line itself */
+    linear-gradient(180deg,
+      transparent 0%, var(--t-gold) 30%, var(--t-gold) 70%, transparent 100%)
+      center / 3px 100% no-repeat;
+}
+
+/* ── Buttons (where shared classes are used) ────────── */
+body.theme .btn {
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  font-weight: 700;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.28s ease, color 0.28s ease,
+              background 0.28s ease, border-color 0.28s ease;
+}
+body.theme .btn:hover { transform: translateY(-2px); }
+body.theme .btn-primary {
+  background: linear-gradient(120deg,
+    var(--t-gold) 0%, var(--t-gold-hi) 55%, var(--t-gold) 100%);
+  color: #161410;
+  box-shadow: 0 4px 18px rgba(201,168,76,0.22);
+}
+body.theme .btn-primary:hover { box-shadow: 0 8px 26px rgba(201,168,76,0.38); }
+body.theme .btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -80%;
+  width: 50%; height: 100%;
+  background: linear-gradient(105deg,
+    transparent, rgba(255,255,255,0.45), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+}
+body.theme .btn-primary:hover::after { left: 130%; }
+body.theme .btn-outline {
+  border: 1px solid var(--t-gold-30);
+  color: var(--t-gold-hi);
+}
+body.theme .btn-outline:hover {
+  background: var(--t-gold);
+  color: #161410;
+  border-color: var(--t-gold);
+}
+
+/* ── Footer: stitched seam + serif motto ────────────── */
+body.theme footer { position: relative; }
+body.theme footer::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: 50%;
+  transform: translateX(-50%);
+  width: min(520px, 70vw);
+  height: 8px;
+  background: var(--t-stitch);
+  -webkit-mask-image: linear-gradient(90deg,
+    transparent, #000 25% 75%, transparent);
+          mask-image: linear-gradient(90deg,
+    transparent, #000 25% 75%, transparent);
+}
+body.theme .footer-motto {
+  font-family: var(--t-serif);
+  font-style: italic;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  text-transform: none;
+  color: var(--t-gold-hi);
+}
+
+/* ── Quality floor ──────────────────────────────────── */
+body.theme :focus-visible {
+  outline: 2px solid var(--t-gold-hi);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.theme .btn,
+  body.theme .btn-primary::after {
+    transition-duration: 0.01ms !important;
+  }
+}
