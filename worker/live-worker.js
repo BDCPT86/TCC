@@ -3960,11 +3960,19 @@ Tygerberg Cricket Club`
 
           if (useStandings) {
             // Build season points per participant using same logic as leaderboard
-            const [allPicksR, allScoresR, allRoundsR] = await Promise.all([
+            /* playersR was missing from this list while the fourth fetch
+               below was being read as `playersR` on line 3974 — so the
+               whole H2H draw threw "playersR is not defined".
+
+               It only fired from round 3 on, because this branch runs
+               only when useStandings is true (scoredRoundCount >= 3).
+               Rounds 1 and 2 seed without standings and never touch it,
+               which is why the draw worked twice and then stopped. */
+            const [allPicksR, allScoresR, allRoundsR, playersR] = await Promise.all([
               fetch(`${SB}/rest/v1/fantasy_picks?select=*`, { headers: fetchH }).then(r => r.json()),
               fetch(`${SB}/rest/v1/fantasy_scores?select=*`, { headers: fetchH }).then(r => r.json()),
               fetch(`${SB}/rest/v1/fantasy_rounds?select=id,wildcard,boost_modifier`, { headers: fetchH }).then(r => r.json()),
-            fetch(`${SB}/rest/v1/players?select=id,role&active=not.eq.false`, { headers: fetchH }).then(r => r.json()),
+              fetch(`${SB}/rest/v1/players?select=id,role&active=not.eq.false`, { headers: fetchH }).then(r => r.json()),
             ]);
 
             const roundWc = {};
