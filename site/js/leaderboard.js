@@ -223,7 +223,7 @@ async function loadLeaderboard(roundId) {
   try {
     var picksUrl   = SUPABASE_URL+'/rest/v1/fantasy_picks?select=*,fantasy_participants(name,team_name)';
     var scoresUrl  = SUPABASE_URL+'/rest/v1/fantasy_scores?select=*';
-    var playersUrl = SUPABASE_URL+'/rest/v1/players?select=id,name,role,fantasy_value,captain&active=not.eq.false';
+    var playersUrl = SUPABASE_URL+'/rest/v1/public_players?select=id,name,role,fantasy_value,captain&active=not.eq.false';
     if (roundId !== 'season') { picksUrl += '&round_id=eq.'+roundId; scoresUrl += '&round_id=eq.'+roundId; }
 
     var [pr, sr, plr, h2hFixtures, elig] = await Promise.all([
@@ -971,7 +971,7 @@ async function loadLiveView() {
       fetch(SUPABASE_URL + '/rest/v1/fantasy_player_name_map?select=scorer_name,player_id', {
         headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
       }).then(function(r){ return r.json(); }),
-      fetch(SUPABASE_URL + '/rest/v1/players?select=id,role,name&active=not.eq.false', {
+      fetch(SUPABASE_URL + '/rest/v1/public_players?select=id,role,name&active=not.eq.false', {
         headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
       }).then(function(r){ return r.json(); }),
     ]);

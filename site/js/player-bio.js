@@ -11,7 +11,7 @@ var selectedPhotoFile = null;
   if (!sel) return;
   try {
     var r = await fetch(
-      SB_URL + '/rest/v1/players?select=id,name&order=name.asc&limit=200',
+      SB_URL + '/rest/v1/public_players?select=id,name&order=name.asc&limit=200',
       { headers: H }
     );
     if (!r.ok) throw new Error('Failed to load');

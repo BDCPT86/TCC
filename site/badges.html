@@ -307,7 +307,7 @@ async function loadAll() {
       fetch(SUPABASE_URL+'/rest/v1/fantasy_picks?select=*', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SUPABASE_URL+'/rest/v1/fantasy_scores?select=*', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SUPABASE_URL+'/rest/v1/fantasy_rounds?select=id,name,wildcard,boost_modifier&order=created_at.asc', {headers:H}).then(function(r){return r.ok?r.json():[];}),
-      fetch(SUPABASE_URL+'/rest/v1/players?select=id,name,role,fantasy_value&active=not.eq.false', {headers:H}).then(function(r){return r.ok?r.json():[];}),
+      fetch(SUPABASE_URL+'/rest/v1/public_players?select=id,name,role,fantasy_value&active=not.eq.false', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SUPABASE_URL+'/rest/v1/fantasy_badges?select=*', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SUPABASE_URL+'/rest/v1/fantasy_h2h_fixtures?resolved=eq.true&select=participant_a,participant_b,winner_id,round_id', {headers:H}).then(function(r){return r.ok?r.json():[];}),
     ]);

@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var emptyEl   = document.getElementById('fp-empty');
   if (!loadingEl) return;
 
-  fetch(SUPABASE_URL + '/rest/v1/players?select=id,name,nickname,role,squad,active,captain,vice_captain,fantasy_value,batting_hand,bowling_style,bio,cricket_hero,favourite_shot,years_at_tcc,photo_url,member_type&active=not.eq.false&member_type=eq.player&order=name.asc', {
+  fetch(SUPABASE_URL + '/rest/v1/public_players?select=id,name,nickname,role,squad,active,captain,vice_captain,fantasy_value,batting_hand,bowling_style,bio,cricket_hero,favourite_shot,years_at_tcc,photo_url,member_type&active=not.eq.false&member_type=eq.player&order=name.asc', {
     headers: {
       'apikey':        SUPABASE_ANON_KEY,
       'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,

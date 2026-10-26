@@ -2265,7 +2265,7 @@ async function computeAndNotifyBadges(roundId) {
     fetch(SUPABASE_URL+'/rest/v1/fantasy_picks?select=*', {headers:H}).then(function(r){return r.ok?r.json():[];}),
     fetch(SUPABASE_URL+'/rest/v1/fantasy_scores?select=*', {headers:H}).then(function(r){return r.ok?r.json():[];}),
     fetch(SUPABASE_URL+'/rest/v1/fantasy_rounds?select=id,name,wildcard,boost_modifier&order=created_at.asc', {headers:H}).then(function(r){return r.ok?r.json():[];}),
-    fetch(SUPABASE_URL+'/rest/v1/players?active=not.eq.false&select=id,name,role,fantasy_value', {headers:H}).then(function(r){return r.ok?r.json():[];}),
+    fetch(SUPABASE_URL+'/rest/v1/public_players?active=not.eq.false&select=id,name,role,fantasy_value', {headers:H}).then(function(r){return r.ok?r.json():[];}),
     fetch(SUPABASE_URL+'/rest/v1/fantasy_badges?select=participant_id,badge_id', {headers:H}).then(function(r){return r.ok?r.json():[];}),
     fetch(SUPABASE_URL+'/rest/v1/fantasy_h2h_fixtures?resolved=eq.true&select=participant_a,participant_b,winner_id,round_id', {headers:H}).then(function(r){return r.ok?r.json():[];}),
   ]);
@@ -2695,7 +2695,7 @@ async function loadBioLinkPlayers() {
   var sel = document.getElementById('bio-link-player-select');
   if (!sel || sel.options.length > 1) return; // already loaded
   try {
-    var r = await fetch(SUPABASE_URL+'/rest/v1/players?active=not.eq.false&select=id,name&order=name.asc', {headers:H});
+    var r = await fetch(SUPABASE_URL+'/rest/v1/public_players?active=not.eq.false&select=id,name&order=name.asc', {headers:H});
     var rows = await r.json();
     (rows||[]).forEach(function(p) {
       var opt = document.createElement('option');
@@ -2906,7 +2906,7 @@ async function reapplyBio(id, name) {
 
 async function showBioLinkDialog(submissionId, submittedName, fieldOverrides) {
   // Load active players for the dropdown
-  var r     = await fetch(SUPABASE_URL+'/rest/v1/players?active=not.eq.false&select=id,name&order=name.asc', {headers:H});
+  var r     = await fetch(SUPABASE_URL+'/rest/v1/public_players?active=not.eq.false&select=id,name&order=name.asc', {headers:H});
   var squad = await r.json();
 
   var overlay = document.createElement('div');
@@ -3001,7 +3001,7 @@ async function loadPlayersAdmin() {
   var el = document.getElementById('players-admin-list');
   el.innerHTML = '<div class="album-list-loading">Loading…</div>';
   try {
-    var r = await fetch(SUPABASE_URL + '/rest/v1/players?select=id,name,role,active,captain,vice_captain,photo_url,squad,member_type&order=name.asc', { headers: H });
+    var r = await fetch(SUPABASE_URL + '/rest/v1/public_players?select=id,name,role,active,captain,vice_captain,photo_url,squad,member_type&order=name.asc', { headers: H });
     allPlayersAdmin = await r.json();
     renderPlayerList();
   } catch(e) { el.innerHTML = '<div class="album-list-loading" style="color:#e07070">Error loading players.</div>'; }
@@ -3729,7 +3729,7 @@ async function loadNameMap() {
   try {
     var [mapRows, players] = await Promise.all([
       fetch(SUPABASE_URL+'/rest/v1/fantasy_player_name_map?select=id,scorer_name,player_id,players(name)&order=scorer_name.asc', {headers:H}).then(function(r){return r.json();}),
-      fetch(SUPABASE_URL+'/rest/v1/players?select=id,name&active=not.eq.false&order=name.asc', {headers:H}).then(function(r){return r.json();}),
+      fetch(SUPABASE_URL+'/rest/v1/public_players?select=id,name&active=not.eq.false&order=name.asc', {headers:H}).then(function(r){return r.json();}),
     ]);
 
     // Populate player select
@@ -6849,7 +6849,7 @@ async function wnFillPlayerList() {
   var dl = wnEl('wn-players');
   if (!dl || dl.dataset.filled) return;
   try {
-    var r = await fetch(SUPABASE_URL + '/rest/v1/players?select=name&active=not.eq.false&order=name.asc&limit=400', { headers: H });
+    var r = await fetch(SUPABASE_URL + '/rest/v1/public_players?select=name&active=not.eq.false&order=name.asc&limit=400', { headers: H });
     var rows = await r.json();
     if (!Array.isArray(rows)) return;
     dl.innerHTML = rows.map(function (p) { return '<option value="' + wnEsc(p.name) + '">'; }).join('');
@@ -7283,7 +7283,7 @@ async function agFillPlayerList() {
   var dl = agEl('ag-players');
   if (!dl || dl.dataset.filled) return;
   try {
-    var r = await fetch(SUPABASE_URL + '/rest/v1/players?select=name&active=not.eq.false&order=name.asc&limit=400', { headers: H });
+    var r = await fetch(SUPABASE_URL + '/rest/v1/public_players?select=name&active=not.eq.false&order=name.asc&limit=400', { headers: H });
     var rows = await r.json();
     if (!Array.isArray(rows)) return;
     dl.innerHTML = rows.map(function (p) { return '<option value="' + wnEsc(p.name) + '">'; }).join('');

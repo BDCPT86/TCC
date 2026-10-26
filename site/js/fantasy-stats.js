@@ -109,7 +109,7 @@ async function load() {
       fetch(SUPABASE_URL+'/rest/v1/fantasy_rounds?select=id,name,wildcard&order=created_at.asc', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SUPABASE_URL+'/rest/v1/fantasy_picks?select=participant_id,round_id,player_ids,captain_id,vice_captain_id,chip,created_at&order=created_at.asc', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SUPABASE_URL+'/rest/v1/fantasy_scores?select=*', {headers:H}).then(function(r){return r.ok?r.json():[];}),
-      fetch(SUPABASE_URL+'/rest/v1/players?select=id,name,role&active=not.eq.false', {headers:H}).then(function(r){return r.ok?r.json():[];}),
+      fetch(SUPABASE_URL+'/rest/v1/public_players?select=id,name,role&active=not.eq.false', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SUPABASE_URL+'/rest/v1/fantasy_chip_usage?select=chip,round_id,participant_id', {headers:H}).then(function(r){return r.ok?r.json():[];})
     ]);
 

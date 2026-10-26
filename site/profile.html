@@ -875,7 +875,7 @@ async function loadProfile() {
          third — without it this page scored a boosted round
          differently from the leaderboard. */
       fetch(SB_URL+'/rest/v1/fantasy_rounds?select=id,name,wildcard,h2h,locked,deadline,boost_modifier&order=created_at.asc', {headers:H}).then(function(r){return r.ok?r.json():[];}),
-      fetch(SB_URL+'/rest/v1/players?select=id,name,role,fantasy_value&active=not.eq.false', {headers:H}).then(function(r){return r.ok?r.json():[];}),
+      fetch(SB_URL+'/rest/v1/public_players?select=id,name,role,fantasy_value&active=not.eq.false', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SB_URL+'/rest/v1/fantasy_leaderboard_summary?select=participant_id,total_points&order=total_points.desc', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SB_URL+'/rest/v1/fantasy_picks?select=participant_id,round_id,player_ids,captain_id,vice_captain_id', {headers:H}).then(function(r){return r.ok?r.json():[];}),
       fetch(SB_URL+'/rest/v1/fantasy_h2h_fixtures?resolved=eq.true&select=participant_a,participant_b,winner_id,round_id,score_a,score_b', {headers:H}).then(function(r){return r.ok?r.json():[];}),

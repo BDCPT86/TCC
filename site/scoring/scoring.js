@@ -560,7 +560,7 @@ var _namesReady = false;
 async function loadPlayerNameSuggestions() {
   if (_namesReady) return;
   try {
-    var r = await fetch(SUPABASE_URL + '/rest/v1/players?select=name&active=not.eq.false&order=name.asc', {
+    var r = await fetch(SUPABASE_URL + '/rest/v1/public_players?select=name&active=not.eq.false&order=name.asc', {
       headers: { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY }
     });
     var rows = (await r.json()) || [];
@@ -3307,7 +3307,7 @@ async function openLineupModal(mode) {
   // Fetch players from DB
   var allPlayers = [];
   try {
-    var r = await fetch(SUPABASE_URL + '/rest/v1/players?active=not.eq.false&select=id,name,role&order=name.asc', {
+    var r = await fetch(SUPABASE_URL + '/rest/v1/public_players?active=not.eq.false&select=id,name,role&order=name.asc', {
       headers: { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY }
     });
     allPlayers = (await r.json()) || [];

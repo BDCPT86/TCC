@@ -341,7 +341,7 @@ async function loadData() {
     var safeArr = function(v) { return Array.isArray(v) ? v : []; };
 
     var [pr, sr, rr] = await Promise.all([
-      fetch(SUPABASE_URL + '/rest/v1/players?active=not.eq.false&select=id,name,role,fantasy_value&order=name.asc', {headers:H}).then(function(r){ return r.ok ? r.json() : []; }),
+      fetch(SUPABASE_URL + '/rest/v1/public_players?active=not.eq.false&select=id,name,role,fantasy_value&order=name.asc', {headers:H}).then(function(r){ return r.ok ? r.json() : []; }),
       fetch(SUPABASE_URL + '/rest/v1/fantasy_scores?select=*', {headers:H}).then(function(r){ return r.ok ? r.json() : []; }),
       fetch(SUPABASE_URL + '/rest/v1/fantasy_rounds?select=id,name,wildcard&order=created_at.asc', {headers:H}).then(function(r){ return r.ok ? r.json() : []; }),
     ]);
